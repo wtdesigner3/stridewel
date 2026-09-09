@@ -150,7 +150,7 @@ $workingHours = $contactInfo['working_hours'] ?? 'Mon - Sat: 09:30 - 18:30 IST';
 				<li><a href="index" class="<?= $active_page === 'home' ? 'active' : '' ?>"><span><i class="bi bi-house-door-fill text-danger me-2"></i> Home</span> <i class="bi bi-chevron-right"></i></a></li>
 				<li><a href="about" class="<?= $active_page === 'about' ? 'active' : '' ?>"><span><i class="bi bi-info-circle-fill text-danger me-2"></i> About Us</span> <i class="bi bi-chevron-right"></i></a></li>
 				<li class="mobile_has_submenu">
-					<a href="#mobileProdCollapse" class="mobile_accordion_toggle collapsed" id="mobileProdToggle">
+					<a href="javascript:void(0);" class="mobile_accordion_toggle collapsed" id="mobileProdToggle" role="button" aria-expanded="false">
 						<span><i class="bi bi-grid-fill text-danger me-2"></i> Products Catalog</span> <i class="bi bi-chevron-down mobile_toggle_chevron"></i>
 					</a>
 					<div class="mobile_products_accordion" id="mobileProdCollapse">
@@ -376,27 +376,6 @@ $workingHours = $contactInfo['working_hours'] ?? 'Mon - Sat: 09:30 - 18:30 IST';
 			if (prod) {
 				$('#quoteProduct').val(prod);
 			}
-		});
-
-		// Mobile drawer toggler
-		$('#mobileNavToggle').on('click', function(e) {
-			e.preventDefault();
-			$('body').addClass('mobile_drawer_open');
-			$('#mobileNavDrawer').addClass('active');
-			$('#mobileNavBackdrop').addClass('active');
-		});
-
-		$('#mobileNavClose, #mobileNavBackdrop').on('click', function() {
-			$('body').removeClass('mobile_drawer_open');
-			$('#mobileNavDrawer').removeClass('active');
-			$('#mobileNavBackdrop').removeClass('active');
-		});
-
-		// Mobile drawer product accordion toggle
-		$('#mobileProdToggle').on('click', function(e) {
-			e.preventDefault();
-			$(this).toggleClass('collapsed');
-			$('#mobileProdCollapse').slideToggle(250);
 		});
 	});
 	</script>

@@ -670,26 +670,38 @@
                 e.preventDefault();
                 $('#mobileNavDrawer').addClass('active');
                 $('#mobileNavBackdrop').addClass('active');
-                $('body').css('overflow', 'hidden');
+                $('body').addClass('mobile_drawer_open').css('overflow', 'hidden');
             });
 
             // Toggle Mobile Products Catalog Accordion (Closed by default, click to expand)
             $(document).on('click', '.mobile_accordion_toggle, .mobile_submenu_toggle, #mobileProdToggle', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                var $parent = $(this).closest('.mobile_has_submenu');
+                var $this = $(this);
+                var $parent = $this.closest('.mobile_has_submenu');
                 var $accordion = $parent.find('.mobile_products_accordion, #mobileProdCollapse, .mobile_submenu_wrap');
                 
-                $parent.toggleClass('open');
-                $(this).toggleClass('collapsed');
-                $accordion.stop(true, true).slideToggle(280);
+                if ($accordion.is(':visible')) {
+                    $parent.removeClass('open');
+                    $this.addClass('collapsed').attr('aria-expanded', 'false');
+                    $accordion.stop(true, true).slideUp(280);
+                } else {
+                    $parent.addClass('open');
+                    $this.removeClass('collapsed').attr('aria-expanded', 'true');
+                    $accordion.stop(true, true).slideDown(280);
+                }
             });
 
-            // Close Drawer (on close button, backdrop, direct navigation links, or action buttons)
+            // Prevent clicks inside accordion container from closing or bubbling
+            $(document).on('click', '.mobile_products_accordion, #mobileProdCollapse', function (e) {
+                e.stopPropagation();
+            });
+
+            // Close Drawer (on close button, backdrop, direct top-level navigation links, or action buttons)
             $(document).on('click', '#mobileNavClose, #mobileNavBackdrop, .mobile_nav_list > li:not(.mobile_has_submenu) > a, .mobile_product_link, .btn_drawer_quote, .btn_drawer_catalog', function () {
                 $('#mobileNavDrawer').removeClass('active');
                 $('#mobileNavBackdrop').removeClass('active');
-                $('body').css('overflow', '');
+                $('body').removeClass('mobile_drawer_open').css('overflow', '');
             });
         })();
 
