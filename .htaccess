@@ -1,0 +1,40 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Disable directory listing
+    Options -Indexes
+
+    # Allow direct access to real files and directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Clean URLs for Main Static Pages
+    RewriteRule ^(home|index)/?$ index.php [L,QSA]
+    RewriteRule ^about/?$ about.php [L,QSA]
+    RewriteRule ^contact/?$ contact.php [L,QSA]
+    RewriteRule ^faq/?$ faq.php [L,QSA]
+    RewriteRule ^sitemap(\.xml)?$ sitemap.php [L,QSA]
+
+    # Products Catalog Routes
+    RewriteRule ^products/?$ shop.php [L,QSA]
+    RewriteRule ^products/([a-zA-Z0-9_-]+)/?$ shop.php?cat=$1 [L,QSA]
+    RewriteRule ^shop/?$ shop.php [L,QSA]
+
+    # Blog & Article Routes
+    RewriteRule ^blogs?/?$ blog.php [L,QSA]
+    RewriteRule ^blog/([a-zA-Z0-9_-]+)/?$ blog-details.php?slug=$1 [L,QSA]
+    RewriteRule ^blog-details/?$ blog-details.php [L,QSA]
+
+    # Product Detail Route: /category-slug/product-slug
+    RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ shop-details.php?cat=$1&slug=$2 [L,QSA]
+
+    # Backward Compatibility Aliases
+    RewriteRule ^product/([a-zA-Z0-9_-]+)/?$ shop-details.php?slug=$1 [L,QSA]
+    RewriteRule ^shop-details/?$ shop-details.php [L,QSA]
+
+    # Generic Extensionless PHP Routing Fallback
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^/]+)/?$ $1.php [L,QSA]
+</IfModule>

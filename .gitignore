@@ -1,0 +1,62 @@
+# ==============================================================================
+# Stridewel / Cattlemed Project .gitignore
+# ==============================================================================
+
+# Environment & Local Configuration Overrides
+.env
+.env.*
+!.env.example
+inc/config.local.php
+*.local.php
+
+# PHP & Server Error Logs
+error_log
+*/error_log
+*/*/error_log
+*/*/*/error_log
+*.log
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE & Editor Settings
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.gemini/
+.agents/
+
+# Temporary, Scratch & Backup Files
+*.tmp
+*.bak
+*.old
+*.orig
+scratch/
+test_*.php
+
+# Legacy Static Template HTML Files
+*.html
+assets/**/*.html
+admin/**/*.html
+
+# Node & Package Manager Dependencies (if added in future)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+vendor/
+
+# Temporary Uploads Cache (Preserve directories)
+uploads/tmp/*
+!uploads/.gitkeep
