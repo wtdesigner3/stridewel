@@ -8,6 +8,7 @@ $siteProfile = get_site_profile();
 $contactInfo = get_contact_info();
 $allCategories = get_all_categories();
 $allProducts = get_all_products();
+$headerCatalog = function_exists('get_catalog_info') ? get_catalog_info() : null;
 
 // Group products by category slug
 $productsByCategory = [];
@@ -82,7 +83,7 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 						<a href="index"><img src="assets/images/logo.png" alt="<?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>" style="max-height: 44px; width: auto;"></a>
 					</div>
 				</div>
-				<div class="col-lg-7 d-none d-lg-block">
+				<div class="col-xl-6 col-lg-6 d-none d-lg-block">
 					<div class="header-menu">
 						<ul class="nav_scroll">
 							<li><a href="index" class="<?= $active_page === 'home' ? 'active' : '' ?>">Home</a></li>
@@ -155,10 +156,7 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 								</div>
 
 								<!-- Mega Menu Bottom Catalog Strip -->
-								<?php 
-								$headerCatalog = function_exists('get_catalog_info') ? get_catalog_info() : null;
-								if (!empty($headerCatalog['status']) && !empty($headerCatalog['catalog_pdf'])):
-								?>
+								<?php if (!empty($headerCatalog['status']) && !empty($headerCatalog['catalog_pdf'])): ?>
 								<div class="col-12 mt-2 pt-2 border-top d-flex flex-wrap align-items-center justify-content-between gap-2" style="font-size: 13px;">
 									<div class="d-flex align-items-center gap-2 text-muted">
 										<i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
@@ -177,8 +175,15 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 						</ul>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-6 col-6">			
+				<div class="col-xl-4 col-lg-4 col-md-6 col-6">			
 					<div class="header_quote_wrap text-end d-flex justify-content-end align-items-center">
+						<?php if (!empty($headerCatalog['status']) && !empty($headerCatalog['catalog_pdf'])): ?>
+						<a href="<?= e($headerCatalog['catalog_pdf']) ?>" target="_blank" download class="header_catalog_btn" title="<?= e($headerCatalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>">
+							<i class="bi bi-file-earmark-pdf-fill"></i>
+							<span class="catalog_text_desktop d-none d-xl-inline">Download Catalog</span>
+							<span class="catalog_text_tablet d-inline d-xl-none">Catalog</span>
+						</a>
+						<?php endif; ?>
 						<a href="#quoteModal" class="header_quote_btn open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal"><i class="bi bi-file-earmark-text-fill"></i> <span>Get Quote</span></a>
 						<button class="mobile_nav_toggler" id="mobileNavToggle" aria-label="Open Navigation Menu"><i class="bi bi-list"></i></button>
 					</div>
