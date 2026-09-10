@@ -40,6 +40,7 @@ $page_seo = [
 
 // Fetch related products in the same category
 $allProducts = get_all_products();
+$catalogInfo = get_catalog_info();
 $relatedProducts = [];
 foreach ($allProducts as $p) {
     if (($p['product_code'] ?? '') !== ($product['product_code'] ?? '') && 
@@ -132,36 +133,55 @@ require_once __DIR__ . '/includes/header.php';
 				<div class="col-lg-6 col-md-12">
 					<div class="product_info_panel">
 						<div class="sku_category_bar">
-							<span class="sku_badge" id="product_sku_badge">ITEM CODE: <?= e($product['product_code'] ?? 'AI') ?></span>
-							<span class="category_tag_pill" id="product_category_pill"><?= e($product['category_name'] ?? 'Veterinary') ?></span>
+							<?php if (!empty($product['product_code'])): ?>
+							<span class="sku_badge" id="product_sku_badge">ITEM CODE: <?= e($product['product_code']) ?></span>
+							<?php endif; ?>
+							<?php if (!empty($product['category_name'])): ?>
+							<span class="category_tag_pill" id="product_category_pill"><?= e($product['category_name']) ?></span>
+							<?php endif; ?>
 							<span class="b2b_compliance_pill"><i class="bi bi-shield-check text-danger me-1"></i> ISO 9001:2015 QMS Compliant</span>
 						</div>
 
 						<h1 class="product_main_title" id="product_title_heading"><?= e($product['product_name']) ?></h1>
 
-						<p class="product_synopsis" id="product_synopsis_text">
-							<?= !empty($product['description']) ? $product['description'] : e($product['short_description'] ?? '') ?>
-						</p>
+						<?php 
+						$synopsis = !empty($product['description']) ? $product['description'] : ($product['short_description'] ?? '');
+						if (!empty($synopsis)): 
+						?>
+						<div class="product_synopsis" id="product_synopsis_text">
+							<?= $synopsis ?>
+						</div>
+						<?php endif; ?>
 
 						<!-- Quick Specs Key Matrix -->
+						<?php if (!empty($product['material']) || !empty($product['compatibility']) || !empty($product['locking_type']) || !empty($product['standard_compliance'])): ?>
 						<div class="quick_specs_matrix" id="quick_specs_container">
+							<?php if (!empty($product['material'])): ?>
 							<div class="spec_matrix_card">
 								<div class="spec_matrix_label">Primary Material</div>
-								<div class="spec_matrix_val" id="spec_material"><?= e($product['material'] ?? 'SS-304 / SS-316 Medical Grade') ?></div>
+								<div class="spec_matrix_val" id="spec_material"><?= e($product['material']) ?></div>
 							</div>
+							<?php endif; ?>
+							<?php if (!empty($product['compatibility'])): ?>
 							<div class="spec_matrix_card">
 								<div class="spec_matrix_label">Compatibility</div>
-								<div class="spec_matrix_val" id="spec_compat"><?= e($product['compatibility'] ?? '0.50ml & 0.25ml Straws') ?></div>
+								<div class="spec_matrix_val" id="spec_compat"><?= e($product['compatibility']) ?></div>
 							</div>
+							<?php endif; ?>
+							<?php if (!empty($product['locking_type'])): ?>
 							<div class="spec_matrix_card">
 								<div class="spec_matrix_label">Locking Mechanism</div>
-								<div class="spec_matrix_val" id="spec_lock"><?= e($product['locking_type'] ?? 'Precision Dual Lock') ?></div>
+								<div class="spec_matrix_val" id="spec_lock"><?= e($product['locking_type']) ?></div>
 							</div>
+							<?php endif; ?>
+							<?php if (!empty($product['standard_compliance'])): ?>
 							<div class="spec_matrix_card">
 								<div class="spec_matrix_label">Standard Compliance</div>
-								<div class="spec_matrix_val" id="spec_std"><?= e($product['standard_compliance'] ?? 'French & German Standard') ?></div>
+								<div class="spec_matrix_val" id="spec_std"><?= e($product['standard_compliance']) ?></div>
 							</div>
+							<?php endif; ?>
 						</div>
+						<?php endif; ?>
 
 						<!-- Institutional Procurement Action Card -->
 						<div class="procure_action_card">
@@ -176,9 +196,11 @@ require_once __DIR__ . '/includes/header.php';
 								<a href="#quoteModal" class="btn_request_quote open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal" data-product="<?= e($product['product_name']) ?> (<?= e($product['product_code']) ?>)" id="btn_quote_trigger">
 									<i class="bi bi-file-earmark-text-fill"></i> Request Wholesale Quote
 								</a>
-								<a href="assets/STRIDEWEL (2).pdf" target="_blank" class="btn_download_brochure">
-									<i class="bi bi-download"></i> Catalog PDF
+								<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf'])): ?>
+								<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn_download_brochure">
+									<i class="bi bi-download"></i> <?= e($catalogInfo['btn_text'] ?? 'Catalog PDF') ?>
 								</a>
+								<?php endif; ?>
 							</div>
 
 							<div class="quick_contact_pills">
@@ -232,38 +254,54 @@ require_once __DIR__ . '/includes/header.php';
 						</h3>
 						<table class="specs_table_modern" id="full_specs_table">
 							<tbody>
+								<?php if (!empty($product['product_code'])): ?>
 								<tr>
 									<th>Product Code / SKU</th>
-									<td id="tab_sku_code"><?= e($product['product_code'] ?? 'AI') ?></td>
+									<td id="tab_sku_code"><?= e($product['product_code']) ?></td>
 								</tr>
+								<?php endif; ?>
+								<?php if (!empty($product['category_name'])): ?>
 								<tr>
 									<th>Product Category</th>
-									<td id="tab_category_val"><?= e($product['category_name'] ?? 'Veterinary') ?></td>
+									<td id="tab_category_val"><?= e($product['category_name']) ?></td>
 								</tr>
+								<?php endif; ?>
+								<?php if (!empty($product['material'])): ?>
 								<tr>
 									<th>Material Composition</th>
-									<td id="tab_material_val"><?= e($product['material'] ?? 'High Precision Surgical Grade Stainless Steel (SS-304/SS-316)') ?></td>
+									<td id="tab_material_val"><?= e($product['material']) ?></td>
 								</tr>
+								<?php endif; ?>
+								<?php if (!empty($product['compatibility'])): ?>
 								<tr>
 									<th>Straw Compatibility</th>
-									<td id="tab_compat_val"><?= e($product['compatibility'] ?? 'Universal Dual Design (0.50 ml Medium & 0.25 ml Mini French Straws)') ?></td>
+									<td id="tab_compat_val"><?= e($product['compatibility']) ?></td>
 								</tr>
+								<?php endif; ?>
+								<?php if (!empty($product['locking_type'])): ?>
 								<tr>
 									<th>Locking System</th>
-									<td id="tab_locking_val"><?= e($product['locking_type'] ?? 'Precision Mechanism & Self-Locking Assembly') ?></td>
+									<td id="tab_locking_val"><?= e($product['locking_type']) ?></td>
 								</tr>
+								<?php endif; ?>
+								<?php if (!empty($product['sterilization'])): ?>
 								<tr>
 									<th>Sterilization Compatibility</th>
-									<td id="tab_steril_val"><?= e($product['sterilization'] ?? 'Autoclavable (121°C - 134°C), Boiling Water Sterilization, Alcohol Disinfection') ?></td>
+									<td id="tab_steril_val"><?= e($product['sterilization']) ?></td>
 								</tr>
+								<?php endif; ?>
+								<?php if (!empty($product['standard_compliance'])): ?>
 								<tr>
 									<th>Manufacturing Compliance</th>
-									<td id="tab_compliance_val"><?= e($product['standard_compliance'] ?? 'ISO 9001:2015 QMS Standard, European French Veterinary Specifications') ?></td>
+									<td id="tab_compliance_val"><?= e($product['standard_compliance']) ?></td>
 								</tr>
+								<?php endif; ?>
+								<?php if (!empty($product['packaging'])): ?>
 								<tr>
 									<th>Export Packaging</th>
-									<td id="tab_packaging_val"><?= e($product['packaging'] ?? 'Individual Protective Sleeve in Export Standard Heavy Duty Master Cartons') ?></td>
+									<td id="tab_packaging_val"><?= e($product['packaging']) ?></td>
 								</tr>
+								<?php endif; ?>
 							</tbody>
 						</table>
 					</div>

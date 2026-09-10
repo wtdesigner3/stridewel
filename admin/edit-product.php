@@ -4,7 +4,7 @@ require('../inc/function.php');
 
 $msg = "";
 $error = "";
-$pid = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$pid = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 
 $all_categories = get_all_categories(false);
 $product = get_product_by_id_or_slug($pid);
@@ -119,7 +119,7 @@ if (isset($_POST['update_product'])) {
 		<div id="content" class="content">
 			<div class="d-flex align-items-center justify-content-between mb-4">
 				<div>
-					<h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+					<h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
 						Edit Product: <?= htmlspecialchars($product['name']) ?> (<?= htmlspecialchars($product['code']) ?>)
 					</h1>
 					<p class="text-muted mb-0">Modify technical specifications, showcase media, and page SEO metadata.</p>

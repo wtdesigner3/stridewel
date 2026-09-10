@@ -12,25 +12,35 @@ if (isset($_POST['update_contact_page'])) {
     $email1 = clean_input($_POST['primary_email'] ?? $_POST['con_email1'] ?? '');
     $email2 = clean_input($_POST['secondary_email'] ?? $_POST['con_email2'] ?? '');
     $whatsapp = clean_input($_POST['whatsapp_number'] ?? $_POST['con_whatsaap'] ?? '');
-    $address = clean_input($_POST['office_address'] ?? $_POST['con_address'] ?? '');
+    $address = clean_input(strip_tags($_POST['office_address'] ?? $_POST['con_address'] ?? ''));
     $map = clean_input($_POST['google_map_iframe'] ?? $_POST['con_map'] ?? '');
     $hours = clean_input($_POST['working_hours'] ?? 'Mon – Sat: 09:30 – 18:30 IST');
 
-    global $db;
-    if ($db instanceof PDO) {
-        $stmt = $db->prepare("UPDATE tbl_contact SET primary_phone=?, secondary_phone=?, primary_email=?, secondary_email=?, whatsapp_number=?, office_address=?, google_map_iframe=?, working_hours=? WHERE id=1");
-        if ($stmt->execute([$phone1, $phone2, $email1, $email2, $whatsapp, $address, $map, $hours])) {
-            $msg = "Contact details, address, and Google Map embed updated successfully!";
-        } else {
-            $error = "Failed to update contact settings.";
-        }
-    } elseif (is_object($db)) {
-        $stmt = $db->prepare("UPDATE tbl_contact SET primary_phone=?, secondary_phone=?, primary_email=?, secondary_email=?, whatsapp_number=?, office_address=?, google_map_iframe=?, working_hours=? WHERE id=1");
-        if ($stmt) {
-            $stmt->bind_param("ssssssss", $phone1, $phone2, $email1, $email2, $whatsapp, $address, $map, $hours);
-            $stmt->execute();
-            $msg = "Contact details updated successfully!";
-        }
+    global $conn;
+    $phone1_esc = mysqli_real_escape_string($conn, $phone1);
+    $phone2_esc = mysqli_real_escape_string($conn, $phone2);
+    $email1_esc = mysqli_real_escape_string($conn, $email1);
+    $email2_esc = mysqli_real_escape_string($conn, $email2);
+    $whatsapp_esc = mysqli_real_escape_string($conn, $whatsapp);
+    $address_esc = mysqli_real_escape_string($conn, $address);
+    $map_esc = mysqli_real_escape_string($conn, $map);
+    $hours_esc = mysqli_real_escape_string($conn, $hours);
+
+    $upd = mysqli_query($conn, "UPDATE `tbl_contact` SET 
+        `con_phone1` = '$phone1_esc', `primary_phone` = '$phone1_esc',
+        `con_phone2` = '$phone2_esc', `secondary_phone` = '$phone2_esc',
+        `con_email1` = '$email1_esc', `primary_email` = '$email1_esc',
+        `con_email2` = '$email2_esc', `secondary_email` = '$email2_esc',
+        `con_whatsaap` = '$whatsapp_esc', `whatsapp_number` = '$whatsapp_esc',
+        `con_address` = '$address_esc', `office_address` = '$address_esc',
+        `con_map` = '$map_esc', `google_map_iframe` = '$map_esc',
+        `working_hours` = '$hours_esc'
+        WHERE `con_id` = 1");
+
+    if ($upd) {
+        $msg = "Contact details, phone numbers, and address updated successfully!";
+    } else {
+        $error = "Failed to update contact settings: " . mysqli_error($conn);
     }
 }
 
@@ -97,35 +107,35 @@ $contact = get_contact_info();
                                         <label class="form-label fw-bold">Primary Helpline Phone <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="fa-solid fa-phone text-muted"></i></span>
-                                            <input type="text" name="primary_phone" class="form-control" value="<?= htmlspecialchars($contact['primary_phone'] ?? '+91 98100 46037') ?>" required>
+                                            <input type="text" name="primary_phone" class="form-control" value="<?= htmlspecialchars($contact['primary_phone'] ?? $contact['con_phone1'] ?? '+91 98100 46037') ?>" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">Secondary Line / Telephone</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="fa-solid fa-phone-volume text-muted"></i></span>
-                                            <input type="text" name="secondary_phone" class="form-control" value="<?= htmlspecialchars($contact['secondary_phone'] ?? '+91 98100 46038') ?>">
+                                            <input type="text" name="secondary_phone" class="form-control" value="<?= htmlspecialchars($contact['secondary_phone'] ?? $contact['con_phone2'] ?? '+91 98100 46038') ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">Primary Inquiries Email <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="fa-solid fa-envelope text-muted"></i></span>
-                                            <input type="email" name="primary_email" class="form-control" value="<?= htmlspecialchars($contact['primary_email'] ?? 'stridewel@gmail.com') ?>" required>
+                                            <input type="email" name="primary_email" class="form-control" value="<?= htmlspecialchars($contact['primary_email'] ?? $contact['con_email1'] ?? 'stridewel@gmail.com') ?>" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">Secondary / Sales Email</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="fa-solid fa-at text-muted"></i></span>
-                                            <input type="email" name="secondary_email" class="form-control" value="<?= htmlspecialchars($contact['secondary_email'] ?? 'sales@stridewel.com') ?>">
+                                            <input type="email" name="secondary_email" class="form-control" value="<?= htmlspecialchars($contact['secondary_email'] ?? $contact['con_email2'] ?? 'sales@stridewel.com') ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">WhatsApp Hotline Number</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light"><i class="fa-brands fa-whatsapp text-success"></i></span>
-                                            <input type="text" name="whatsapp_number" class="form-control" value="<?= htmlspecialchars($contact['whatsapp_number'] ?? '+91 98100 46037') ?>">
+                                            <input type="text" name="whatsapp_number" class="form-control" value="<?= htmlspecialchars($contact['whatsapp_number'] ?? $contact['con_whatsaap'] ?? '+91 98100 46037') ?>">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -140,12 +150,12 @@ $contact = get_contact_info();
                                 <h6 class="fw-bold mb-3 text-muted text-uppercase" style="font-size: 11px; letter-spacing: 1px;">Office Address &amp; Maps</h6>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Corporate Office &amp; Facility Address</label>
-                                    <textarea name="office_address" class="form-control" rows="3"><?= htmlspecialchars($contact['office_address'] ?? '26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015, India') ?></textarea>
+                                    <textarea name="office_address" class="form-control" rows="3"><?= htmlspecialchars($contact['office_address'] ?? $contact['con_address'] ?? '26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015, India') ?></textarea>
                                 </div>
 
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">Google Map Embed URL / iframe</label>
-                                    <textarea name="google_map_iframe" class="form-control" rows="3"><?= htmlspecialchars($contact['google_map_iframe'] ?? '') ?></textarea>
+                                    <textarea name="google_map_iframe" class="form-control" rows="3"><?= htmlspecialchars($contact['google_map_iframe'] ?? $contact['con_map'] ?? '') ?></textarea>
                                 </div>
 
                                 <button type="submit" name="update_contact_page" class="btn btn-danger px-4 py-2 fw-bold">

@@ -6,7 +6,7 @@ $profile = get_site_profile();
 	<div class="sidebar-scroll-wrapper">
 		<!-- Sidebar Navigation -->
 		<ul class="nav">
-			<li class="nav-header" style="color: #6C8176; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">CORE DESK</li>
+			<li class="nav-header" style="color: #94a3b8; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">CORE DESK</li>
 			
 			<li class="<?php echo ($current_page == 'index.php') ? 'active' : ''; ?>">
 				<a href="index.php">
@@ -22,11 +22,11 @@ $profile = get_site_profile();
 				</a>
 			</li>
 
-			<li class="nav-header" style="color: #6C8176; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">CATALOG &amp; PRODUCTS</li>
+			<li class="nav-header" style="color: #94a3b8; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">CATALOG &amp; PRODUCTS</li>
 
 			<!-- Product Catalog Submenu -->
 			<?php 
-			$product_pages = ['manage-products.php', 'manage-categories.php', 'add-product.php', 'edit-product.php'];
+			$product_pages = ['manage-products.php', 'manage-categories.php', 'add-product.php', 'edit-product.php', 'manage-catalog.php'];
 			$is_product_active = in_array($current_page, $product_pages);
 			$sidebar_categories = function_exists('get_all_categories') ? get_all_categories(false) : [];
 			$sidebar_cat_count = count($sidebar_categories);
@@ -49,10 +49,13 @@ $profile = get_site_profile();
 					<li class="<?= ($current_page == 'add-product.php') ? 'active' : '' ?>">
 						<a href="add-product.php">Add New Product</a>
 					</li>
+					<li class="<?= ($current_page == 'manage-catalog.php') ? 'active' : '' ?>">
+						<a href="manage-catalog.php"><i class="fa-solid fa-file-pdf text-danger me-1"></i> PDF Catalog Download</a>
+					</li>
 				</ul>
 			</li>
 
-			<li class="nav-header" style="color: #6C8176; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">WEBSITE PAGES CMS</li>
+			<li class="nav-header" style="color: #94a3b8; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">WEBSITE PAGES CMS</li>
 
 			<!-- Home Page CMS Submenu -->
 			<?php 
@@ -125,21 +128,35 @@ $profile = get_site_profile();
 						<a href="manage-about-industries.php">Institutional Supply Partners</a>
 					</li>
 					<li class="<?= ($current_page == 'manage-about-cta.php') ? 'active' : '' ?>">
-						<a href="manage-about-cta.php">Inquiry CTA &amp; PDF Catalog</a>
+						<a href="manage-about-cta.php">Call-To-Action (CTA) Banner</a>
 					</li>
 				</ul>
 			</li>
 
-			<!-- FAQ Management -->
+			<!-- FAQ Management Submenu -->
 			<?php 
-			$faq_pages = ['manage-faq.php', 'add-faq.php', 'edit-faq.php'];
+			$faq_pages = ['manage-faq.php', 'add-faq.php', 'edit-faq.php', 'manage-faq-categories.php'];
 			$is_faq_active = in_array($current_page, $faq_pages);
 			?>
-			<li class="<?= $is_faq_active ? 'active' : '' ?>">
-				<a href="manage-faq.php">
-					<i class="fa-solid fa-circle-question"></i>
-					<span>FAQ Management</span>
+			<li class="has-sub <?= $is_faq_active ? 'active expand' : '' ?>">
+				<a href="javascript:void(0);" class="sidebar-parent-toggle d-flex align-items-center justify-content-between">
+					<div>
+						<i class="fa-solid fa-circle-question"></i>
+						<span>FAQ Management</span>
+					</div>
+					<b class="caret"></b>
 				</a>
+				<ul class="sub-menu" style="<?= $is_faq_active ? 'display: block;' : '' ?>">
+					<li class="<?= ($current_page == 'manage-faq.php') ? 'active' : '' ?>">
+						<a href="manage-faq.php">All Questions</a>
+					</li>
+					<li class="<?= ($current_page == 'add-faq.php') ? 'active' : '' ?>">
+						<a href="add-faq.php">Add New Question</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-faq-categories.php') ? 'active' : '' ?>">
+						<a href="manage-faq-categories.php">FAQ Categories</a>
+					</li>
+				</ul>
 			</li>
 
 			<!-- Contact Page CMS -->
@@ -160,7 +177,7 @@ $profile = get_site_profile();
 
 			<!-- Blog & Technical Insights Submenu -->
 			<?php 
-			$blog_pages = ['manage-blogs.php', 'add-blogs.php', 'edit-blogs.php'];
+			$blog_pages = ['manage-blogs.php', 'add-blogs.php', 'edit-blogs.php', 'manage-blog-categories.php'];
 			$is_blog_active = in_array($current_page, $blog_pages);
 			?>
 			<li class="has-sub <?= $is_blog_active ? 'active expand' : '' ?>">
@@ -178,10 +195,13 @@ $profile = get_site_profile();
 					<li class="<?= ($current_page == 'add-blogs.php') ? 'active' : '' ?>">
 						<a href="add-blogs.php">Add New Article</a>
 					</li>
+					<li class="<?= ($current_page == 'manage-blog-categories.php') ? 'active' : '' ?>">
+						<a href="manage-blog-categories.php">Blog Categories</a>
+					</li>
 				</ul>
 			</li>
 
-			<li class="nav-header" style="color: #6C8176; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">SEO &amp; CONFIGURATION</li>
+			<li class="nav-header" style="color: #94a3b8; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">SEO &amp; CONFIGURATION</li>
 
 			<!-- Page SEO & Settings Submenu -->
 			<?php 
@@ -219,7 +239,7 @@ $profile = get_site_profile();
 				</a>
 			</li>
 
-			<li class="nav-header" style="color: #6C8176; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">ACTIONS</li>
+			<li class="nav-header" style="color: #94a3b8; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">ACTIONS</li>
 
 			<li>
 				<a href="../index.php" target="_blank">

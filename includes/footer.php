@@ -23,29 +23,59 @@ $primaryEmail = $contactInfo['primary_email'] ?? 'stridewel@gmail.com';
 $waNumber = preg_replace('/[^0-9]/', '', $contactInfo['whatsapp_number'] ?? $primaryPhone);
 $officeAddress = $contactInfo['office_address'] ?? '26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015';
 $workingHours = $contactInfo['working_hours'] ?? 'Mon - Sat: 09:30 - 18:30 IST';
+
+$aboutInfo = $aboutInfo ?? get_about_info();
+$ctaBadge = trim($aboutInfo['cta_badge'] ?? '');
+$ctaHeading = trim($aboutInfo['cta_heading'] ?? '');
+$ctaDesc = trim($aboutInfo['cta_desc'] ?? '');
+$ctaBtnText = trim($aboutInfo['cta_btn_text'] ?? '');
+$ctaBtnLink = trim($aboutInfo['cta_btn_link'] ?? '');
+$ctaBgImage = trim($aboutInfo['cta_bg_image'] ?? '');
+if (empty($ctaBgImage)) {
+    $ctaBgImage = 'assets/images/banners/banner_institutional_supply.jpg';
+}
+$showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText));
 ?>
 
+	<?php if ($showCtaBanner): ?>
 	<!--==================================================-->
 	<!-- Start Institutional Supply CTA Banner -->
 	<!--==================================================-->
-	<div class="institutional_cta_banner">
+	<div class="institutional_cta_banner" style="background: linear-gradient(135deg, rgba(16, 55, 85, 0.94) 0%, rgba(10, 30, 50, 0.96) 100%), url('<?= e($ctaBgImage) ?>') center center / cover no-repeat !important;">
 		<div class="container">
 			<div class="row align-items-center">
-				<div class="col-lg-8 col-md-12">
-					<div class="cta_badge"><i class="bi bi-patch-check-fill"></i> DIRECT MANUFACTURER SUPPLY</div>
-					<h2>Bulk Institutional Procurement &amp; Custom A.I. Tool Manufacturing</h2>
-					<p>Stridewel International supplies state livestock boards, veterinary universities, dairy federations, and international export programs with ISO-certified artificial insemination and cryogenic equipment.</p>
+				<div class="<?= (!empty($ctaBtnText) || !empty($primaryPhone)) ? 'col-lg-8' : 'col-12' ?> col-md-12">
+					<?php if (!empty($ctaBadge)): ?>
+					<div class="cta_badge"><i class="bi bi-patch-check-fill"></i> <?= e($ctaBadge) ?></div>
+					<?php endif; ?>
+					<?php if (!empty($ctaHeading)): ?>
+					<h2><?= $ctaHeading ?></h2>
+					<?php endif; ?>
+					<?php if (!empty($ctaDesc)): ?>
+					<p><?= nl2br(e($ctaDesc)) ?></p>
+					<?php endif; ?>
 				</div>
+				<?php if (!empty($ctaBtnText) || !empty($primaryPhone)): ?>
 				<div class="col-lg-4 col-md-12 text-lg-end mt-4 mt-lg-0">
-					<a href="#quoteModal" class="cta_quote_btn open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal"><i class="bi bi-file-earmark-text-fill"></i> Request Institutional Quote</a>
+					<?php if (!empty($ctaBtnText)): ?>
+						<?php if (empty($ctaBtnLink) || $ctaBtnLink === '#quoteModal' || $ctaBtnLink === '#'): ?>
+						<a href="#quoteModal" class="cta_quote_btn open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal"><i class="bi bi-file-earmark-text-fill"></i> <?= e($ctaBtnText) ?></a>
+						<?php else: ?>
+						<a href="<?= e($ctaBtnLink) ?>" class="cta_quote_btn"><i class="bi bi-file-earmark-text-fill"></i> <?= e($ctaBtnText) ?></a>
+						<?php endif; ?>
+					<?php endif; ?>
+					<?php if (!empty($primaryPhone)): ?>
 					<div class="cta_phone mt-2"><i class="bi bi-telephone-fill"></i> Helpline: <a href="tel:<?= e($primaryPhone) ?>" style="color:inherit; text-decoration:none;"><?= e($primaryPhone) ?></a></div>
+					<?php endif; ?>
 				</div>
+				<?php endif; ?>
 			</div>
 		</div>
 	</div>
 	<!--==================================================-->
 	<!-- End Institutional Supply CTA Banner -->
 	<!--==================================================-->
+	<?php endif; ?>
 
 	<!--==================================================-->
 	<!-- Start Footer Area -->
@@ -105,11 +135,24 @@ $workingHours = $contactInfo['working_hours'] ?? 'Mon - Sat: 09:30 - 18:30 IST';
 					<div class="footer-widget">
 						<h4>Corporate Office</h4>
 						<ul class="footer-contact-info">
+							<?php if (!empty($officeAddress)): ?>
 							<li><i class="bi bi-geo-alt-fill text-danger"></i> <?= e($officeAddress) ?></li>
-							<li><i class="bi bi-file-earmark-ruled-fill text-danger"></i> <strong>GST No:</strong> <?= e($contactInfo['con_gst'] ?? $siteProfile['pro_gst'] ?? '07AAEPC9628C1ZZ') ?></li>
+							<?php endif; ?>
+							<?php 
+							$gstNo = $contactInfo['con_gst'] ?? ($siteProfile['pro_gst'] ?? '07AAEPC9628C1ZZ');
+							if (!empty($gstNo)): 
+							?>
+							<li><i class="bi bi-file-earmark-ruled-fill text-danger"></i> <strong>GST No:</strong> <?= e($gstNo) ?></li>
+							<?php endif; ?>
+							<?php if (!empty($primaryPhone)): ?>
 							<li><i class="bi bi-telephone-fill text-danger"></i> <a href="tel:<?= e($primaryPhone) ?>"><?= e($primaryPhone) ?></a></li>
+							<?php endif; ?>
+							<?php if (!empty($primaryEmail)): ?>
 							<li><i class="bi bi-envelope-fill text-danger"></i> <a href="mailto:<?= e($primaryEmail) ?>"><?= e($primaryEmail) ?></a></li>
+							<?php endif; ?>
+							<?php if (!empty($workingHours)): ?>
 							<li><i class="bi bi-clock-fill text-danger"></i> <?= e($workingHours) ?></li>
+							<?php endif; ?>
 						</ul>
 					</div>
 				</div>
@@ -204,6 +247,14 @@ $workingHours = $contactInfo['working_hours'] ?? 'Mon - Sat: 09:30 - 18:30 IST';
 			<a href="#quoteModal" class="btn_drawer_quote open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal">
 				<i class="bi bi-file-earmark-text-fill"></i> Request Price Quote
 			</a>
+			<?php 
+			$footerCatalog = function_exists('get_catalog_info') ? get_catalog_info() : null;
+			if (!empty($footerCatalog['status']) && !empty($footerCatalog['catalog_pdf'])): 
+			?>
+			<a href="<?= e($footerCatalog['catalog_pdf']) ?>" target="_blank" class="btn_drawer_catalog mt-2" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px 16px; background: #ffffff; border: 1.5px solid #ed1c24; color: #ed1c24; font-weight: 700; font-size: 13px; border-radius: 8px; text-decoration: none;">
+				<i class="bi bi-file-earmark-pdf-fill"></i> <?= e($footerCatalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>
+			</a>
+			<?php endif; ?>
 			<div class="drawer_phone">
 				<a href="tel:<?= e($primaryPhone) ?>" style="color: inherit; text-decoration: none;">
 					<i class="bi bi-telephone-fill text-danger me-1"></i> Helpline: <?= e($primaryPhone) ?>

@@ -35,7 +35,7 @@ $profile = get_site_profile();
 				<i class="fa-solid fa-chevron-down user-caret-icon ms-1"></i>
 			</a>
 			<div class="dropdown-menu dropdown-menu-end shadow-lg border-0 modern-user-dropdown mt-2">
-				<div class="dropdown-header text-uppercase fw-bold px-3 pt-2 pb-1" style="font-size: 10.5px; color: #8C9E94; letter-spacing: 0.5px;">Executive Desk</div>
+				<div class="dropdown-header text-uppercase fw-bold px-3 pt-2 pb-1" style="font-size: 10.5px; color: #94a3b8; letter-spacing: 0.5px;">Executive Desk</div>
 				<a href="manage-profile.php" class="dropdown-item py-2 px-3 d-flex align-items-center gap-2">
 					<i class="fa-solid fa-shield-halved text-muted" style="width: 16px;"></i>
 					<span>Admin Security</span>

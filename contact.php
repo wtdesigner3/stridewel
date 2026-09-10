@@ -8,13 +8,13 @@ $page_seo = 'contact';
 $contactInfo = get_contact_info();
 $allProducts = get_all_products();
 
-$primaryPhone = $contactInfo['primary_phone'] ?? '+91 98100 46038';
-$secondaryPhone = $contactInfo['secondary_phone'] ?? '+91 98100 46038';
-$primaryEmail = $contactInfo['primary_email'] ?? 'stridewel@gmail.com';
-$secondaryEmail = $contactInfo['secondary_email'] ?? 'stridewel@gmail.com';
-$officeAddress = $contactInfo['office_address'] ?? '26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015';
-$workingHours = $contactInfo['working_hours'] ?? 'Mon – Sat: 09:30 – 18:30 IST';
-$mapIframe = $contactInfo['google_map_iframe'] ?? '';
+$primaryPhone = !empty($contactInfo['primary_phone']) ? $contactInfo['primary_phone'] : ($contactInfo['con_phone1'] ?? '+91 98100 46038');
+$secondaryPhone = !empty($contactInfo['secondary_phone']) ? $contactInfo['secondary_phone'] : ($contactInfo['con_phone2'] ?? '+91 98100 46038');
+$primaryEmail = !empty($contactInfo['primary_email']) ? $contactInfo['primary_email'] : ($contactInfo['con_email1'] ?? 'stridewel@gmail.com');
+$secondaryEmail = !empty($contactInfo['secondary_email']) ? $contactInfo['secondary_email'] : ($contactInfo['con_email2'] ?? 'stridewel@gmail.com');
+$officeAddress = !empty($contactInfo['office_address']) ? $contactInfo['office_address'] : ($contactInfo['con_address'] ?? '26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015');
+$workingHours = !empty($contactInfo['working_hours']) ? $contactInfo['working_hours'] : 'Mon – Sat: 09:30 – 18:30 IST';
+$mapIframe = !empty($contactInfo['google_map_iframe']) ? $contactInfo['google_map_iframe'] : ($contactInfo['con_map'] ?? '');
 
 require_once __DIR__ . '/includes/header.php';
 ?>

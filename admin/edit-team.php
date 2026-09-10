@@ -2,9 +2,14 @@
 require('checksession.php');
 include '../inc/function.php'; 
 
-$b=$_REQUEST['cid'];
-$bdata=mysqli_query($conn,"SELECT * FROM `tbl_teams` where `tt_id`='$b'");
-$brec=mysqli_fetch_array($bdata);
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['cid'] ?? $_REQUEST['bid'] ?? 0);
+$bdata = mysqli_query($conn, "SELECT * FROM `tbl_teams` where `tt_id`='$b'");
+$brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_teams` ORDER BY `tt_id` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['tt_id'];
+}
 if(isset($_POST['update']))
 {
   $name = mysqli_real_escape_string($conn,$_POST['name']); 
@@ -13,9 +18,9 @@ if(isset($_POST['update']))
   $prourl = strtolower($purl);
   $location = mysqli_real_escape_string($conn,$_POST['location']); 
   	$heading = mysqli_real_escape_string($conn,$_POST['heading']);
-		$subheading = mysqli_real_escape_string($conn,$_POST['subheading']);
-  $description = mysqli_real_escape_string($conn,$_POST['description']); 
-  	$short_description = mysqli_real_escape_string($conn,$_POST['short_description']);
+		$subheading = mysqli_real_escape_string($conn, strip_tags($_POST['subheading'] ?? ''));
+  $description = mysqli_real_escape_string($conn, strip_tags($_POST['description'] ?? '')); 
+  	$short_description = mysqli_real_escape_string($conn, strip_tags($_POST['short_description'] ?? ''));
   $status = mysqli_real_escape_string($conn,$_POST['status']); 
   $sort = mysqli_real_escape_string($conn,$_POST['sort']); 
   $old = mysqli_real_escape_string($conn,$_POST['oldimg']);  

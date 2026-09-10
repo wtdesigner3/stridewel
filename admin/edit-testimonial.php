@@ -2,9 +2,14 @@
 require('checksession.php');
 include '../inc/function.php'; 
 
-$b=$_REQUEST['cid'];
-$bdata=mysqli_query($conn,"SELECT * FROM `tbl_testimonial` where `tt_id`='$b'");
-$brec=mysqli_fetch_array($bdata);
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['cid'] ?? $_REQUEST['bid'] ?? 0);
+$bdata = mysqli_query($conn, "SELECT * FROM `tbl_testimonial` where `tt_id`='$b'");
+$brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_testimonial` ORDER BY `tt_id` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['tt_id'];
+}
 if(isset($_POST['update']))
 {
   $name = mysqli_real_escape_string($conn,$_POST['name']); 

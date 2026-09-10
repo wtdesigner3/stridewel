@@ -44,8 +44,29 @@ if (isset($_POST['batch_action']) && !empty($_POST['selected_ids'])) {
     }
 }
 
-// Fetch all FAQs
-$faqs_list = get_faqs();
+// Fetch category counts & all FAQs directly from database
+$category_filter = trim($_GET['category'] ?? '');
+$where = "1=1";
+if (!empty($category_filter)) {
+    $where .= " AND `category`='" . mysqli_real_escape_string($conn, $category_filter) . "'";
+}
+
+$cnt_all = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FROM `tbl_faq`"))['c'] ?? 0;
+$categories_q = mysqli_query($conn, "SELECT `category`, count(*) as count FROM `tbl_faq` WHERE `category` IS NOT NULL AND `category` != '' GROUP BY `category`");
+$categories = [];
+if ($categories_q) {
+    while ($cat_row = mysqli_fetch_assoc($categories_q)) {
+        $categories[] = $cat_row;
+    }
+}
+
+$faqs_q = mysqli_query($conn, "SELECT * FROM `tbl_faq` WHERE $where ORDER BY `sort_order` ASC, `id` ASC");
+$faqs_list = [];
+if ($faqs_q) {
+    while ($r = mysqli_fetch_assoc($faqs_q)) {
+        $faqs_list[] = $r;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,12 +98,54 @@ $faqs_list = get_faqs();
 				</div>
 			</div>
 
+			<!-- Quick Sub-Menu Navigation -->
+			<div class="cms-subnav-strip mb-4">
+				<a href="manage-faq.php" class="cms-subnav-pill active">
+					<i class="fa-solid fa-circle-question"></i> All FAQ Questions
+				</a>
+				<a href="add-faq.php" class="cms-subnav-pill">
+					<i class="fa-solid fa-circle-plus"></i> Add Question
+				</a>
+				<a href="manage-faq-categories.php" class="cms-subnav-pill">
+					<i class="fa-solid fa-folder-tree"></i> FAQ Categories
+				</a>
+				<a href="../faq.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
+					<i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live FAQ Page
+				</a>
+			</div>
+
 			<?php if ($msg != ""): ?>
 				<div class="alert alert-success alert-dismissible fade show" role="alert">
 					<i class="fa-solid fa-circle-check me-2"></i> <?= htmlspecialchars($msg) ?>
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>
 			<?php endif; ?>
+
+			<?php if ($error != ""): ?>
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					<i class="fa-solid fa-triangle-exclamation me-2"></i> <?= htmlspecialchars($error) ?>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			<?php endif; ?>
+
+			<!-- Category Filter Tabs & Live Search -->
+			<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+				<div class="cms-subnav-strip mb-0">
+					<a href="manage-faq.php" class="cms-subnav-pill <?= ($category_filter == '') ? 'active' : '' ?>">
+						All FAQs (<?= $cnt_all ?>)
+					</a>
+					<?php foreach ($categories as $cat): ?>
+						<a href="manage-faq.php?category=<?= urlencode($cat['category']) ?>" class="cms-subnav-pill <?= ($category_filter == $cat['category']) ? 'active' : '' ?>">
+							<?= htmlspecialchars($cat['category']) ?> (<?= $cat['count'] ?>)
+						</a>
+					<?php endforeach; ?>
+				</div>
+
+				<div class="search-filter-box">
+					<i class="fa-solid fa-magnifying-glass"></i>
+					<input type="text" id="faqSearchInput" class="form-control" placeholder="Search question, answer, category...">
+				</div>
+			</div>
 
 			<!-- FAQ Table Card -->
 			<div class="table-crud-card">
@@ -104,7 +167,7 @@ $faqs_list = get_faqs();
 							<tbody>
 								<?php if (!empty($faqs_list)): ?>
 									<?php foreach ($faqs_list as $f): ?>
-										<tr>
+										<tr class="faq-row" data-id="<?= $f['id'] ?>" data-status="<?= (int)($f['status'] ?? 1) ?>">
 											<td style="text-align: center;">
 												<input type="checkbox" name="selected_ids[]" value="<?= $f['id'] ?>" class="crud-checkbox row-select-cb">
 											</td>
@@ -112,8 +175,8 @@ $faqs_list = get_faqs();
 												<span class="badge bg-light text-dark border fw-bold"><?= htmlspecialchars($f['category'] ?? 'General') ?></span>
 											</td>
 											<td>
-												<div class="fw-bold text-dark fs-6 mb-1"><?= htmlspecialchars($f['question']) ?></div>
-												<small class="text-muted text-truncate d-block" style="max-width: 500px;">
+												<div class="fw-bold text-dark fs-6 mb-1 faq-question-text"><?= htmlspecialchars($f['question']) ?></div>
+												<small class="text-muted text-truncate d-block faq-answer-text" style="max-width: 500px;">
 													<?= htmlspecialchars(strip_tags($f['answer'])) ?>
 												</small>
 											</td>
@@ -127,7 +190,7 @@ $faqs_list = get_faqs();
 													       data-id="<?= $f['id'] ?>" 
 													       data-table="tbl_faq" 
 													       data-field="status" 
-													       <?= (!isset($f['status']) || $f['status'] == 1) ? 'checked' : '' ?>>
+													       <?= ((int)($f['status'] ?? 1) === 1) ? 'checked' : '' ?>>
 													<span class="status-switch-slider"></span>
 												</label>
 											</td>
@@ -176,5 +239,137 @@ $faqs_list = get_faqs();
 		</div>
 		<?php require('includes/footer.php'); ?>
 	</div>
+
+	<!-- Toast Container for AJAX toggles -->
+	<div class="crud-toast-container">
+		<div id="crudToast" class="crud-toast" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-body">
+				<i id="crudToastIcon" class="fa-solid fa-circle-check text-success fs-5"></i>
+				<span id="crudToastMessage">Status updated</span>
+			</div>
+			<button type="button" class="toast-close-btn" onclick="document.getElementById('crudToast').classList.remove('show');" aria-label="Close">&times;</button>
+		</div>
+	</div>
+
+	<!-- Instant Search, Multi-select, and AJAX Toggle Script -->
+	<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		const searchInput = document.getElementById('faqSearchInput');
+		const selectAll = document.getElementById('selectAllFaqs');
+		const rowCheckboxes = document.querySelectorAll('.row-select-cb');
+		const batchBar = document.getElementById('batchActionBar');
+		const countBadge = document.getElementById('selectedCountBadge');
+		const toastEl = document.getElementById('crudToast');
+		const toastMessage = document.getElementById('crudToastMessage');
+		const toastIcon = document.getElementById('crudToastIcon');
+		const toast = toastEl ? new bootstrap.Toast(toastEl, { delay: 3000 }) : null;
+
+		// Multi-select & Batch Bar update
+		function updateBatchBar() {
+			const checkedBoxes = document.querySelectorAll('.row-select-cb:checked');
+			const count = checkedBoxes.length;
+			if (count > 0) {
+				if (countBadge) countBadge.textContent = count + ' selected';
+				if (batchBar) batchBar.classList.add('show');
+			} else {
+				if (batchBar) batchBar.classList.remove('show');
+			}
+
+			rowCheckboxes.forEach(cb => {
+				const tr = cb.closest('tr');
+				if (tr) {
+					if (cb.checked) tr.classList.add('row-selected');
+					else tr.classList.remove('row-selected');
+				}
+			});
+
+			if (selectAll) {
+				const totalVisible = document.querySelectorAll('.faq-row:not([style*="display: none"]) .row-select-cb').length;
+				const checkedVisible = document.querySelectorAll('.faq-row:not([style*="display: none"]) .row-select-cb:checked').length;
+				selectAll.checked = (totalVisible > 0 && totalVisible === checkedVisible);
+			}
+		}
+
+		if (selectAll) {
+			selectAll.addEventListener('change', function() {
+				const isChecked = this.checked;
+				rowCheckboxes.forEach(cb => {
+					const row = cb.closest('tr');
+					if (row && row.style.display !== 'none') {
+						cb.checked = isChecked;
+					}
+				});
+				updateBatchBar();
+			});
+		}
+
+		rowCheckboxes.forEach(cb => {
+			cb.addEventListener('change', updateBatchBar);
+		});
+
+		// Instant Search
+		if (searchInput) {
+			searchInput.addEventListener('keyup', function() {
+				const query = this.value.toLowerCase().trim();
+				const rows = document.querySelectorAll('.faq-row');
+				rows.forEach(row => {
+					const text = row.innerText.toLowerCase();
+					if (text.includes(query)) {
+						row.style.display = '';
+					} else {
+						row.style.display = 'none';
+						const cb = row.querySelector('.row-select-cb');
+						if (cb) cb.checked = false;
+					}
+				});
+				updateBatchBar();
+			});
+		}
+
+		// AJAX Status Switch Logic
+		const statusSwitches = document.querySelectorAll('.status-toggle-switch');
+		statusSwitches.forEach(sw => {
+			sw.addEventListener('change', function() {
+				const currentSw = this;
+				const itemId = currentSw.getAttribute('data-id');
+				const tableName = currentSw.getAttribute('data-table') || 'tbl_faq';
+				const fieldName = currentSw.getAttribute('data-field') || 'status';
+				const newStatus = currentSw.checked ? 1 : 0;
+				const row = currentSw.closest('tr');
+
+				const formData = new FormData();
+				formData.append('table', tableName);
+				formData.append('id', itemId);
+				formData.append('status', newStatus);
+				formData.append('field', fieldName);
+
+				fetch('ajax/toggle-status.php', {
+					method: 'POST',
+					body: formData
+				})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success) {
+						if (toastMessage) toastMessage.textContent = data.message || `FAQ #${itemId} status updated.`;
+						if (toastIcon) toastIcon.className = 'fa-solid fa-circle-check text-success fs-5';
+						if (toast) toast.show();
+						if (row) row.setAttribute('data-status', newStatus);
+					} else {
+						currentSw.checked = !newStatus;
+						if (toastMessage) toastMessage.textContent = data.error || 'Failed to update.';
+						if (toastIcon) toastIcon.className = 'fa-solid fa-circle-xmark text-danger fs-5';
+						if (toast) toast.show();
+					}
+				})
+				.catch(err => {
+					currentSw.checked = !newStatus;
+					if (toastMessage) toastMessage.textContent = 'Network error while updating.';
+					if (toastIcon) toastIcon.className = 'fa-solid fa-circle-xmark text-danger fs-5';
+					if (toast) toast.show();
+				});
+			});
+		});
+	});
+	</script>
 </body>
 </html>

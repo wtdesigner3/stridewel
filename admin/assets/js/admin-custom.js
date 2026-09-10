@@ -29,13 +29,14 @@
             this.show = function() {
                 if (!this.element) return;
                 var $el = window.jQuery ? window.jQuery(this.element) : null;
-                if ($el && typeof $el.toast === 'function') {
+                if ($el && typeof $el.toast === 'function' && typeof $el.toast.Constructor !== 'undefined') {
                     $el.toast(this.options).toast('show');
                 } else {
                     this.element.classList.add('show');
                     var el = this.element;
                     var delay = (this.options && this.options.delay) || 3000;
-                    setTimeout(function() {
+                    clearTimeout(window._bsToastTimer);
+                    window._bsToastTimer = setTimeout(function() {
                         if (el) el.classList.remove('show');
                     }, delay);
                 }
@@ -43,7 +44,7 @@
             this.hide = function() {
                 if (!this.element) return;
                 var $el = window.jQuery ? window.jQuery(this.element) : null;
-                if ($el && typeof $el.toast === 'function') {
+                if ($el && typeof $el.toast === 'function' && typeof $el.toast.Constructor !== 'undefined') {
                     $el.toast('hide');
                 } else {
                     this.element.classList.remove('show');
@@ -57,6 +58,38 @@
             return new window.bootstrap.Toast(element, options);
         };
     }
+
+    // Global Admin Toast Notification Helper
+    window.showAdminToast = function(message, isSuccess = true) {
+        var toastEl = document.getElementById('crudToast');
+        var toastMsg = document.getElementById('crudToastMessage');
+        var toastIcon = document.getElementById('crudToastIcon');
+        if (toastEl) {
+            if (toastMsg) toastMsg.textContent = message;
+            if (toastIcon) {
+                toastIcon.className = isSuccess ? 'fa-solid fa-circle-check text-success fs-5' : 'fa-solid fa-circle-xmark text-danger fs-5';
+            }
+            toastEl.classList.add('show');
+            clearTimeout(window._adminToastTimer);
+            window._adminToastTimer = setTimeout(function() {
+                toastEl.classList.remove('show');
+            }, 3500);
+        }
+        if (window.jQuery && typeof window.jQuery.toast === 'function') {
+            try {
+                window.jQuery.toast({
+                    heading: isSuccess ? 'Success' : 'Notice',
+                    text: message,
+                    icon: isSuccess ? 'success' : 'error',
+                    position: 'top-right',
+                    loader: true,
+                    loaderBg: isSuccess ? '#10b981' : '#ef4444',
+                    hideAfter: 3500,
+                    stack: 5
+                });
+            } catch(e) {}
+        }
+    };
 })();
 
 (function($) {
@@ -214,9 +247,14 @@
 
     window.initAdminCKEditor = function(context) {
         var $scope = context ? $(context) : $(document);
-        $scope.find('textarea.ckeditor, textarea[id*="editor"], textarea[name*="content"], textarea[name*="desc"], textarea[name*="detail"], textarea[data-ckeditor="true"]').each(function() {
-            // Avoid initializing simple short inputs, badge fields, or plain textareas inside modals
-            if ($(this).hasClass('no-ckeditor') || $(this).attr('rows') === '1' || $(this).data('no-ckeditor') || (this.name && this.name.indexOf('badge') !== -1) || ($(this).closest('.modal').length > 0 && !$(this).hasClass('ckeditor') && !$(this).data('ckeditor'))) {
+        // Only initialize CKEditor on textareas explicitly marked for rich-text articles/blogs/stories
+        $scope.find('textarea.ckeditor, textarea[data-ckeditor="true"], textarea.rich-editor, textarea[id^="editor"], textarea#b_detail, textarea#story_content').each(function() {
+            var $el = $(this);
+            // Never initialize on plain inputs, short descriptions, or elements with no-ckeditor
+            if ($el.hasClass('no-ckeditor') || $el.data('no-ckeditor') === true || $el.attr('no-ckeditor')) {
+                return;
+            }
+            if ($el.attr('rows') === '1' || $el.attr('rows') === '2' || $el.attr('rows') === '3') {
                 return;
             }
             window.initCKEditor5OnElement(this);

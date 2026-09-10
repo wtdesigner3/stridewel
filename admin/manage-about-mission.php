@@ -8,8 +8,8 @@ $error = "";
 // Handle Pillar Updates
 if (isset($_POST['update_pillar'])) {
     $pillar = $_POST['pillar_type'] ?? '';
-    $heading = mysqli_real_escape_string($conn, trim($_POST['heading']));
-    $content = mysqli_real_escape_string($conn, trim($_POST['content']));
+    $heading = mysqli_real_escape_string($conn, trim(strip_tags($_POST['heading'] ?? '')));
+    $content = mysqli_real_escape_string($conn, trim(strip_tags($_POST['content'] ?? '')));
 
     if ($pillar === 'mission') {
         $upd = mysqli_query($conn, "UPDATE `tbl_about` SET `mission_heading`='$heading', `mission_content`='$content' WHERE `id`=1");
@@ -85,7 +85,7 @@ $pillars = [
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Mission, Vision &amp; Quality Philosophy
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">

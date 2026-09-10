@@ -10,10 +10,35 @@ require_once(__DIR__ . '/config.php');
 // =========================================================================
 
 /**
- * Escape HTML output for XSS prevention.
+ * Escape HTML output for safe XSS-free text display.
+ * Automatically strips rogue HTML/paragraph tags so <p>...</p> never renders as literal text.
  */
 function e($string) {
-    return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
+    if ($string === null || $string === '') return '';
+    $clean = strip_tags((string)$string);
+    return htmlspecialchars($clean, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Safely format text or descriptions, unwrapping single outer <p>...</p> tags if present.
+ */
+function clean_desc($string) {
+    if ($string === null || $string === '') return '';
+    $trimmed = trim((string)$string);
+    if (preg_match('/^<p[^>]*>(.*?)<\/p>$/is', $trimmed, $m)) {
+        if (strpos($m[1], '<p') === false) {
+            $trimmed = trim($m[1]);
+        }
+    }
+    return htmlspecialchars(strip_tags($trimmed), ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Allow safe inline formatting (bold, italics, spans) while preventing rogue block wrappers.
+ */
+function clean_inline_html($string) {
+    if ($string === null || $string === '') return '';
+    return strip_tags((string)$string, '<strong><b><em><i><span><br>');
 }
 
 /**
@@ -741,23 +766,32 @@ function normalize_product_item($p) {
     $p['product_code'] = $p['code'] ?? $p['product_code'] ?? 'AI';
     $p['code'] = $p['product_code'];
 
-    // Category Mapping (IDs 1-5 Matching PDF Catalog)
-    $cat_map = [
-        1 => ['name' => 'A.I. Guns & Sheaths', 'slug' => 'guns-sheaths'],
-        2 => ['name' => 'Straws & Cryo Goblets', 'slug' => 'straws-goblets'],
-        3 => ['name' => 'Semen Collection & Lab', 'slug' => 'semen-collection'],
-        4 => ['name' => 'Surgical Instruments', 'slug' => 'surgical-inst'],
-        5 => ['name' => 'Protective & Field Care', 'slug' => 'protective-field'],
-    ];
-
-    $cid = (int)($p['category_id'] ?? 1);
-    $cinfo = $cat_map[$cid] ?? $cat_map[1];
-
-    if (empty($p['category_name'])) {
-        $p['category_name'] = $cinfo['name'];
+    // Category Mapping (IDs 1-5 Matching PDF Catalog or dynamic from DB)
+    if (!empty($p['cat_name'])) {
+        $p['category_name'] = $p['cat_name'];
     }
-    if (empty($p['category_slug'])) {
-        $p['category_slug'] = $cinfo['slug'];
+    if (!empty($p['cat_slug'])) {
+        $p['category_slug'] = $p['cat_slug'];
+    }
+
+    if (empty($p['category_name']) || empty($p['category_slug'])) {
+        $cat_map = [
+            1 => ['name' => 'A.I. Guns & Sheaths', 'slug' => 'guns-sheaths'],
+            2 => ['name' => 'Straws & Cryo Goblets', 'slug' => 'straws-goblets'],
+            3 => ['name' => 'Semen Collection & Lab', 'slug' => 'semen-collection'],
+            4 => ['name' => 'Surgical Instruments', 'slug' => 'surgical-inst'],
+            5 => ['name' => 'Protective & Field Care', 'slug' => 'protective-field'],
+        ];
+
+        $cid = (int)($p['category_id'] ?? 1);
+        $cinfo = $cat_map[$cid] ?? $cat_map[1];
+
+        if (empty($p['category_name'])) {
+            $p['category_name'] = $cinfo['name'];
+        }
+        if (empty($p['category_slug'])) {
+            $p['category_slug'] = $cinfo['slug'];
+        }
     }
 
     // Slugs & Clean Detail URL (e.g. guns-sheaths/artificial-insemination-gun)
@@ -781,16 +815,23 @@ function normalize_product_item($p) {
 /**
  * Get all Products with optional category filter
  */
-function get_all_products($limit = 0, $cat_id = 0, $featured_only = false) {
+function get_all_products($limit = 0, $cat_id = 0, $featured_only = false, $active_cat_only = true) {
     global $conn;
     if ($conn) {
-        $clauses = ["`status`=1"];
-        if ($cat_id > 0) $clauses[] = "`category_id`=" . (int)$cat_id;
-        if ($featured_only) $clauses[] = "`is_featured`=1";
+        $clauses = ["p.`status`=1"];
+        if ($active_cat_only) {
+            $clauses[] = "(c.`status`=1 OR c.`id` IS NULL)";
+        }
+        if ($cat_id > 0) $clauses[] = "p.`category_id`=" . (int)$cat_id;
+        if ($featured_only) $clauses[] = "p.`is_featured`=1";
         $where = "WHERE " . implode(" AND ", $clauses);
         $limit_sql = ($limit > 0) ? "LIMIT " . (int)$limit : "";
 
-        $q = @mysqli_query($conn, "SELECT * FROM `tbl_product` $where ORDER BY `sort` ASC, `id` ASC $limit_sql");
+        $q = @mysqli_query($conn, "SELECT p.*, c.`name` AS cat_name, c.`slug` AS cat_slug 
+            FROM `tbl_product` p 
+            LEFT JOIN `tbl_category` c ON p.`category_id` = c.`id` 
+            $where 
+            ORDER BY p.`sort` ASC, p.`id` ASC $limit_sql");
         if ($q && mysqli_num_rows($q) > 0) {
             $list = [];
             while ($r = mysqli_fetch_assoc($q)) {
@@ -824,7 +865,10 @@ function get_product_by_id_or_slug($val) {
         $code_space = str_replace('-', ' ', $val_esc);
         $code_hyphen = str_replace(' ', '-', $val_esc);
         
-        $q = @mysqli_query($conn, "SELECT * FROM `tbl_product` WHERE `slug`='$val_esc' OR `code`='$val_esc' OR `code`='$code_space' OR `code`='$code_hyphen' OR `id`=" . (int)$val_clean . " LIMIT 1");
+        $q = @mysqli_query($conn, "SELECT p.*, c.`name` AS cat_name, c.`slug` AS cat_slug 
+            FROM `tbl_product` p 
+            LEFT JOIN `tbl_category` c ON p.`category_id` = c.`id` 
+            WHERE (p.`slug`='$val_esc' OR p.`code`='$val_esc' OR p.`code`='$code_space' OR p.`code`='$code_hyphen' OR p.`id`=" . (int)$val_clean . ") LIMIT 1");
         if ($q && ($row = mysqli_fetch_assoc($q))) {
             return normalize_product_item($row);
         }
@@ -1191,7 +1235,13 @@ function get_about_info() {
         'mission_heading' => 'Our Mission & Global Vision',
         'mission_content' => 'To manufacture zero-defect veterinary and artificial insemination instruments while conducting regular in-house R&D to empower livestock development agencies, veterinarians, and dairy farmers worldwide.',
         'vision_content' => 'To be the benchmark in frozen semen technology, precision veterinary surgical tools, and state-of-the-art cryogenic systems.',
-        'values_content' => 'Continuous R&D Innovation • ISO 9001:2015 Quality Standards • Italian Burdizzo Heritage • Customer Centricity'
+        'values_content' => 'Continuous R&D Innovation • ISO 9001:2015 Quality Standards • Italian Burdizzo Heritage • Customer Centricity',
+        'cta_badge' => 'DIRECT MANUFACTURER SUPPLY',
+        'cta_heading' => 'Bulk Institutional Procurement & Custom A.I. Tool Manufacturing',
+        'cta_desc' => 'Stridewel International supplies state livestock boards, veterinary universities, dairy federations, and international export programs with ISO-certified artificial insemination and cryogenic equipment.',
+        'cta_btn_text' => 'Request Institutional Quote',
+        'cta_btn_link' => '#quoteModal',
+        'cta_bg_image' => 'assets/images/banners/banner_institutional_supply.jpg'
     ];
 }
 
@@ -1386,5 +1436,28 @@ function get_timeline_data() {
     }
 
     return ['meta' => $meta, 'items' => $items];
+}
+
+/**
+ * Fetch Product Catalog Info & Download Configuration
+ */
+function get_catalog_info() {
+    global $conn;
+    if ($conn) {
+        $q = @mysqli_query($conn, "SELECT * FROM `tbl_catalog` WHERE `id`=1 LIMIT 1");
+        if ($q && ($row = mysqli_fetch_assoc($q))) {
+            return $row;
+        }
+    }
+    return [
+        'id' => 1,
+        'catalog_title' => 'Complete Veterinary & A.I. Equipment Product Catalog',
+        'catalog_subtitle' => 'Comprehensive product catalog featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.',
+        'catalog_pdf' => 'assets/STRIDEWEL (2).pdf',
+        'btn_text' => 'Download Full Catalog (PDF)',
+        'version_label' => '2026 Edition (ISO 9001:2015)',
+        'file_size' => '4.8 MB',
+        'status' => 1
+    ];
 }
 

@@ -75,6 +75,7 @@ require_once __DIR__ . '/includes/header.php';
 			</div>
 
 			<!-- Category Filter Pills -->
+			<?php if (!empty($categories)): ?>
 			<div class="faq_category_nav" id="faqCategoryFilter">
 				<button type="button" class="faq_filter_pill active" data-category="all">
 					<i class="bi bi-grid-fill"></i> All Questions (<?= count($faqs) ?>)
@@ -87,30 +88,38 @@ require_once __DIR__ . '/includes/header.php';
 				</button>
 				<?php endforeach; ?>
 			</div>
+			<?php endif; ?>
 
 			<!-- FAQ Accordion List -->
 			<div class="row justify-content-center">
 				<div class="col-lg-10" id="faqAccordionContainer">
-					<?php foreach ($faqs as $idx => $f): 
-						$catSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $f['category'] ?? 'General'));
-						$isOpen = ($idx === 0);
-					?>
-					<div class="faq_card_item <?= $isOpen ? 'active' : '' ?>" data-category="<?= e($catSlug) ?>">
-						<div class="faq_card_header">
-							<div class="faq_header_left">
-								<span class="faq_topic_badge"><?= e($f['category'] ?? 'Technical Support') ?></span>
-								<h3 class="faq_question_text"><?= ($idx + 1) ?>. <?= e($f['question']) ?></h3>
+					<?php if (!empty($faqs)): ?>
+						<?php foreach ($faqs as $idx => $f): 
+							$catSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $f['category'] ?? 'General'));
+							$isOpen = ($idx === 0);
+						?>
+						<div class="faq_card_item <?= $isOpen ? 'active' : '' ?>" data-category="<?= e($catSlug) ?>">
+							<div class="faq_card_header">
+								<div class="faq_header_left">
+									<?php if (!empty($f['category'])): ?>
+									<span class="faq_topic_badge"><?= e($f['category']) ?></span>
+									<?php endif; ?>
+									<h3 class="faq_question_text"><?= ($idx + 1) ?>. <?= e($f['question']) ?></h3>
+								</div>
+								<div class="faq_toggle_icon"><i class="bi bi-chevron-down"></i></div>
 							</div>
-							<div class="faq_toggle_icon"><i class="bi bi-chevron-down"></i></div>
-						</div>
-						<div class="faq_card_body" style="<?= $isOpen ? 'display: block;' : 'display: none;' ?>">
-							<p><?= nl2br(e($f['answer'])) ?></p>
-							<div class="faq_technical_tip">
-								<strong>Clinical Recommendation:</strong> Always maintain sterile field protocols and verify instrument calibration prior to high-value breeding procedures.
+							<div class="faq_card_body" style="<?= $isOpen ? 'display: block;' : 'display: none;' ?>">
+								<?php if (!empty($f['answer'])): ?>
+								<p><?= nl2br(e($f['answer'])) ?></p>
+								<?php endif; ?>
 							</div>
 						</div>
-					</div>
-					<?php endforeach; ?>
+						<?php endforeach; ?>
+					<?php else: ?>
+						<div class="text-center py-5">
+							<p class="text-muted">No frequently asked questions available at this time.</p>
+						</div>
+					<?php endif; ?>
 				</div>
 			</div>
 

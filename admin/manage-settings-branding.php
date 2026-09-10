@@ -16,11 +16,16 @@ if (isset($_POST['update_branding'])) {
     $dark_logo = $cur_prof['pro_dark_logo'] ?? 'assets/img/logo/antara-logo-dark.svg';
     $favicon = $cur_prof['pro_favicon'] ?? 'assets/img/logo/favicon.png';
 
+    $upload_dir = "../uploads/logo/";
+    if (!is_dir($upload_dir)) {
+        @mkdir($upload_dir, 0777, true);
+    }
+
     // Handle White Logo Upload
     if (!empty($_FILES['pro_logo']['name'])) {
         $ext = pathinfo($_FILES['pro_logo']['name'], PATHINFO_EXTENSION);
         $new_name = "logo_white_" . time() . "." . $ext;
-        if (move_uploaded_file($_FILES['pro_logo']['tmp_name'], "../../uploads/logo/" . $new_name)) {
+        if (move_uploaded_file($_FILES['pro_logo']['tmp_name'], $upload_dir . $new_name)) {
             $logo = "uploads/logo/" . $new_name;
         }
     }
@@ -29,7 +34,7 @@ if (isset($_POST['update_branding'])) {
     if (!empty($_FILES['pro_dark_logo']['name'])) {
         $ext = pathinfo($_FILES['pro_dark_logo']['name'], PATHINFO_EXTENSION);
         $new_name = "logo_dark_" . time() . "." . $ext;
-        if (move_uploaded_file($_FILES['pro_dark_logo']['tmp_name'], "../../uploads/logo/" . $new_name)) {
+        if (move_uploaded_file($_FILES['pro_dark_logo']['tmp_name'], $upload_dir . $new_name)) {
             $dark_logo = "uploads/logo/" . $new_name;
         }
     }
@@ -38,7 +43,7 @@ if (isset($_POST['update_branding'])) {
     if (!empty($_FILES['pro_favicon']['name'])) {
         $ext = pathinfo($_FILES['pro_favicon']['name'], PATHINFO_EXTENSION);
         $new_name = "favicon_" . time() . "." . $ext;
-        if (move_uploaded_file($_FILES['pro_favicon']['tmp_name'], "../../uploads/logo/" . $new_name)) {
+        if (move_uploaded_file($_FILES['pro_favicon']['tmp_name'], $upload_dir . $new_name)) {
             $favicon = "uploads/logo/" . $new_name;
         }
     }
@@ -131,7 +136,7 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                     <div class="col-lg-12">
                         <div class="card border-0 shadow-sm rounded-3 mb-4">
                             <div class="card-header bg-white py-3 border-bottom">
-                                <h5 class="mb-0 fw-bold" style="color: #123023;">
+                                <h5 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-heading text-warning me-2"></i> Website Title & Brand Name
                                 </h5>
                             </div>
@@ -148,16 +153,16 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                     <div class="col-lg-4 col-md-6">
                         <div class="card border-0 shadow-sm rounded-3 h-100">
                             <div class="card-header bg-white py-3 border-bottom">
-                                <h6 class="mb-0 fw-bold" style="color: #123023;">
+                                <h6 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-sun text-warning me-2"></i> Primary White Logo
                                 </h6>
                             </div>
                             <div class="card-body p-4 d-flex flex-column justify-content-between">
                                 <div>
                                     <p class="small text-muted mb-3">Rendered over transparent hero headers and dark green footer columns.</p>
-                                    <div class="p-4 rounded-3 text-center mb-3" style="background: #123023; border: 1px solid rgba(255,255,255,0.1);">
+                                    <div class="p-4 rounded-3 text-center mb-3" style="background: #103755; border: 1px solid rgba(255,255,255,0.1);">
                                         <?php if (!empty($profile['pro_logo'])): ?>
-                                            <img src="../../<?= htmlspecialchars($profile['pro_logo']) ?>" alt="White Logo Preview" style="max-height: 48px; max-width: 100%;">
+                                            <img src="../<?= htmlspecialchars($profile['pro_logo']) ?>" alt="White Logo Preview" style="max-height: 48px; max-width: 100%;">
                                         <?php else: ?>
                                             <span class="text-white-50">No Logo Uploaded</span>
                                         <?php endif; ?>
@@ -176,7 +181,7 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                     <div class="col-lg-4 col-md-6">
                         <div class="card border-0 shadow-sm rounded-3 h-100">
                             <div class="card-header bg-white py-3 border-bottom">
-                                <h6 class="mb-0 fw-bold" style="color: #123023;">
+                                <h6 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-moon text-primary me-2"></i> Sticky & Inner Dark Logo
                                 </h6>
                             </div>
@@ -185,7 +190,7 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                                     <p class="small text-muted mb-3">Rendered over solid white sticky header and inner pages (About, Contact, Products).</p>
                                     <div class="p-4 rounded-3 text-center mb-3 bg-light border">
                                         <?php if (!empty($profile['pro_dark_logo'])): ?>
-                                            <img src="../../<?= htmlspecialchars($profile['pro_dark_logo']) ?>" alt="Dark Logo Preview" style="max-height: 48px; max-width: 100%;">
+                                            <img src="../<?= htmlspecialchars($profile['pro_dark_logo']) ?>" alt="Dark Logo Preview" style="max-height: 48px; max-width: 100%;">
                                         <?php else: ?>
                                             <span class="text-muted">No Dark Logo Uploaded</span>
                                         <?php endif; ?>
@@ -204,7 +209,7 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                     <div class="col-lg-4 col-md-12">
                         <div class="card border-0 shadow-sm rounded-3 h-100">
                             <div class="card-header bg-white py-3 border-bottom">
-                                <h6 class="mb-0 fw-bold" style="color: #123023;">
+                                <h6 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-globe text-success me-2"></i> Website Favicon
                                 </h6>
                             </div>
@@ -213,7 +218,7 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                                     <p class="small text-muted mb-3">Displayed in web browser tabs, bookmarks, and mobile shortcut icons.</p>
                                     <div class="p-4 rounded-3 text-center mb-3 bg-light border d-flex align-items-center justify-content-center gap-3">
                                         <?php if (!empty($profile['pro_favicon'])): ?>
-                                            <img src="../../<?= htmlspecialchars($profile['pro_favicon']) ?>" alt="Favicon Preview" style="width: 38px; height: 38px; object-fit: contain;">
+                                            <img src="../<?= htmlspecialchars($profile['pro_favicon']) ?>" alt="Favicon Preview" style="width: 38px; height: 38px; object-fit: contain;">
                                             <span class="small text-muted">Tab Icon (32x32)</span>
                                         <?php else: ?>
                                             <span class="text-muted">No Favicon Uploaded</span>

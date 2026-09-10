@@ -101,7 +101,7 @@ $contact = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_contact` W
                 <div class="col-lg-8">
                     <div class="card border-0 shadow-sm rounded-3">
                         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                            <h5 class="mb-0 fw-bold" style="color: #123023;">
+                            <h5 class="mb-0 fw-bold" style="color: #103755;">
                                 <i class="fa-solid fa-link text-warning me-2"></i> Active Social Media URLs
                             </h5>
                             <span class="badge bg-light text-dark border">External Channels</span>
@@ -163,7 +163,7 @@ $contact = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_contact` W
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm rounded-3">
                         <div class="card-header bg-white py-3 border-bottom">
-                            <h5 class="mb-0 fw-bold" style="color: #123023;">
+                            <h5 class="mb-0 fw-bold" style="color: #103755;">
                                 <i class="fa-solid fa-circle-question text-info me-2"></i> Where These Display
                             </h5>
                         </div>

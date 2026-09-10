@@ -2,19 +2,24 @@
 require('checksession.php');
 include '../inc/function.php';
 
-$b = $_REQUEST['bid'];
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 $bdata = mysqli_query($conn, "SELECT * FROM `tbl_acheivements` where `id`='$b'");
 $brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_acheivements` ORDER BY `id` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['id'];
+}
 if (isset($_POST['update'])) {
-	$numbers = mysqli_real_escape_string($conn, $_POST['numbers']);
-	$title = mysqli_real_escape_string($conn, $_POST['title']);
-	$name = mysqli_real_escape_string($conn, $_POST['name']);
-	$subtitle = mysqli_real_escape_string($conn, $_POST['subtitle']);
-	$position = mysqli_real_escape_string($conn, $_POST['position']);
-	$desc = mysqli_real_escape_string($conn, $_POST['desc']);
-	$status = mysqli_real_escape_string($conn, $_POST['status']);
-	  $old = mysqli_real_escape_string($conn,$_POST['oldimg']); 
-	  	  $alt = mysqli_real_escape_string($conn,$_POST['alt']); 
+	$numbers = mysqli_real_escape_string($conn, trim(strip_tags($_POST['numbers'] ?? '')));
+	$title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
+	$name = mysqli_real_escape_string($conn, trim(strip_tags($_POST['name'] ?? '')));
+	$subtitle = mysqli_real_escape_string($conn, trim(strip_tags($_POST['subtitle'] ?? '')));
+	$position = mysqli_real_escape_string($conn, $_POST['position'] ?? 0);
+	$desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['desc'] ?? '')));
+	$status = mysqli_real_escape_string($conn, $_POST['status'] ?? 0);
+	$old = mysqli_real_escape_string($conn,$_POST['oldimg'] ?? ''); 
+	$alt = mysqli_real_escape_string($conn, trim(strip_tags($_POST['alt'] ?? ''))); 
 
   $ach_image=$_FILES['ach_image']['name'];
   if($ach_image!='')

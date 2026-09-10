@@ -2,14 +2,20 @@
 require('checksession.php');
 require('../inc/function.php');
 
-$b = $_REQUEST['bid'];
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 $bdata = mysqli_query($conn, "SELECT * FROM `tbl_career` where `id`='$b'");
 $brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    // If invalid id, try finding latest or first
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_career` ORDER BY `id` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['id'];
+}
 if (isset($_POST['update'])) {
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $desc = mysqli_real_escape_string($conn, $_POST['desc']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
-    $sort = mysqli_real_escape_string($conn, $_POST['sort']);
+    $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['desc'] ?? '')));
+    $status = mysqli_real_escape_string($conn, $_POST['status'] ?? 0);
+    $sort = mysqli_real_escape_string($conn, $_POST['sort'] ?? 0);
 
     $query = mysqli_query($conn, "UPDATE `tbl_career` SET `job_title`='$title',`job_desc`='$desc',`status`='$status',`sort`='$sort' WHERE `id`='$b'");
     if ($query == true) {
@@ -79,7 +85,7 @@ if (isset($_POST['update'])) {
                                     <div class="form-group">
                                         <label for="bannerlink">Job Description</label>
                                         <textarea name="desc" placeholder="Enter  Description" rows="5"
-                                            class="form-control"><?= $brec['job_desc'] ?></textarea>
+                                            class="form-control no-ckeditor"><?= htmlspecialchars(strip_tags($brec['job_desc'] ?? '')) ?></textarea>
                                     </div>
 
                                     <div class="form-group">

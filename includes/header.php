@@ -153,6 +153,22 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 										<?php endforeach; ?>
 									</ul>
 								</div>
+
+								<!-- Mega Menu Bottom Catalog Strip -->
+								<?php 
+								$headerCatalog = function_exists('get_catalog_info') ? get_catalog_info() : null;
+								if (!empty($headerCatalog['status']) && !empty($headerCatalog['catalog_pdf'])):
+								?>
+								<div class="col-12 mt-2 pt-2 border-top d-flex flex-wrap align-items-center justify-content-between gap-2" style="font-size: 13px;">
+									<div class="d-flex align-items-center gap-2 text-muted">
+										<i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
+										<span>Looking for complete institutional tender specifications &amp; items?</span>
+									</div>
+									<a href="<?= e($headerCatalog['catalog_pdf']) ?>" target="_blank" class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1.5" style="font-size: 12px;">
+										<i class="bi bi-download"></i> <?= e($headerCatalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>
+									</a>
+								</div>
+								<?php endif; ?>
 							</div>
 						</li>
 							<li><a href="faq" class="<?= $active_page === 'faq' ? 'active' : '' ?>">FAQ &amp; Help</a></li>

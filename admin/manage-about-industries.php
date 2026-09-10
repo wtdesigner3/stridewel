@@ -7,18 +7,18 @@ $error = "";
 
 // Handle Footprint Section Update
 if (isset($_POST['update_footprint'])) {
-    $subheading = mysqli_real_escape_string($conn, trim($_POST['footprint_subheading']));
-    $heading = mysqli_real_escape_string($conn, trim($_POST['footprint_heading']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['footprint_desc']));
+    $subheading = mysqli_real_escape_string($conn, trim(strip_tags($_POST['footprint_subheading'] ?? '')));
+    $heading = mysqli_real_escape_string($conn, trim(strip_tags($_POST['footprint_heading'] ?? '')));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['footprint_desc'] ?? '')));
 
-    $channel_1_title = mysqli_real_escape_string($conn, trim($_POST['channel_1_title'] ?? ''));
-    $channel_1_sub = mysqli_real_escape_string($conn, trim($_POST['channel_1_sub'] ?? ''));
-    $channel_2_title = mysqli_real_escape_string($conn, trim($_POST['channel_2_title'] ?? ''));
-    $channel_2_sub = mysqli_real_escape_string($conn, trim($_POST['channel_2_sub'] ?? ''));
-    $channel_3_title = mysqli_real_escape_string($conn, trim($_POST['channel_3_title'] ?? ''));
-    $channel_3_sub = mysqli_real_escape_string($conn, trim($_POST['channel_3_sub'] ?? ''));
-    $channel_4_title = mysqli_real_escape_string($conn, trim($_POST['channel_4_title'] ?? ''));
-    $channel_4_sub = mysqli_real_escape_string($conn, trim($_POST['channel_4_sub'] ?? ''));
+    $channel_1_title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_1_title'] ?? '')));
+    $channel_1_sub = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_1_sub'] ?? '')));
+    $channel_2_title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_2_title'] ?? '')));
+    $channel_2_sub = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_2_sub'] ?? '')));
+    $channel_3_title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_3_title'] ?? '')));
+    $channel_3_sub = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_3_sub'] ?? '')));
+    $channel_4_title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_4_title'] ?? '')));
+    $channel_4_sub = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_4_sub'] ?? '')));
 
     $cur_q = mysqli_query($conn, "SELECT `footprint_image` FROM `tbl_about` WHERE `id`=1");
     $cur = mysqli_fetch_assoc($cur_q);
@@ -81,7 +81,7 @@ $footprint_img = !empty($about['footprint_image']) ? $about['footprint_image'] :
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Institutional Supply Partners &amp; Footprint
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -159,7 +159,7 @@ $footprint_img = !empty($about['footprint_image']) ? $about['footprint_image'] :
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label fw-bold text-dark mb-1">Overview Description Narrative</label>
-                                        <textarea name="footprint_desc" class="form-control" rows="3"><?= htmlspecialchars($about['footprint_desc'] ?? '') ?></textarea>
+                                        <textarea name="footprint_desc" class="form-control no-ckeditor" rows="3"><?= htmlspecialchars(strip_tags($about['footprint_desc'] ?? '')) ?></textarea>
                                     </div>
                                 </div>
 

@@ -2,23 +2,28 @@
 require('checksession.php');
 include '../inc/function.php';
 
-$b = $_REQUEST['bid'];
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 $bdata = mysqli_query($conn, "SELECT * FROM `tbl_quick_links` where `id`='$b'");
 $brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_quick_links` ORDER BY `id` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['id'];
+}
 if (isset($_POST['update'])) {
 
-    $title = mysqli_real_escape_string($conn,$_POST['title']);
+    $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
     $prourls = mysqli_real_escape_string($conn,$_POST['prourl']);
 	$prourrl = str_replace(array( '\'', '"', ' ', ',' , ';', '*', ',', '/', '&', '_', '$', '--', '-', '<', '>','(',')','.','?','{','}','[',']','|','~','`',':'), '-', $prourls);
 	$prourl = strtolower($prourrl);
     $description = mysqli_real_escape_string($conn,$_POST['description']);
-	$position = mysqli_real_escape_string($conn,$_POST['position']);
-	$status = mysqli_real_escape_string($conn,$_POST['status']); 
+	$position = mysqli_real_escape_string($conn,$_POST['position'] ?? 0);
+	$status = mysqli_real_escape_string($conn,$_POST['status'] ?? 0); 
 	
-	$metatag = mysqli_real_escape_string($conn,$_POST['metatag']);
-	$keyword = mysqli_real_escape_string($conn,$_POST['keyword']);
-	$metadesc = mysqli_real_escape_string($conn,$_POST['metadescription']); 
-	$old = mysqli_real_escape_string($conn,$_POST['oldimg']); 
+	$metatag = mysqli_real_escape_string($conn, trim(strip_tags($_POST['metatag'] ?? '')));
+	$keyword = mysqli_real_escape_string($conn, trim(strip_tags($_POST['keyword'] ?? '')));
+	$metadesc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['metadescription'] ?? ''))); 
+	$old = mysqli_real_escape_string($conn,$_POST['oldimg'] ?? ''); 
 
 	$bimage=$_FILES['bimage']['name'];
 	if($bimage!="")

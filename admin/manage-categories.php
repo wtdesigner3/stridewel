@@ -72,9 +72,9 @@ if (isset($_POST['add_category'])) {
     if (empty($slug)) {
         $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
     }
-    $division = mysqli_real_escape_string($conn, $_POST['division'] ?? 'export');
-    $title = mysqli_real_escape_string($conn, trim($_POST['title']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['desc']));
+    $division = mysqli_real_escape_string($conn, $_POST['division'] ?? 'veterinary');
+    $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['desc'] ?? '')));
     $sort = (int)($_POST['sort'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
 
@@ -106,9 +106,9 @@ if (isset($_POST['edit_category'])) {
     $eid = (int)$_POST['category_id'];
     $name = mysqli_real_escape_string($conn, trim($_POST['name']));
     $slug = mysqli_real_escape_string($conn, trim($_POST['slug']));
-    $division = mysqli_real_escape_string($conn, $_POST['division'] ?? 'export');
-    $title = mysqli_real_escape_string($conn, trim($_POST['title']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['desc']));
+    $division = mysqli_real_escape_string($conn, $_POST['division'] ?? 'veterinary');
+    $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['desc'] ?? '')));
     $sort = (int)($_POST['sort'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
 
@@ -172,7 +172,7 @@ if ($cats_q) {
             <!-- Header Title Bar & Breadcrumbs matching reference design -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Product Categories
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -253,7 +253,8 @@ if ($cats_q) {
                             <tbody id="catsTableBody">
                                 <?php if (!empty($categories)): ?>
                                     <?php foreach ($categories as $cat): ?>
-                                        <tr class="cat-row"
+                                        <tr class="cat-row <?= $cat['status'] == 1 ? '' : 'row-inactive' ?>"
+                                            id="catRow<?= $cat['id'] ?>"
                                             data-id="<?= $cat['id'] ?>"
                                             data-sort="<?= (int)$cat['sort'] ?>"
                                             data-status="<?= (int)$cat['status'] ?>"
@@ -269,20 +270,20 @@ if ($cats_q) {
                                             <!-- Thumbnail Image -->
                                             <td style="text-align: center;">
                                                 <div class="table-thumb-box mx-auto">
-                                                    <img src="../../<?= htmlspecialchars($cat['image']) ?>" alt="Category Image" onerror="this.src='assets/img/commodities/hero-export-banner.jpg'">
+                                                    <img src="../<?= htmlspecialchars($cat['image']) ?>" alt="Category Image" onerror="this.src='assets/img/commodities/hero-export-banner.jpg'">
                                                 </div>
                                             </td>
 
                                             <!-- Category Name & Slug -->
                                             <td>
-                                                <div class="fw-bold text-dark" style="font-size: 14px; line-height: 1.35;">
+                                                <div class="fw-bold text-dark cat-name-display" style="font-size: 14px; line-height: 1.35;">
                                                     <?= htmlspecialchars($cat['name']) ?>
                                                 </div>
                                                 <div class="text-muted small mt-1">
                                                     <?= htmlspecialchars($cat['slug']) ?>
                                                     <?php if (!empty($cat['division'])): ?>
-                                                        <span class="badge <?= $cat['division'] === 'export' ? 'bg-success' : 'bg-primary' ?> ms-1" style="font-size: 10px; text-transform: uppercase;">
-                                                            <?= $cat['division'] ?>
+                                                        <span class="badge <?= ($cat['division'] === 'veterinary' ? 'bg-primary' : ($cat['division'] === 'export' ? 'bg-success' : 'bg-info')) ?> ms-1" style="font-size: 10px; text-transform: uppercase;">
+                                                            <?= htmlspecialchars($cat['division']) ?>
                                                         </span>
                                                     <?php endif; ?>
                                                 </div>
@@ -302,17 +303,23 @@ if ($cats_q) {
                                                 </span>
                                             </td>
 
-                                            <!-- Status Toggle Switch (Capsule Slider) -->
+                                            <!-- Status Toggle Switch & Explicit Badge -->
                                             <td style="text-align: center;">
-                                                <label class="status-switch-wrapper" title="Click to toggle active status">
-                                                    <input type="checkbox" 
-                                                           class="status-toggle-switch" 
-                                                           data-id="<?= $cat['id'] ?>"
-                                                           data-table="tbl_category"
-                                                           data-field="status"
-                                                           <?= $cat['status'] == 1 ? 'checked' : '' ?>>
-                                                    <span class="status-switch-slider"></span>
-                                                </label>
+                                                <div class="d-flex flex-column align-items-center gap-1">
+                                                    <label class="status-switch-wrapper mb-0" title="Click to toggle active status">
+                                                        <input type="checkbox" 
+                                                               class="status-toggle-switch" 
+                                                               data-id="<?= $cat['id'] ?>"
+                                                               data-name="<?= htmlspecialchars($cat['name']) ?>"
+                                                               data-table="tbl_category"
+                                                               data-field="status"
+                                                               <?= $cat['status'] == 1 ? 'checked' : '' ?>>
+                                                        <span class="status-switch-slider"></span>
+                                                    </label>
+                                                    <span class="cat-status-badge badge <?= $cat['status'] == 1 ? 'bg-success text-white' : 'bg-secondary text-white' ?>">
+                                                        <?= $cat['status'] == 1 ? 'Active' : 'Inactive' ?>
+                                                    </span>
+                                                </div>
                                             </td>
 
                                             <!-- Action Buttons (Edit pencil & Delete trash) -->
@@ -376,7 +383,7 @@ if ($cats_q) {
     <div class="modal fade" id="addCatModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #123023 0%, #1B4533 100%);">
+                <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #103755 0%, #1B4533 100%);">
                     <h5 class="modal-title fw-bold" style="color: #FFFFFF !important;">
                         <i class="fa-solid fa-plus-circle text-warning me-2"></i> Add New Product Category
                     </h5>
@@ -394,8 +401,9 @@ if ($cats_q) {
                             <div class="col-md-4">
                                 <label class="form-label fw-bold text-dark">Division</label>
                                 <select name="division" class="form-select no-select2">
-                                    <option value="export">Export Commodities</option>
-                                    <option value="horeca">Restaurant & Café (HORECA)</option>
+                                    <option value="veterinary" selected>Veterinary & A.I. Equipment</option>
+                                    <option value="export">Export Division</option>
+                                    <option value="horeca">HORECA & Café</option>
                                 </select>
                             </div>
                             <div class="col-md-12">
@@ -448,7 +456,7 @@ if ($cats_q) {
             <div class="modal fade" id="editCatModal<?= $cat['id'] ?>" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                        <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #123023 0%, #1B4533 100%);">
+                        <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #103755 0%, #1B4533 100%);">
                             <h5 class="modal-title fw-bold" style="color: #FFFFFF !important;">
                                 <i class="fa-solid fa-pen-to-square text-warning me-2"></i> Edit Category #<?= $cat['id'] ?>
                             </h5>
@@ -467,8 +475,9 @@ if ($cats_q) {
                                     <div class="col-md-4">
                                         <label class="form-label fw-bold text-dark">Division</label>
                                         <select name="division" class="form-select no-select2">
-                                            <option value="export" <?= ($cat['division'] === 'export') ? 'selected' : '' ?>>Export Commodities</option>
-                                            <option value="horeca" <?= ($cat['division'] === 'horeca') ? 'selected' : '' ?>>Restaurant & Café (HORECA)</option>
+                                            <option value="veterinary" <?= ($cat['division'] === 'veterinary') ? 'selected' : '' ?>>Veterinary & A.I. Equipment</option>
+                                            <option value="export" <?= ($cat['division'] === 'export') ? 'selected' : '' ?>>Export Division</option>
+                                            <option value="horeca" <?= ($cat['division'] === 'horeca') ? 'selected' : '' ?>>HORECA & Café</option>
                                         </select>
                                     </div>
                                     <div class="col-md-12">
@@ -486,7 +495,7 @@ if ($cats_q) {
                                     <div class="col-md-12">
                                         <label class="form-label fw-bold text-dark">Current Image</label>
                                         <div class="mb-2 p-2 border rounded bg-light d-flex align-items-center gap-3">
-                                            <img src="../../<?= htmlspecialchars($cat['image']) ?>" alt="Current Image" style="height: 60px; width: 60px; object-fit: cover; border-radius: 8px;">
+                                            <img src="../<?= htmlspecialchars($cat['image']) ?>" alt="Current Image" onerror="this.src='assets/img/commodities/hero-export-banner.jpg'" style="height: 60px; width: 60px; object-fit: cover; border-radius: 8px;">
                                             <div>
                                                 <div class="small fw-bold text-dark"><?= htmlspecialchars(basename($cat['image'])) ?></div>
                                                 <small class="text-muted">Select a new file below to replace this image.</small>
@@ -540,6 +549,23 @@ if ($cats_q) {
         const toastMessage = document.getElementById('crudToastMessage');
         const toastIcon = document.getElementById('crudToastIcon');
         const toast = (toastEl && typeof bootstrap !== 'undefined' && bootstrap.Toast) ? new bootstrap.Toast(toastEl, { delay: 3000 }) : null;
+
+        function showToast(message, isSuccess = true) {
+            if (toastMessage) toastMessage.textContent = message;
+            if (toastIcon) {
+                toastIcon.className = isSuccess ? 'fa-solid fa-circle-check text-success fs-5' : 'fa-solid fa-circle-xmark text-danger fs-5';
+            }
+            if (toastEl) {
+                toastEl.classList.add('show');
+                clearTimeout(window._crudToastTimer);
+                window._crudToastTimer = setTimeout(() => {
+                    toastEl.classList.remove('show');
+                }, 3500);
+            }
+            if (toast && typeof toast.show === 'function') {
+                try { toast.show(); } catch(e){}
+            }
+        }
 
         function updateBatchBar() {
             const checkedBoxes = document.querySelectorAll('.row-select-cb:checked');
@@ -635,10 +661,12 @@ if ($cats_q) {
             sw.addEventListener('change', function() {
                 const currentSw = this;
                 const itemId = currentSw.getAttribute('data-id');
+                const catName = currentSw.getAttribute('data-name') || ('Category #' + itemId);
                 const tableName = currentSw.getAttribute('data-table');
                 const fieldName = currentSw.getAttribute('data-field') || 'status';
                 const newStatus = currentSw.checked ? 1 : 0;
                 const row = currentSw.closest('tr');
+                const badgeEl = row ? row.querySelector('.cat-status-badge') : null;
 
                 const formData = new FormData();
                 formData.append('table', tableName);
@@ -653,10 +681,31 @@ if ($cats_q) {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        toastMessage.textContent = data.message || `Category #${itemId} status updated.`;
-                        toastIcon.className = 'fa-solid fa-circle-check text-success fs-5';
-                        toast.show();
-                        if (row) row.setAttribute('data-status', newStatus);
+                        const statusText = newStatus === 1 ? 'Active' : 'Inactive';
+                        const toastMsg = `"${catName}" is now ${statusText}.`;
+                        if (typeof window.showAdminToast === 'function') {
+                            window.showAdminToast(toastMsg, newStatus === 1);
+                        } else {
+                            showToast(toastMsg, true);
+                        }
+
+                        if (row) {
+                            row.setAttribute('data-status', newStatus);
+                            if (newStatus === 1) {
+                                row.classList.remove('row-inactive');
+                            } else {
+                                row.classList.add('row-inactive');
+                            }
+                        }
+
+                        if (badgeEl) {
+                            badgeEl.textContent = statusText;
+                            if (newStatus === 1) {
+                                badgeEl.className = 'cat-status-badge badge bg-success text-white';
+                            } else {
+                                badgeEl.className = 'cat-status-badge badge bg-secondary text-white';
+                            }
+                        }
 
                         let activeCount = document.querySelectorAll('.status-toggle-switch:checked').length;
                         const activeCountEl = document.getElementById('activeCatsCount');
@@ -665,16 +714,22 @@ if ($cats_q) {
                         }
                     } else {
                         currentSw.checked = !newStatus;
-                        toastMessage.textContent = data.error || 'Failed to update status.';
-                        toastIcon.className = 'fa-solid fa-circle-xmark text-danger fs-5';
-                        toast.show();
+                        const errText = data.error || 'Failed to update status.';
+                        if (typeof window.showAdminToast === 'function') {
+                            window.showAdminToast(errText, false);
+                        } else {
+                            showToast(errText, false);
+                        }
                     }
                 })
                 .catch(err => {
                     currentSw.checked = !newStatus;
-                    toastMessage.textContent = 'Network error while updating status.';
-                    toastIcon.className = 'fa-solid fa-triangle-exclamation text-warning fs-5';
-                    toast.show();
+                    const errText = 'Network error while updating status.';
+                    if (typeof window.showAdminToast === 'function') {
+                        window.showAdminToast(errText, false);
+                    } else {
+                        showToast(errText, false);
+                    }
                 });
             });
         });

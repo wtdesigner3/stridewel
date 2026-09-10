@@ -9,7 +9,7 @@ $error = "";
 if (isset($_POST['update_meta'])) {
     $badge = mysqli_real_escape_string($conn, trim($_POST['badge']));
     $heading = mysqli_real_escape_string($conn, trim($_POST['heading']));
-    $description = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $description = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
 
     $upd = mysqli_query($conn, "UPDATE `tbl_timeline_meta` SET 
         `badge`='$badge',
@@ -48,7 +48,7 @@ if (isset($_POST['add_milestone'])) {
     $year_tag = mysqli_real_escape_string($conn, trim($_POST['year_tag']));
     $title = mysqli_real_escape_string($conn, trim($_POST['title']));
     $card_tag = mysqli_real_escape_string($conn, trim($_POST['card_tag']));
-    $description = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $description = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
@@ -72,7 +72,7 @@ if (isset($_POST['edit_milestone'])) {
     $year_tag = mysqli_real_escape_string($conn, trim($_POST['year_tag']));
     $title = mysqli_real_escape_string($conn, trim($_POST['title']));
     $card_tag = mysqli_real_escape_string($conn, trim($_POST['card_tag']));
-    $description = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $description = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
@@ -134,7 +134,7 @@ if ($tq) {
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Milestones &amp; Heritage Journey (1982 – Present)
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -212,7 +212,7 @@ if ($tq) {
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label fw-bold text-dark mb-1">Introductory Summary</label>
-                                    <textarea name="description" class="form-control" rows="4"><?= htmlspecialchars($meta['description']) ?></textarea>
+                                    <textarea name="description" class="form-control no-ckeditor" rows="4"><?= htmlspecialchars(strip_tags($meta['description'])) ?></textarea>
                                 </div>
                                 <button type="submit" name="update_meta" class="btn btn-danger w-100 fw-bold py-2.5 rounded-pill shadow-sm">
                                     <i class="fa-solid fa-floppy-disk me-1"></i> Update Timeline Header
@@ -452,20 +452,20 @@ if ($tq) {
     <script>
         $(document).ready(function() {
             if (typeof App !== 'undefined' && typeof App.init === 'function') {
-                App.init();
+                try { App.init(); } catch(e) { console.warn('App.init:', e); }
             }
 
-            $(document).on('click', '.edit-milestone-btn', function(e) {
-                e.preventDefault();
-                var id = $(this).attr('data-id') || $(this).data('id');
-                var year = $(this).attr('data-year') || $(this).data('year');
-                var yeartag = $(this).attr('data-yeartag') || $(this).data('yeartag');
-                var title = $(this).attr('data-title') || $(this).data('title');
-                var cardtag = $(this).attr('data-cardtag') || $(this).data('cardtag');
-                var desc = $(this).attr('data-desc') || $(this).data('desc');
-                var icon = $(this).attr('data-icon') || $(this).data('icon');
-                var sort = $(this).attr('data-sort') || $(this).data('sort');
-                var status = $(this).attr('data-status') || $(this).data('status');
+            function populateMilestoneModal(btn) {
+                if (!btn || !btn.length) return;
+                var id = btn.attr('data-id') || btn.data('id');
+                var year = btn.attr('data-year') || btn.data('year');
+                var yeartag = btn.attr('data-yeartag') || btn.data('yeartag');
+                var title = btn.attr('data-title') || btn.data('title');
+                var cardtag = btn.attr('data-cardtag') || btn.data('cardtag');
+                var desc = btn.attr('data-desc') || btn.data('desc');
+                var icon = btn.attr('data-icon') || btn.data('icon');
+                var sort = btn.attr('data-sort') || btn.data('sort');
+                var status = btn.attr('data-status') || btn.data('status');
 
                 $('#editMilestoneId').val(id);
                 $('#editYear').val(year);
@@ -476,6 +476,11 @@ if ($tq) {
                 $('#editIcon').val(icon);
                 $('#editSort').val(sort);
                 $('#editStatus').prop('checked', status == 1 || status == '1');
+            }
+
+            $(document).on('click', '.edit-milestone-btn', function(e) {
+                var btn = $(this).closest('.edit-milestone-btn');
+                populateMilestoneModal(btn);
 
                 if (typeof $.fn.modal !== 'undefined') {
                     $('#editMilestoneModal').modal('show');
@@ -484,6 +489,13 @@ if ($tq) {
                     modal.show();
                 } else {
                     $('#editMilestoneModal').show().addClass('show');
+                }
+            });
+
+            $('#editMilestoneModal').on('show.bs.modal', function(e) {
+                var btn = $(e.relatedTarget);
+                if (btn && btn.length) {
+                    populateMilestoneModal(btn);
                 }
             });
         });

@@ -97,8 +97,8 @@ if (isset($_POST['Delete']) && isset($_POST['bb'])) {
                                                 <th>Job Title</th>
                                                 <th>Job Description</th>
                                                 <th width="1%">Status</th>
-                                                <th width="1%">Delete</th>
                                                 <th width="1%">Edit</th>
+                                                <th width="1%">Delete</th>
                                                 <th width="1%">
                                                     <input type="checkbox" id="select_all">
                                                 </th>

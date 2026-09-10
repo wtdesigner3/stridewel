@@ -175,7 +175,7 @@ if ($slides_query) {
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Hero Carousel Banners
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -414,7 +414,7 @@ if ($slides_query) {
     <div class="modal fade" id="addSlideModal" tabindex="-1" aria-labelledby="addSlideModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #123023 0%, #1B4533 100%);">
+                <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #103755 0%, #1B4533 100%);">
                     <h5 class="modal-title fw-bold" id="addSlideModalLabel" style="color: #FFFFFF !important;">
                         <i class="fa-solid fa-plus-circle text-warning me-2"></i> Add New Hero Carousel Slide
                     </h5>
@@ -499,7 +499,7 @@ if ($slides_query) {
             <div class="modal fade" id="editSlideModal<?= $s['id'] ?>" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                        <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #123023 0%, #1B4533 100%);">
+                        <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #103755 0%, #1B4533 100%);">
                             <h5 class="modal-title fw-bold" style="color: #FFFFFF !important;">
                                 <i class="fa-solid fa-pen-to-square text-warning me-2"></i> Edit Hero Slide #<?= $s['id'] ?>
                             </h5>

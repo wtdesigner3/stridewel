@@ -27,16 +27,14 @@ if (isset($_POST['add_blog'])) {
     $read_time     = mysqli_real_escape_string($conn, trim($_POST['read_time'] ?? '5 min read'));
     $date          = !empty($_POST['b_date']) ? mysqli_real_escape_string($conn, $_POST['b_date']) : date('Y-m-d');
     $short_desc    = mysqli_real_escape_string($conn, trim($_POST['b_short_desc'] ?? ''));
-    $description   = mysqli_real_escape_string($conn, trim($_POST['b_description'] ?? ''));
-    $quote         = "";
-    $quote_author  = "";
-    $tags          = "";
+    $detail        = mysqli_real_escape_string($conn, trim($_POST['b_detail'] ?? $_POST['b_description'] ?? ''));
+    $tags          = mysqli_real_escape_string($conn, trim($_POST['b_tags'] ?? ''));
     $status        = isset($_POST['b_status']) ? 1 : 0;
     $sort          = intval($_POST['b_sort'] ?? 0);
 
-    $metatag       = mysqli_real_escape_string($conn, trim($_POST['metatag'] ?? ''));
-    $metakeyword   = mysqli_real_escape_string($conn, trim($_POST['metakeyword'] ?? ''));
-    $metadesc      = mysqli_real_escape_string($conn, trim($_POST['metadesc'] ?? ''));
+    $meta_title    = mysqli_real_escape_string($conn, trim($_POST['meta_title'] ?? $_POST['metatag'] ?? ''));
+    $meta_keywords = mysqli_real_escape_string($conn, trim($_POST['meta_keywords'] ?? $_POST['metakeyword'] ?? ''));
+    $meta_desc     = mysqli_real_escape_string($conn, trim($_POST['meta_desc'] ?? $_POST['metadesc'] ?? ''));
 
     // Handle Featured Image Upload
     $b_image = "assets/images/species/species_dairy_cattle.jpg"; // default
@@ -61,9 +59,9 @@ if (isset($_POST['add_blog'])) {
         }
 
         $insert_sql = "INSERT INTO `tbl_blogs` 
-            (`b_title`, `b_url`, `b_category`, `author`, `b_image`, `b_short_desc`, `b_description`, `b_quote`, `b_quote_author`, `b_tags`, `read_time`, `b_date`, `b_status`, `b_sort`, `metatag`, `metakeyword`, `metadesc`)
+            (`b_title`, `b_url`, `b_category`, `author`, `read_time`, `b_image`, `b_short_desc`, `b_detail`, `b_tags`, `b_date`, `b_status`, `b_sort`, `meta_title`, `meta_keywords`, `meta_desc`)
             VALUES 
-            ('$title', '$slug', '$category', '$author', '$b_image', '$short_desc', '$description', '$quote', '$quote_author', '$tags', '$read_time', '$date', '$status', '$sort', '$metatag', '$metakeyword', '$metadesc')";
+            ('$title', '$slug', '$category', '$author', '$read_time', '$b_image', '$short_desc', '$detail', '$tags', '$date', '$status', '$sort', '$meta_title', '$meta_keywords', '$meta_desc')";
 
         if (mysqli_query($conn, $insert_sql)) {
             header("Location: manage-blogs.php?msg=" . urlencode("Article published successfully!"));
@@ -114,33 +112,51 @@ if (isset($_POST['add_blog'])) {
 							<div class="row g-3 mb-3">
 								<div class="col-md-6">
 									<label class="form-label fw-bold">Category</label>
-									<select name="b_category" class="form-select">
-										<option value="A.I. Protocols">A.I. Protocols</option>
-										<option value="Cryogenics &amp; LN2">Cryogenics &amp; LN2</option>
-										<option value="Small Ruminants">Small Ruminants</option>
-										<option value="Surgical Care">Surgical Care</option>
-										<option value="Bovine Reproduction">Bovine Reproduction</option>
-									</select>
+									<div class="input-group">
+										<select name="b_category" class="form-select" required>
+											<?php 
+											$bc_q = mysqli_query($conn, "SELECT `name` FROM `tbl_blog_categories` WHERE `status`=1 ORDER BY `sort_order` ASC, `name` ASC");
+											if ($bc_q && mysqli_num_rows($bc_q) > 0) {
+												while ($bc = mysqli_fetch_assoc($bc_q)) {
+													echo '<option value="' . htmlspecialchars($bc['name']) . '">' . htmlspecialchars($bc['name']) . '</option>';
+												}
+											} else {
+												echo '<option value="A.I. Protocols">A.I. Protocols</option>';
+											}
+											?>
+										</select>
+										<a href="manage-blog-categories.php" target="_blank" class="btn btn-outline-secondary" title="Manage Blog Categories">
+											<i class="fa-solid fa-gear"></i>
+										</a>
+									</div>
 								</div>
 								<div class="col-md-6">
 									<label class="form-label fw-bold">Author Name</label>
-									<input type="text" name="author" class="form-control" value="Dr. R. K. Sharma">
+									<input type="text" name="author" class="form-control" value="<?= htmlspecialchars($_POST['author'] ?? 'Dr. R. K. Sharma') ?>">
+								</div>
+								<div class="col-md-4">
+									<label class="form-label fw-bold">Estimated Read Time</label>
+									<input type="text" name="read_time" class="form-control" value="<?= htmlspecialchars($_POST['read_time'] ?? '5 min read') ?>" placeholder="e.g. 5 min read">
+								</div>
+								<div class="col-md-8">
+									<label class="form-label fw-bold">Tags / Keywords (Comma separated)</label>
+									<input type="text" name="b_tags" class="form-control" value="<?= htmlspecialchars($_POST['b_tags'] ?? '') ?>" placeholder="e.g. cryogenics, universal ai gun, semen thawing">
 								</div>
 							</div>
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Custom URL Slug (Optional)</label>
-								<input type="text" name="b_url" class="form-control" placeholder="semen-thawing-protocols">
+								<input type="text" name="b_url" class="form-control" value="<?= htmlspecialchars($_POST['b_url'] ?? '') ?>" placeholder="semen-thawing-protocols">
 							</div>
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Short Executive Summary / Lead</label>
-								<textarea name="b_short_desc" class="form-control" rows="3" placeholder="Brief 2-line clinical summary..."></textarea>
+								<textarea name="b_short_desc" class="form-control" rows="3" placeholder="Brief 2-line clinical summary..."><?= htmlspecialchars($_POST['b_short_desc'] ?? '') ?></textarea>
 							</div>
 
 							<div class="mb-3">
-								<label class="form-label fw-bold">Full Article Content (HTML / Formatted)</label>
-								<textarea name="b_description" class="form-control" rows="12" placeholder="Write full article content..."></textarea>
+								<label class="form-label fw-bold">Full Article Content (HTML / Formatted) <span class="text-danger">*</span></label>
+								<textarea name="b_detail" class="form-control ckeditor-field" rows="12" placeholder="Write full article content..."><?= htmlspecialchars($_POST['b_detail'] ?? $_POST['b_description'] ?? '') ?></textarea>
 							</div>
 						</div>
 
@@ -150,17 +166,17 @@ if (isset($_POST['add_blog'])) {
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Meta Title Tag</label>
-								<input type="text" name="metatag" class="form-control" placeholder="Custom SEO Title Tag">
+								<input type="text" name="meta_title" class="form-control" value="<?= htmlspecialchars($_POST['meta_title'] ?? $_POST['metatag'] ?? '') ?>" placeholder="Custom SEO Title Tag">
 							</div>
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Meta Keywords</label>
-								<input type="text" name="metakeyword" class="form-control" placeholder="semen straw thawer, universal ai gun, bovine insemination">
+								<input type="text" name="meta_keywords" class="form-control" value="<?= htmlspecialchars($_POST['meta_keywords'] ?? $_POST['metakeyword'] ?? '') ?>" placeholder="semen straw thawer, universal ai gun, bovine insemination">
 							</div>
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Meta Description</label>
-								<textarea name="metadesc" class="form-control" rows="2" placeholder="Under 160 characters search preview..."></textarea>
+								<textarea name="meta_desc" class="form-control" rows="2" placeholder="Under 160 characters search preview..."><?= htmlspecialchars($_POST['meta_desc'] ?? $_POST['metadesc'] ?? '') ?></textarea>
 							</div>
 						</div>
 					</div>

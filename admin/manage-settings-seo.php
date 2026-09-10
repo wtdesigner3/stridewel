@@ -191,7 +191,7 @@ $current_page_seo = get_page_seo($selected_page);
                 <div class="col-lg-8">
                     <div class="card border-0 shadow-sm rounded-3 mb-4">
                         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                            <h5 class="mb-0 fw-bold" style="color: #123023;">
+                            <h5 class="mb-0 fw-bold" style="color: #103755;">
                                 <i class="fa-solid fa-tag text-warning me-2"></i> SEO Meta for: <span class="text-primary"><?= htmlspecialchars($seo_pages[$selected_page]) ?></span>
                             </h5>
                             <span class="badge bg-primary-subtle text-primary border border-primary-subtle"><?= strtoupper($selected_page) ?></span>
@@ -268,7 +268,7 @@ $current_page_seo = get_page_seo($selected_page);
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm rounded-3 mb-4">
                         <div class="card-header bg-white py-3 border-bottom">
-                            <h5 class="mb-0 fw-bold" style="color: #123023;">
+                            <h5 class="mb-0 fw-bold" style="color: #103755;">
                                 <i class="fa-solid fa-globe text-success me-2"></i> Global Defaults &amp; Footer
                             </h5>
                         </div>

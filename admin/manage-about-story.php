@@ -65,7 +65,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Heritage &amp; Corporate Story
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -127,7 +127,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                     <div class="col-lg-8">
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom">
-                                <h5 class="mb-0 fw-bold" style="color: #123023;">
+                                <h5 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-pen-nib text-danger me-2"></i> Heritage Content &amp; Narrative
                                 </h5>
                             </div>
@@ -180,7 +180,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom">
-                                <h5 class="mb-0 fw-bold" style="color: #123023;">
+                                <h5 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-image text-success me-2"></i> Featured Section Image
                                 </h5>
                             </div>

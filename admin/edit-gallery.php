@@ -3,9 +3,14 @@
 require('checksession.php');
 require '../inc/function.php';
 
-$b = $_REQUEST['bid'];
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 $bdata = mysqli_query($conn, "SELECT * FROM `tbl_gallery` where `id`='$b'");
 $brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_gallery` ORDER BY `id` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['id'];
+}
 if (isset($_POST['update'])) {
   $name = mysqli_real_escape_string($conn, $_POST['name']);
   $project_id = mysqli_real_escape_string($conn, $_POST['project_id']);

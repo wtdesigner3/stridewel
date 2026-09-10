@@ -6,6 +6,7 @@ $active_page = 'about';
 $page_seo = 'about';
 
 $aboutInfo = get_about_info();
+$catalogInfo = get_catalog_info();
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -97,9 +98,11 @@ require_once __DIR__ . '/includes/header.php';
 							<a href="products" class="btn btn-danger btn_about_primary">
 								<i class="bi bi-grid-fill me-1"></i> Explore Product Catalog <i class="bi bi-arrow-right ms-1"></i>
 							</a>
-							<a href="assets/STRIDEWEL (2).pdf" target="_blank" class="btn btn-outline-dark btn_about_secondary">
-								<i class="bi bi-download me-1"></i> Download PDF Catalog
+							<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf'])): ?>
+							<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn btn-outline-dark btn_about_secondary">
+								<i class="bi bi-download me-1"></i> <?= e($catalogInfo['btn_text'] ?? 'Download PDF Catalog') ?>
 							</a>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
@@ -117,42 +120,58 @@ require_once __DIR__ . '/includes/header.php';
 		style="padding: 55px 0 60px; background: #ffffff; border-top: 1px solid #f1f5f9;">
 		<div class="container">
 			<div class="row g-4">
+				<?php if (!empty($aboutInfo['stat_1_val']) || !empty($aboutInfo['stat_1_label'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="about_stat_box">
 						<div class="about_stat_num">
 							<span class="count_digit" data-target="<?= e($aboutInfo['stat_1_val'] ?? '40') ?>">0</span><span class="plus_sign"><?= e($aboutInfo['stat_1_suffix'] ?? '+') ?></span>
 						</div>
 						<div class="about_stat_label"><?= e($aboutInfo['stat_1_label'] ?? 'Years of Industry Heritage') ?></div>
-						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_1_sub'] ?? 'Pioneering A.I. since 1982') ?></div>
+						<?php if (!empty($aboutInfo['stat_1_sub'])): ?>
+						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_1_sub']) ?></div>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
+				<?php if (!empty($aboutInfo['stat_2_val']) || !empty($aboutInfo['stat_2_label'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="about_stat_box">
 						<div class="about_stat_num">
 							<span class="count_digit" data-target="<?= e($aboutInfo['stat_2_val'] ?? '100') ?>">0</span><span class="plus_sign"><?= e($aboutInfo['stat_2_suffix'] ?? 'K+') ?></span>
 						</div>
 						<div class="about_stat_label"><?= e($aboutInfo['stat_2_label'] ?? 'Universal Guns Supplied') ?></div>
-						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_2_sub'] ?? 'Universal 0.5 & 0.25ml SS') ?></div>
+						<?php if (!empty($aboutInfo['stat_2_sub'])): ?>
+						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_2_sub']) ?></div>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
+				<?php if (!empty($aboutInfo['stat_3_val']) || !empty($aboutInfo['stat_3_label'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="about_stat_box">
 						<div class="about_stat_num">
 							<span class="count_digit" data-target="<?= e($aboutInfo['stat_3_val'] ?? '50') ?>">0</span><span class="plus_sign"><?= e($aboutInfo['stat_3_suffix'] ?? 'M+') ?></span>
 						</div>
 						<div class="about_stat_label"><?= e($aboutInfo['stat_3_label'] ?? 'French Sheaths Produced') ?></div>
-						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_3_sub'] ?? 'Cleanroom medical grade') ?></div>
+						<?php if (!empty($aboutInfo['stat_3_sub'])): ?>
+						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_3_sub']) ?></div>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
+				<?php if (!empty($aboutInfo['stat_4_val']) || !empty($aboutInfo['stat_4_label'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="about_stat_box">
 						<div class="about_stat_num">
 							<span class="count_digit" data-target="<?= e($aboutInfo['stat_4_val'] ?? '25') ?>">0</span><span class="plus_sign"><?= e($aboutInfo['stat_4_suffix'] ?? '+') ?></span>
 						</div>
 						<div class="about_stat_label"><?= e($aboutInfo['stat_4_label'] ?? 'Countries Export Footprint') ?></div>
-						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_4_sub'] ?? 'Asia, Africa & Middle East') ?></div>
+						<?php if (!empty($aboutInfo['stat_4_sub'])): ?>
+						<div style="font-size: 12.5px; color: #94a3b8; margin-top: 5px;"><?= e($aboutInfo['stat_4_sub']) ?></div>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
 			</div>
 		</div>
 	</section>
@@ -195,27 +214,31 @@ require_once __DIR__ . '/includes/header.php';
 					<?php if ($isLeftDate): ?>
 						<div class="v_timeline_col v_date_col v_date_left">
 							<div class="v_timeline_date_badge" <?= $isLast ? 'style="background: #ed1c24; color: #fff; border-color: #ed1c24;"' : '' ?>>
-								<i class="bi <?= e($icon) ?> <?= $isLast ? 'me-1' : 'text-danger me-1' ?>"></i> <?= e($item['year']) ?> &bull; <?= e($item['year_tag']) ?>
+								<i class="bi <?= e($icon) ?> <?= $isLast ? 'me-1' : 'text-danger me-1' ?>"></i> <?= e($item['year']) ?><?= !empty($item['year_tag']) ? ' &bull; ' . e($item['year_tag']) : '' ?>
 							</div>
 						</div>
 						<div class="v_timeline_dot"></div>
 						<div class="v_timeline_col v_card_col">
 							<div class="v_timeline_card" <?= $isLast ? 'style="border-left: 4px solid #ed1c24;"' : '' ?>>
-								<h4 class="v_card_title"><?= e($item['title']) ?> <span class="v_card_tag" <?= $isLast ? 'style="background: #ed1c24; color: #fff;"' : '' ?>><?= e($item['card_tag']) ?></span></h4>
+								<h4 class="v_card_title"><?= e($item['title']) ?><?php if (!empty($item['card_tag'])): ?> <span class="v_card_tag" <?= $isLast ? 'style="background: #ed1c24; color: #fff;"' : '' ?>><?= e($item['card_tag']) ?></span><?php endif; ?></h4>
+								<?php if (!empty($item['description'])): ?>
 								<p class="v_card_desc"><?= e($item['description']) ?></p>
+								<?php endif; ?>
 							</div>
 						</div>
 					<?php else: ?>
 						<div class="v_timeline_col v_card_col">
 							<div class="v_timeline_card" <?= $isLast ? 'style="border-left: 4px solid #ed1c24;"' : '' ?>>
-								<h4 class="v_card_title"><?= e($item['title']) ?> <span class="v_card_tag" <?= $isLast ? 'style="background: #ed1c24; color: #fff;"' : '' ?>><?= e($item['card_tag']) ?></span></h4>
+								<h4 class="v_card_title"><?= e($item['title']) ?><?php if (!empty($item['card_tag'])): ?> <span class="v_card_tag" <?= $isLast ? 'style="background: #ed1c24; color: #fff;"' : '' ?>><?= e($item['card_tag']) ?></span><?php endif; ?></h4>
+								<?php if (!empty($item['description'])): ?>
 								<p class="v_card_desc"><?= e($item['description']) ?></p>
+								<?php endif; ?>
 							</div>
 						</div>
 						<div class="v_timeline_dot"></div>
 						<div class="v_timeline_col v_date_col v_date_right">
 							<div class="v_timeline_date_badge" <?= $isLast ? 'style="background: #ed1c24; color: #fff; border-color: #ed1c24;"' : '' ?>>
-								<i class="bi <?= e($icon) ?> <?= $isLast ? 'me-1' : 'text-danger me-1' ?>"></i> <?= e($item['year']) ?> &bull; <?= e($item['year_tag']) ?>
+								<i class="bi <?= e($icon) ?> <?= $isLast ? 'me-1' : 'text-danger me-1' ?>"></i> <?= e($item['year']) ?><?= !empty($item['year_tag']) ? ' &bull; ' . e($item['year_tag']) : '' ?>
 							</div>
 						</div>
 					<?php endif; ?>
@@ -249,56 +272,72 @@ require_once __DIR__ . '/includes/header.php';
 
 			<div class="row g-4">
 				<!-- Pillar 1: Mission -->
+				<?php if (!empty($aboutInfo['mission_heading']) || !empty($aboutInfo['mission_content'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="pillar_card_clean">
 						<div class="pillar_icon_clean">
 							<i class="bi bi-bullseye"></i>
 						</div>
 						<h3 class="pillar_title_clean"><?= e($aboutInfo['mission_heading'] ?? 'Our Mission') ?></h3>
+						<?php if (!empty($aboutInfo['mission_content'])): ?>
 						<p class="pillar_desc_clean">
-							<?= e($aboutInfo['mission_content'] ?? 'To empower veterinarians, livestock development boards, and dairy farmers with accessible, high-precision artificial insemination tools that maximize conception rates and genetic gains.') ?>
+							<?= e($aboutInfo['mission_content']) ?>
 						</p>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
 
 				<!-- Pillar 2: Vision -->
+				<?php if (!empty($aboutInfo['vision_heading']) || !empty($aboutInfo['vision_content'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="pillar_card_clean">
 						<div class="pillar_icon_clean">
 							<i class="bi bi-eye-fill"></i>
 						</div>
 						<h3 class="pillar_title_clean"><?= e($aboutInfo['vision_heading'] ?? 'Our Vision') ?></h3>
+						<?php if (!empty($aboutInfo['vision_content'])): ?>
 						<p class="pillar_desc_clean">
-							<?= e($aboutInfo['vision_content'] ?? 'To be recognized worldwide as the foremost Indian manufacturing authority in frozen semen technology, cryogenics, and small ruminant reproductive healthcare.') ?>
+							<?= e($aboutInfo['vision_content']) ?>
 						</p>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
 
 				<!-- Pillar 3: Quality Policy -->
+				<?php if (!empty($aboutInfo['values_heading']) || !empty($aboutInfo['values_content'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="pillar_card_clean">
 						<div class="pillar_icon_clean">
 							<i class="bi bi-patch-check-fill"></i>
 						</div>
 						<h3 class="pillar_title_clean"><?= e($aboutInfo['values_heading'] ?? 'Quality Policy') ?></h3>
+						<?php if (!empty($aboutInfo['values_content'])): ?>
 						<p class="pillar_desc_clean">
-							<?= e($aboutInfo['values_content'] ?? 'Zero tolerance for defects through 100% incoming material inspection, ISO 9001:2015 QMS protocols, and batch sterility validation compliant with European veterinary standards.') ?>
+							<?= e($aboutInfo['values_content']) ?>
 						</p>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
 
 				<!-- Pillar 4: R&D Innovation -->
+				<?php if (!empty($aboutInfo['rnd_heading']) || !empty($aboutInfo['rnd_content'])): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="pillar_card_clean">
 						<div class="pillar_icon_clean">
 							<i class="bi bi-lightbulb-fill"></i>
 						</div>
 						<h3 class="pillar_title_clean"><?= e($aboutInfo['rnd_heading'] ?? 'R&D Innovation') ?></h3>
+						<?php if (!empty($aboutInfo['rnd_content'])): ?>
 						<p class="pillar_desc_clean">
-							<?= e($aboutInfo['rnd_content'] ?? 'Continuous engineering development in small ruminant (sheep & goat) transcervical A.I. instruments, digital thawing electronics, and field diagnostic stations.') ?>
+							<?= e($aboutInfo['rnd_content']) ?>
 						</p>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
 			</div>
 		</div>
 	</section>
@@ -364,55 +403,79 @@ require_once __DIR__ . '/includes/header.php';
 			<div class="row align-items-center">
 				<div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
 					<div class="section_title pb-0" style="margin-bottom: 16px;">
-						<h4><i class="bi bi-globe-americas"></i> <?= e($aboutInfo['footprint_subheading'] ?? 'Nationwide & Global Footprint') ?></h4>
+						<?php if (!empty($aboutInfo['footprint_subheading'])): ?>
+						<h4><i class="bi bi-globe-americas"></i> <?= e($aboutInfo['footprint_subheading']) ?></h4>
+						<?php endif; ?>
 						<h1 style="font-size: 34px; line-height: 44px; color: #103755;"><?= !empty($aboutInfo['footprint_heading']) ? $aboutInfo['footprint_heading'] : 'Trusted Partner to <span>Dairy Boards &amp; Veterinary</span> Institutions' ?></h1>
 					</div>
+					<?php if (!empty($aboutInfo['footprint_desc'])): ?>
 					<p style="font-size: 15px; line-height: 26px; color: #475569; margin-bottom: 22px;">
-						<?= e($aboutInfo['footprint_desc'] ?? 'Stridewel International is an authorized vendor and approved tender supplier to major government and cooperative livestock entities across India and internationally.') ?>
+						<?= e($aboutInfo['footprint_desc']) ?>
 					</p>
+					<?php endif; ?>
 
 					<div class="row g-3">
+						<?php if (!empty($aboutInfo['channel_1_title'])): ?>
 						<div class="col-sm-6">
 							<div
 								style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; border-left: 3px solid #ed1c24; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
 								<div style="font-size: 14.5px; font-weight: 800; color: #103755;"><i
-										class="bi bi-check2-circle text-danger me-1"></i> <?= e($aboutInfo['channel_1_title'] ?? 'State Dairy Federations') ?></div>
-								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_1_sub'] ?? 'NDDB, State Cooperative Dairy Boards') ?></div>
+										class="bi bi-check2-circle text-danger me-1"></i> <?= e($aboutInfo['channel_1_title']) ?></div>
+								<?php if (!empty($aboutInfo['channel_1_sub'])): ?>
+								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_1_sub']) ?></div>
+								<?php endif; ?>
 							</div>
 						</div>
+						<?php endif; ?>
+						<?php if (!empty($aboutInfo['channel_2_title'])): ?>
 						<div class="col-sm-6">
 							<div
 								style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; border-left: 3px solid #103755; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
 								<div style="font-size: 14.5px; font-weight: 800; color: #103755;"><i
-										class="bi bi-check2-circle text-primary me-1"></i> <?= e($aboutInfo['channel_2_title'] ?? 'Frozen Semen Stations') ?></div>
-								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_2_sub'] ?? 'Bull mother farms & cryo banks') ?></div>
+										class="bi bi-check2-circle text-primary me-1"></i> <?= e($aboutInfo['channel_2_title']) ?></div>
+								<?php if (!empty($aboutInfo['channel_2_sub'])): ?>
+								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_2_sub']) ?></div>
+								<?php endif; ?>
 							</div>
 						</div>
+						<?php endif; ?>
+						<?php if (!empty($aboutInfo['channel_3_title'])): ?>
 						<div class="col-sm-6">
 							<div
 								style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; border-left: 3px solid #103755; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
 								<div style="font-size: 14.5px; font-weight: 800; color: #103755;"><i
-										class="bi bi-check2-circle text-primary me-1"></i> <?= e($aboutInfo['channel_3_title'] ?? 'Veterinary Universities') ?></div>
-								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_3_sub'] ?? 'IVRI, GADVASU, TANUVAS & Colleges') ?></div>
+										class="bi bi-check2-circle text-primary me-1"></i> <?= e($aboutInfo['channel_3_title']) ?></div>
+								<?php if (!empty($aboutInfo['channel_3_sub'])): ?>
+								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_3_sub']) ?></div>
+								<?php endif; ?>
 							</div>
 						</div>
+						<?php endif; ?>
+						<?php if (!empty($aboutInfo['channel_4_title'])): ?>
 						<div class="col-sm-6">
 							<div
 								style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; border-left: 3px solid #ed1c24; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
 								<div style="font-size: 14.5px; font-weight: 800; color: #103755;"><i
-										class="bi bi-check2-circle text-danger me-1"></i> <?= e($aboutInfo['channel_4_title'] ?? 'International Exports') ?></div>
-								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_4_sub'] ?? 'Direct exports to global countries') ?></div>
+										class="bi bi-check2-circle text-danger me-1"></i> <?= e($aboutInfo['channel_4_title']) ?></div>
+								<?php if (!empty($aboutInfo['channel_4_sub'])): ?>
+								<div style="font-size: 12.5px; color: #64748b; margin-top: 2px;"><?= e($aboutInfo['channel_4_sub']) ?></div>
+								<?php endif; ?>
 							</div>
 						</div>
+						<?php endif; ?>
 					</div>
 
 					<div class="about_btn_group mt-4">
+						<?php if (!empty($aboutInfo['cta_btn_text'])): ?>
 						<a href="<?= e($aboutInfo['cta_btn_link'] ?? 'contact') ?>" class="btn btn-danger btn_about_primary">
-							<i class="bi bi-file-earmark-text-fill me-1"></i> <?= e($aboutInfo['cta_btn_text'] ?? 'Inquire for Institutional Supply') ?>
+							<i class="bi bi-file-earmark-text-fill me-1"></i> <?= e($aboutInfo['cta_btn_text']) ?>
 						</a>
-						<a href="assets/STRIDEWEL (2).pdf" target="_blank" class="btn btn-outline-dark btn_about_secondary">
-							<i class="bi bi-download me-1"></i> Download PDF Catalog
+						<?php endif; ?>
+						<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf'])): ?>
+						<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn btn-outline-dark btn_about_secondary">
+							<i class="bi bi-download me-1"></i> <?= e($catalogInfo['btn_text'] ?? 'Download PDF Catalog') ?>
 						</a>
+						<?php endif; ?>
 					</div>
 				</div>
 

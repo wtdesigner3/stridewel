@@ -94,7 +94,7 @@ if (isset($_POST['add_product'])) {
 		<div id="content" class="content">
 			<div class="d-flex align-items-center justify-content-between mb-4">
 				<div>
-					<h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+					<h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
 						Add New Product / Veterinary Instrument
 					</h1>
 					<p class="text-muted mb-0">Publish an equipment item to the live catalog with specifications &amp; SEO tags.</p>

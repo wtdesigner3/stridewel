@@ -5,10 +5,10 @@ require('../inc/function.php');
 
 if (isset($_POST['submit'])) {
 
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $desc = mysqli_real_escape_string($conn, $_POST['desc']);
-    $status = mysqli_real_escape_string($conn, $_POST['status']);
-    $sort = mysqli_real_escape_string($conn, $_POST['sort']);
+    $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['desc'] ?? '')));
+    $status = mysqli_real_escape_string($conn, $_POST['status'] ?? 0);
+    $sort = mysqli_real_escape_string($conn, $_POST['sort'] ?? 0);
 
     $query = mysqli_query($conn, "INSERT INTO `tbl_career`(`job_title`, `job_desc`, `status`,`sort`) VALUES ('$title','$desc','$status','$sort')");
     if ($query == true) {

@@ -9640,7 +9640,7 @@ footer.footer-area,
 .institutional_cta_banner {
     position: relative !important;
     padding: 70px 0 !important;
-    background: linear-gradient(135deg, rgba(13, 34, 56, 0.94) 0%, rgba(10, 26, 44, 0.96) 100%), url('../images/banners/banner_institutional_supply.jpg') center center / cover no-repeat !important;
+    background: linear-gradient(135deg, rgba(13, 34, 56, 0.94) 0%, rgba(10, 26, 44, 0.96) 100%), url('../images/banners/banner_institutional_supply.jpg') center center / cover no-repeat;
     color: #ffffff !important;
     overflow: hidden !important;
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;

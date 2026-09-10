@@ -4,17 +4,17 @@ include '../inc/function.php';
 
 if(isset($_POST['submit']))
 { 
-    $title = mysqli_real_escape_string($conn,$_POST['title']);
+    $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
     $prourls = mysqli_real_escape_string($conn,$_POST['prourl']);
     $prourrl = str_replace(array( '\'', '"', ' ', ',' , ';', '*', ',', '/', '&', '_', '$', '--', '-', '<', '>','(',')','.','?','{','}','[',']','|','~','`',':'), '-', $prourls);
     $prourl = strtolower($prourrl);
-      $description = mysqli_real_escape_string($conn,$_POST['description']);
-    $position = mysqli_real_escape_string($conn,$_POST['position']);
-    $status = mysqli_real_escape_string($conn,$_POST['status']); 
+    $description = mysqli_real_escape_string($conn,$_POST['description']);
+    $position = mysqli_real_escape_string($conn,$_POST['position'] ?? 0);
+    $status = mysqli_real_escape_string($conn,$_POST['status'] ?? 0); 
     
-    $metatag = mysqli_real_escape_string($conn,$_POST['metatag']);
-    $keyword = mysqli_real_escape_string($conn,$_POST['keyword']);
-    $metadesc = mysqli_real_escape_string($conn,$_POST['metadescription']);
+    $metatag = mysqli_real_escape_string($conn, trim(strip_tags($_POST['metatag'] ?? '')));
+    $keyword = mysqli_real_escape_string($conn, trim(strip_tags($_POST['keyword'] ?? '')));
+    $metadesc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['metadescription'] ?? '')));
 
     $bimages=$_FILES['bimage']['name'];
     if($bimages!="")

@@ -13,7 +13,7 @@
 /*==================================================*/
 .institutional_cta_banner {
     position: relative !important;
-    background: linear-gradient(135deg, rgba(16, 55, 85, 0.94) 0%, rgba(10, 30, 50, 0.96) 100%), url('../images/banners/banner_institutional_supply.jpg') center center / cover no-repeat !important;
+    background: linear-gradient(135deg, rgba(16, 55, 85, 0.94) 0%, rgba(10, 30, 50, 0.96) 100%), url('../images/banners/banner_institutional_supply.jpg') center center / cover no-repeat;
     padding: 75px 0 !important;
     color: #ffffff !important;
     border-top: 4px solid #ed1c24 !important;

@@ -15,7 +15,7 @@ if (!is_dir($upload_dir)) {
 if (isset($_POST['update_meta'])) {
     $badge = mysqli_real_escape_string($conn, trim($_POST['badge']));
     $heading = mysqli_real_escape_string($conn, trim($_POST['heading']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $stat_1_val = mysqli_real_escape_string($conn, trim($_POST['stat_1_val']));
     $stat_1_label = mysqli_real_escape_string($conn, trim($_POST['stat_1_label']));
     $stat_2_val = mysqli_real_escape_string($conn, trim($_POST['stat_2_val']));
@@ -78,7 +78,7 @@ if (isset($_POST['add_step'])) {
     $step_num = mysqli_real_escape_string($conn, trim($_POST['step_num']));
     $phase = mysqli_real_escape_string($conn, trim($_POST['phase_label']));
     $title = mysqli_real_escape_string($conn, trim($_POST['title']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $pills = mysqli_real_escape_string($conn, trim($_POST['pills']));
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
@@ -113,7 +113,7 @@ if (isset($_POST['edit_step'])) {
     $step_num = mysqli_real_escape_string($conn, trim($_POST['step_num']));
     $phase = mysqli_real_escape_string($conn, trim($_POST['phase_label']));
     $title = mysqli_real_escape_string($conn, trim($_POST['title']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $pills = mysqli_real_escape_string($conn, trim($_POST['pills']));
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
@@ -199,7 +199,7 @@ if ($sq) {
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Manufacturing Excellence &amp; Quality Pipeline
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -282,7 +282,7 @@ if ($sq) {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark mb-1">Narrative Description</label>
-                                    <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($meta['description']) ?></textarea>
+                                    <textarea name="description" class="form-control no-ckeditor" rows="3"><?= htmlspecialchars(strip_tags($meta['description'])) ?></textarea>
                                 </div>
 
                                 <h6 class="fw-bold text-dark mt-4 mb-2 pb-1 border-bottom d-flex align-items-center gap-2" style="font-size: 13.5px;">
@@ -570,20 +570,20 @@ if ($sq) {
     <script>
         $(document).ready(function() {
             if (typeof App !== 'undefined' && typeof App.init === 'function') {
-                App.init();
+                try { App.init(); } catch(e) { console.warn('App.init:', e); }
             }
 
-            $(document).on('click', '.edit-step-btn', function(e) {
-                e.preventDefault();
-                var id = $(this).attr('data-id') || $(this).data('id');
-                var step = $(this).attr('data-step') || $(this).data('step');
-                var phase = $(this).attr('data-phase') || $(this).data('phase');
-                var title = $(this).attr('data-title') || $(this).data('title');
-                var desc = $(this).attr('data-desc') || $(this).data('desc');
-                var pills = $(this).attr('data-pills') || $(this).data('pills');
-                var img = $(this).attr('data-img') || $(this).data('img');
-                var sort = $(this).attr('data-sort') || $(this).data('sort');
-                var status = $(this).attr('data-status') || $(this).data('status');
+            function populateStepModal(btn) {
+                if (!btn || !btn.length) return;
+                var id = btn.attr('data-id') || btn.data('id');
+                var step = btn.attr('data-step') || btn.data('step');
+                var phase = btn.attr('data-phase') || btn.data('phase');
+                var title = btn.attr('data-title') || btn.data('title');
+                var desc = btn.attr('data-desc') || btn.data('desc');
+                var pills = btn.attr('data-pills') || btn.data('pills');
+                var img = btn.attr('data-img') || btn.data('img');
+                var sort = btn.attr('data-sort') || btn.data('sort');
+                var status = btn.attr('data-status') || btn.data('status');
 
                 $('#editStepId').val(id);
                 $('#editStepNum').val(step);
@@ -594,6 +594,11 @@ if ($sq) {
                 $('#editImagePreview').attr('src', img);
                 $('#editSort').val(sort);
                 $('#editStatus').prop('checked', status == 1 || status == '1');
+            }
+
+            $(document).on('click', '.edit-step-btn', function(e) {
+                var btn = $(this).closest('.edit-step-btn');
+                populateStepModal(btn);
 
                 if (typeof $.fn.modal !== 'undefined') {
                     $('#editStepModal').modal('show');
@@ -602,6 +607,13 @@ if ($sq) {
                     modal.show();
                 } else {
                     $('#editStepModal').show().addClass('show');
+                }
+            });
+
+            $('#editStepModal').on('show.bs.modal', function(e) {
+                var btn = $(e.relatedTarget);
+                if (btn && btn.length) {
+                    populateStepModal(btn);
                 }
             });
         });

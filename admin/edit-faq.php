@@ -4,7 +4,7 @@ require('../inc/function.php');
 
 $msg = "";
 $error = "";
-$fid = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$fid = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 
 $faq = null;
 if ($conn) {
@@ -30,9 +30,9 @@ if (!$faq) {
 }
 
 if (isset($_POST['update_faq'])) {
-    $category = clean_input($_POST['category'] ?? 'General');
-    $question = clean_input($_POST['question'] ?? '');
-    $answer = clean_input($_POST['answer'] ?? '');
+    $category = clean_input(strip_tags($_POST['category'] ?? 'General'));
+    $question = clean_input(strip_tags($_POST['question'] ?? ''));
+    $answer = clean_input(strip_tags($_POST['answer'] ?? ''));
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
 
@@ -71,7 +71,7 @@ if (isset($_POST['update_faq'])) {
 		<div id="content" class="content">
 			<div class="d-flex align-items-center justify-content-between mb-4">
 				<div>
-					<h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+					<h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
 						Edit FAQ Question #<?= $faq['id'] ?>
 					</h1>
 					<p class="text-muted mb-0">Modify question, answer narrative, and category placement.</p>
@@ -91,13 +91,28 @@ if (isset($_POST['update_faq'])) {
 						<div class="row g-4">
 							<div class="col-md-6">
 								<label class="form-label fw-bold">FAQ Category <span class="text-danger">*</span></label>
-								<select name="category" class="form-select no-select2">
-									<option value="Quality Standards" <?= ($faq['category'] === 'Quality Standards') ? 'selected' : '' ?>>Quality Standards &amp; Materials</option>
-									<option value="Export & Procurement" <?= ($faq['category'] === 'Export & Procurement') ? 'selected' : '' ?>>Export &amp; Procurement</option>
-									<option value="Maintenance" <?= ($faq['category'] === 'Maintenance') ? 'selected' : '' ?>>Maintenance &amp; Hygiene</option>
-									<option value="Technical Support" <?= ($faq['category'] === 'Technical Support') ? 'selected' : '' ?>>Technical Support</option>
-									<option value="General" <?= ($faq['category'] === 'General') ? 'selected' : '' ?>>General Inquiries</option>
-								</select>
+								<div class="input-group">
+									<select name="category" class="form-select no-select2" required>
+										<?php 
+										$fc_q = mysqli_query($conn, "SELECT `name` FROM `tbl_faq_categories` WHERE `status`=1 ORDER BY `sort_order` ASC, `name` ASC");
+										$cur_cat = $faq['category'] ?? 'General';
+										$found_current = false;
+										if ($fc_q && mysqli_num_rows($fc_q) > 0) {
+											while ($fc = mysqli_fetch_assoc($fc_q)) {
+												$sel = ($fc['name'] === $cur_cat) ? 'selected' : '';
+												if ($sel) $found_current = true;
+												echo '<option value="' . htmlspecialchars($fc['name']) . '" ' . $sel . '>' . htmlspecialchars($fc['name']) . '</option>';
+											}
+										}
+										if (!$found_current && !empty($cur_cat)) {
+											echo '<option value="' . htmlspecialchars($cur_cat) . '" selected>' . htmlspecialchars($cur_cat) . '</option>';
+										}
+										?>
+									</select>
+									<a href="manage-faq-categories.php" target="_blank" class="btn btn-outline-secondary" title="Manage Categories">
+										<i class="fa-solid fa-gear"></i>
+									</a>
+								</div>
 							</div>
 
 							<div class="col-md-6">

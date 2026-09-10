@@ -5,10 +5,15 @@
 require('checksession.php'); 
 require '../inc/function.php';     
 
-$b=$_REQUEST['cid'];
-$pid=$_REQUEST['pid'];
-$bdata=mysqli_query($conn,"SELECT * FROM `tbl_category_video` where `id_glry`='$b'");
-$brec=mysqli_fetch_array($bdata);
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['cid'] ?? $_REQUEST['bid'] ?? 0);
+$pid = (int)($_REQUEST['pid'] ?? 0);
+$bdata = mysqli_query($conn, "SELECT * FROM `tbl_category_video` where `id_glry`='$b'");
+$brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_category_video` ORDER BY `id_glry` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['id_glry'];
+}
 if(isset($_POST['update']))
 {
   $link = mysqli_real_escape_string($conn,$_POST['link']); 

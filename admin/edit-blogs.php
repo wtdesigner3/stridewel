@@ -5,7 +5,7 @@ require('../inc/function.php');
 $msg = "";
 $error = "";
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$id = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 if ($id <= 0) {
     header("Location: manage-blogs.php");
     exit();
@@ -36,16 +36,17 @@ if (isset($_POST['update_blog'])) {
 
     $category      = mysqli_real_escape_string($conn, trim($_POST['b_category'] ?? 'A.I. Protocols'));
     $author        = mysqli_real_escape_string($conn, trim($_POST['author'] ?? ($art['author'] ?? 'Dr. R. K. Sharma')));
-    $read_time     = mysqli_real_escape_string($conn, trim($_POST['read_time'] ?? '5 min read'));
+    $read_time     = mysqli_real_escape_string($conn, trim($_POST['read_time'] ?? ($art['read_time'] ?? '5 min read')));
     $date          = !empty($_POST['b_date']) ? mysqli_real_escape_string($conn, $_POST['b_date']) : date('Y-m-d');
     $short_desc    = mysqli_real_escape_string($conn, trim($_POST['b_short_desc'] ?? ''));
-    $description   = mysqli_real_escape_string($conn, trim($_POST['b_description'] ?? ''));
+    $detail        = mysqli_real_escape_string($conn, trim($_POST['b_detail'] ?? $_POST['b_description'] ?? ''));
+    $tags          = mysqli_real_escape_string($conn, trim($_POST['b_tags'] ?? ''));
     $status        = isset($_POST['b_status']) ? 1 : 0;
     $sort          = intval($_POST['b_sort'] ?? 0);
 
-    $metatag       = mysqli_real_escape_string($conn, trim($_POST['metatag'] ?? ''));
-    $metakeyword   = mysqli_real_escape_string($conn, trim($_POST['metakeyword'] ?? ''));
-    $metadesc      = mysqli_real_escape_string($conn, trim($_POST['metadesc'] ?? ''));
+    $meta_title    = mysqli_real_escape_string($conn, trim($_POST['meta_title'] ?? $_POST['metatag'] ?? ''));
+    $meta_keywords = mysqli_real_escape_string($conn, trim($_POST['meta_keywords'] ?? $_POST['metakeyword'] ?? ''));
+    $meta_desc     = mysqli_real_escape_string($conn, trim($_POST['meta_desc'] ?? $_POST['metadesc'] ?? ''));
 
     // Handle Featured Image Upload
     $b_image = $art['b_image'];
@@ -74,16 +75,17 @@ if (isset($_POST['update_blog'])) {
             `b_url` = '$slug',
             `b_category` = '$category',
             `author` = '$author',
+            `read_time` = '$read_time',
             `b_image` = '$b_image',
             `b_short_desc` = '$short_desc',
-            `b_description` = '$description',
-            `read_time` = '$read_time',
+            `b_detail` = '$detail',
+            `b_tags` = '$tags',
             `b_date` = '$date',
             `b_status` = '$status',
             `b_sort` = '$sort',
-            `metatag` = '$metatag',
-            `metakeyword` = '$metakeyword',
-            `metadesc` = '$metadesc'
+            `meta_title` = '$meta_title',
+            `meta_keywords` = '$meta_keywords',
+            `meta_desc` = '$meta_desc'
             WHERE `b_id` = $id";
 
         if (mysqli_query($conn, $update_sql)) {
@@ -135,17 +137,40 @@ if (isset($_POST['update_blog'])) {
 							<div class="row g-3 mb-3">
 								<div class="col-md-6">
 									<label class="form-label fw-bold">Category</label>
-									<select name="b_category" class="form-select">
-										<option value="A.I. Protocols" <?= ($art['b_category'] == 'A.I. Protocols') ? 'selected' : '' ?>>A.I. Protocols</option>
-										<option value="Cryogenics &amp; LN2" <?= ($art['b_category'] == 'Cryogenics &amp; LN2') ? 'selected' : '' ?>>Cryogenics &amp; LN2</option>
-										<option value="Small Ruminants" <?= ($art['b_category'] == 'Small Ruminants') ? 'selected' : '' ?>>Small Ruminants</option>
-										<option value="Surgical Care" <?= ($art['b_category'] == 'Surgical Care') ? 'selected' : '' ?>>Surgical Care</option>
-										<option value="Bovine Reproduction" <?= ($art['b_category'] == 'Bovine Reproduction') ? 'selected' : '' ?>>Bovine Reproduction</option>
-									</select>
+									<div class="input-group">
+										<select name="b_category" class="form-select" required>
+											<?php 
+											$bc_q = mysqli_query($conn, "SELECT `name` FROM `tbl_blog_categories` WHERE `status`=1 ORDER BY `sort_order` ASC, `name` ASC");
+											$cur_bcat = $art['b_category'] ?? 'A.I. Protocols';
+											$found_bcat = false;
+											if ($bc_q && mysqli_num_rows($bc_q) > 0) {
+												while ($bc = mysqli_fetch_assoc($bc_q)) {
+													$sel = ($bc['name'] === $cur_bcat) ? 'selected' : '';
+													if ($sel) $found_bcat = true;
+													echo '<option value="' . htmlspecialchars($bc['name']) . '" ' . $sel . '>' . htmlspecialchars($bc['name']) . '</option>';
+												}
+											}
+											if (!$found_bcat && !empty($cur_bcat)) {
+												echo '<option value="' . htmlspecialchars($cur_bcat) . '" selected>' . htmlspecialchars($cur_bcat) . '</option>';
+											}
+											?>
+										</select>
+										<a href="manage-blog-categories.php" target="_blank" class="btn btn-outline-secondary" title="Manage Blog Categories">
+											<i class="fa-solid fa-gear"></i>
+										</a>
+									</div>
 								</div>
 								<div class="col-md-6">
 									<label class="form-label fw-bold">Author Name</label>
 									<input type="text" name="author" class="form-control" value="<?= htmlspecialchars($art['author'] ?? 'Dr. R. K. Sharma') ?>">
+								</div>
+								<div class="col-md-4">
+									<label class="form-label fw-bold">Estimated Read Time</label>
+									<input type="text" name="read_time" class="form-control" value="<?= htmlspecialchars($art['read_time'] ?? '5 min read') ?>" placeholder="e.g. 5 min read">
+								</div>
+								<div class="col-md-8">
+									<label class="form-label fw-bold">Tags / Keywords (Comma separated)</label>
+									<input type="text" name="b_tags" class="form-control" value="<?= htmlspecialchars($art['b_tags'] ?? '') ?>" placeholder="e.g. cryogenics, universal ai gun, semen thawing">
 								</div>
 							</div>
 
@@ -160,8 +185,8 @@ if (isset($_POST['update_blog'])) {
 							</div>
 
 							<div class="mb-3">
-								<label class="form-label fw-bold">Full Article Content (HTML / Formatted)</label>
-								<textarea name="b_description" class="form-control" rows="12"><?= htmlspecialchars($art['b_description'] ?? '') ?></textarea>
+								<label class="form-label fw-bold">Full Article Content (HTML / Formatted) <span class="text-danger">*</span></label>
+								<textarea name="b_detail" class="form-control ckeditor-field" rows="12"><?= htmlspecialchars($art['b_detail'] ?? $art['b_description'] ?? '') ?></textarea>
 							</div>
 						</div>
 
@@ -171,17 +196,17 @@ if (isset($_POST['update_blog'])) {
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Meta Title Tag</label>
-								<input type="text" name="metatag" class="form-control" value="<?= htmlspecialchars($art['metatag'] ?? '') ?>">
+								<input type="text" name="meta_title" class="form-control" value="<?= htmlspecialchars($art['meta_title'] ?? $art['metatag'] ?? '') ?>" placeholder="Custom SEO Title Tag">
 							</div>
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Meta Keywords</label>
-								<input type="text" name="metakeyword" class="form-control" value="<?= htmlspecialchars($art['metakeyword'] ?? '') ?>">
+								<input type="text" name="meta_keywords" class="form-control" value="<?= htmlspecialchars($art['meta_keywords'] ?? $art['metakeyword'] ?? '') ?>" placeholder="semen straw thawer, universal ai gun, bovine insemination">
 							</div>
 
 							<div class="mb-3">
 								<label class="form-label fw-bold">Meta Description</label>
-								<textarea name="metadesc" class="form-control" rows="2"><?= htmlspecialchars($art['metadesc'] ?? '') ?></textarea>
+								<textarea name="meta_desc" class="form-control" rows="2" placeholder="Under 160 characters search preview..."><?= htmlspecialchars($art['meta_desc'] ?? $art['metadesc'] ?? '') ?></textarea>
 							</div>
 						</div>
 					</div>

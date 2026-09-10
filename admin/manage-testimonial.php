@@ -49,10 +49,10 @@ if (isset($_POST['batch_action']) && !empty($_POST['selected_ids'])) {
 
 // 4. Handle Add Testimonial
 if (isset($_POST['add_testimonial'])) {
-    $name = mysqli_real_escape_string($conn, trim($_POST['tt_name'] ?? ''));
-    $location = mysqli_real_escape_string($conn, trim($_POST['tt_location'] ?? ''));
+    $name = mysqli_real_escape_string($conn, trim(strip_tags($_POST['tt_name'] ?? '')));
+    $location = mysqli_real_escape_string($conn, trim(strip_tags($_POST['tt_location'] ?? '')));
     $rating = (int)($_POST['tt_rating'] ?? 5);
-    $detail = mysqli_real_escape_string($conn, trim($_POST['tt_detail'] ?? ''));
+    $detail = mysqli_real_escape_string($conn, trim(strip_tags($_POST['tt_detail'] ?? '')));
     $sort = (int)($_POST['tt_sort'] ?? 0);
     $status = isset($_POST['tt_status']) ? 1 : 0;
     $photo = 'assets/img/user-avatar.png';
@@ -83,10 +83,10 @@ if (isset($_POST['add_testimonial'])) {
 // 5. Handle Edit Testimonial
 if (isset($_POST['edit_testimonial'])) {
     $eid = (int)$_POST['testimonial_id'];
-    $name = mysqli_real_escape_string($conn, trim($_POST['tt_name'] ?? ''));
-    $location = mysqli_real_escape_string($conn, trim($_POST['tt_location'] ?? ''));
+    $name = mysqli_real_escape_string($conn, trim(strip_tags($_POST['tt_name'] ?? '')));
+    $location = mysqli_real_escape_string($conn, trim(strip_tags($_POST['tt_location'] ?? '')));
     $rating = (int)($_POST['tt_rating'] ?? 5);
-    $detail = mysqli_real_escape_string($conn, trim($_POST['tt_detail'] ?? ''));
+    $detail = mysqli_real_escape_string($conn, trim(strip_tags($_POST['tt_detail'] ?? '')));
     $sort = (int)($_POST['tt_sort'] ?? 0);
     $status = isset($_POST['tt_status']) ? 1 : 0;
 
@@ -317,7 +317,7 @@ $cnt_disabled = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FRO
                                         <div class="modal fade" id="editModal<?= $row['tt_id'] ?>" tabindex="-1" aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                                                    <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #123023 0%, #1B4533 100%);">
+                                                    <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #103755 0%, #1B4533 100%);">
                                                         <h5 class="modal-title fw-bold" style="color: #FFFFFF !important;">
                                                             <i class="fa-solid fa-pen-to-square text-warning me-2"></i> Edit Client Review #<?= $row['tt_id'] ?>
                                                         </h5>
@@ -420,7 +420,7 @@ $cnt_disabled = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FRO
     <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #123023 0%, #1B4533 100%);">
+                <div class="modal-header py-3 px-4" style="background: linear-gradient(135deg, #103755 0%, #1B4533 100%);">
                     <h5 class="modal-title fw-bold" style="color: #FFFFFF !important;">
                         <i class="fa-solid fa-plus-circle text-warning me-2"></i> Add New Client Review / Endorsement
                     </h5>

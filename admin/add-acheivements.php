@@ -4,14 +4,14 @@ include '../inc/function.php';
 
 if(isset($_POST['submit']))
 { 
-    $title = mysqli_real_escape_string($conn,$_POST['title']);
-     $subtitle = mysqli_real_escape_string($conn,$_POST['subtitle']);
-    $numbers = mysqli_real_escape_string($conn,$_POST['numbers']);
-    $name = mysqli_real_escape_string($conn,$_POST['name']);
-	$position = mysqli_real_escape_string($conn,$_POST['position']);
-	$desc = mysqli_real_escape_string($conn,$_POST['desc']);
-	$status = mysqli_real_escape_string($conn,$_POST['status']);
-		$alt = mysqli_real_escape_string($conn,$_POST['alt']);
+    $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['title'] ?? '')));
+    $subtitle = mysqli_real_escape_string($conn, trim(strip_tags($_POST['subtitle'] ?? '')));
+    $numbers = mysqli_real_escape_string($conn, trim(strip_tags($_POST['numbers'] ?? '')));
+    $name = mysqli_real_escape_string($conn, trim(strip_tags($_POST['name'] ?? '')));
+	$position = mysqli_real_escape_string($conn, $_POST['position'] ?? 0);
+	$desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['desc'] ?? '')));
+	$status = mysqli_real_escape_string($conn, $_POST['status'] ?? 0);
+	$alt = mysqli_real_escape_string($conn, trim(strip_tags($_POST['alt'] ?? '')));
 //=============|image|============//
 	$bimages=$_FILES['ach_image']['name'];
 	if($bimages!="")

@@ -29,13 +29,15 @@ if (isset($_POST['update_cta'])) {
         }
     }
 
-    $heading = mysqli_real_escape_string($conn, trim($_POST['cta_heading']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['cta_desc']));
-    $btn_text = mysqli_real_escape_string($conn, trim($_POST['cta_btn_text']));
-    $btn_link = mysqli_real_escape_string($conn, trim($_POST['cta_btn_link']));
+    $badge = mysqli_real_escape_string($conn, trim(strip_tags($_POST['cta_badge'] ?? '')));
+    $heading = mysqli_real_escape_string($conn, trim(strip_tags($_POST['cta_heading'] ?? '', '<span><strong><em><i>')));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['cta_desc'] ?? '')));
+    $btn_text = mysqli_real_escape_string($conn, trim(strip_tags($_POST['cta_btn_text'] ?? '')));
+    $btn_link = mysqli_real_escape_string($conn, trim(strip_tags($_POST['cta_btn_link'] ?? '')));
 
     if (empty($error)) {
         $upd = mysqli_query($conn, "UPDATE `tbl_about` SET 
+            `cta_badge`='$badge',
             `cta_heading`='$heading',
             `cta_desc`='$desc',
             `cta_btn_text`='$btn_text',
@@ -67,7 +69,7 @@ $cta_bg = !empty($about['cta_bg_image']) ? $about['cta_bg_image'] : "assets/imag
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Call-To-Action (CTA) Banner Management
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -133,17 +135,31 @@ $cta_bg = !empty($about['cta_bg_image']) ? $about['cta_bg_image'] : "assets/imag
                 </div>
                 <div class="card-body p-4 bg-light">
                     <div style="background: linear-gradient(135deg, rgba(16, 55, 85, 0.95) 0%, rgba(12, 35, 54, 0.92) 100%), url('../<?= htmlspecialchars($cta_bg) ?>') center/cover no-repeat; color: #FFFFFF; padding: 45px 30px; border-radius: 14px; text-align: center;">
+                        <?php if (!empty($about['cta_badge'])): ?>
+                            <div style="display: inline-block; background: rgba(237, 28, 36, 0.22); border: 1px solid rgba(237, 28, 36, 0.5); color: #ff6b6b; font-size: 11px; font-weight: 800; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px;">
+                                <i class="fa-solid fa-certificate me-1"></i> <?= htmlspecialchars($about['cta_badge']) ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (!empty($about['cta_heading'])): ?>
                         <h3 class="text-white mb-2" style="font-size: 26px; font-weight: 800;">
-                            <?= htmlspecialchars($about['cta_heading'] ?? 'Inquire for Institutional Supply or Custom Tenders') ?>
+                            <?= htmlspecialchars($about['cta_heading']) ?>
                         </h3>
+                        <?php endif; ?>
+                        <?php if (!empty($about['cta_desc'])): ?>
                         <p class="text-white text-opacity-75 mb-4" style="font-size: 14.5px; max-width: 680px; margin: 0 auto 20px;">
-                            <?= htmlspecialchars($about['cta_desc'] ?? 'Direct factory dispatch, customized bulk packaging, and fast technical quotation for government tenders, milk federations, and overseas distributors.') ?>
+                            <?= nl2br(htmlspecialchars($about['cta_desc'])) ?>
                         </p>
+                        <?php endif; ?>
+                        <?php if (!empty($about['cta_btn_text'])): ?>
                         <div>
                             <span class="btn btn-danger fw-bold px-4 py-2" style="border-radius: 8px;">
-                                <?= htmlspecialchars($about['cta_btn_text'] ?? 'Request Price Quote') ?> <i class="fa-solid fa-arrow-right ms-1"></i>
+                                <?= htmlspecialchars($about['cta_btn_text']) ?> <i class="fa-solid fa-arrow-right ms-1"></i>
                             </span>
                         </div>
+                        <?php endif; ?>
+                        <?php if (empty($about['cta_heading']) && empty($about['cta_desc']) && empty($about['cta_btn_text'])): ?>
+                        <p class="text-white-50 fst-italic mb-0">[All main fields are blank - CTA banner will be hidden on frontend]</p>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -162,9 +178,18 @@ $cta_bg = !empty($about['cta_bg_image']) ? $about['cta_bg_image'] : "assets/imag
                             <div class="card-body p-4 bg-white">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark mb-1">
+                                        Badge Highlight Tagline (Optional)
+                                    </label>
+                                    <input type="text" name="cta_badge" class="form-control" value="<?= htmlspecialchars($about['cta_badge'] ?? '') ?>" placeholder="e.g. DIRECT MANUFACTURER SUPPLY">
+                                    <small class="text-muted d-block mt-1">Small badge pill displayed above the heading. Leave blank to hide.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-dark mb-1">
                                         Main Call-To-Action Heading
                                     </label>
                                     <input type="text" name="cta_heading" class="form-control form-control-lg fw-bold" value="<?= htmlspecialchars($about['cta_heading'] ?? '') ?>" placeholder="e.g. Inquire for Institutional Supply or Custom Tenders">
+                                    <small class="text-muted d-block mt-1">Leave blank to hide heading.</small>
                                 </div>
 
                                 <div class="mb-3">
@@ -172,6 +197,7 @@ $cta_bg = !empty($about['cta_bg_image']) ? $about['cta_bg_image'] : "assets/imag
                                         Subtext Description Paragraph
                                     </label>
                                     <textarea name="cta_desc" class="form-control" rows="3" placeholder="Description or guidance for procurement teams..."><?= htmlspecialchars($about['cta_desc'] ?? '') ?></textarea>
+                                    <small class="text-muted d-block mt-1">Leave blank to hide description.</small>
                                 </div>
 
                                 <div class="row g-3">
@@ -180,12 +206,14 @@ $cta_bg = !empty($about['cta_bg_image']) ? $about['cta_bg_image'] : "assets/imag
                                             Button Text
                                         </label>
                                         <input type="text" name="cta_btn_text" class="form-control" value="<?= htmlspecialchars($about['cta_btn_text'] ?? 'Request Price Quote') ?>" placeholder="e.g. Request Price Quote">
+                                        <small class="text-muted d-block mt-1">Leave blank to hide button.</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold text-dark mb-1">
                                             Destination Link URL
                                         </label>
-                                        <input type="text" name="cta_btn_link" class="form-control" value="<?= htmlspecialchars($about['cta_btn_link'] ?? 'contact') ?>" placeholder="e.g. contact">
+                                        <input type="text" name="cta_btn_link" class="form-control" value="<?= htmlspecialchars($about['cta_btn_link'] ?? 'contact') ?>" placeholder="e.g. contact or #quoteModal">
+                                        <small class="text-muted d-block mt-1">Use <code>#quoteModal</code> for the instant quote modal popup, or any page URL (e.g. <code>contact</code>).</small>
                                     </div>
                                 </div>
                             </div>

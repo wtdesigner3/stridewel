@@ -208,4 +208,35 @@ if ($about_row) {
     }
 }
 
+// 6. Ensure tbl_about has cta_badge column
+$c_badge_check = mysqli_query($conn, "SHOW COLUMNS FROM `tbl_about` LIKE 'cta_badge'");
+if (mysqli_num_rows($c_badge_check) == 0) {
+    mysqli_query($conn, "ALTER TABLE `tbl_about` ADD `cta_badge` VARCHAR(255) DEFAULT 'DIRECT MANUFACTURER SUPPLY'");
+    mysqli_query($conn, "UPDATE `tbl_about` SET `cta_badge`='DIRECT MANUFACTURER SUPPLY' WHERE `id`=1");
+    echo "[+] Added cta_badge to tbl_about\n";
+}
+
+// 7. Ensure tbl_catalog exists
+mysqli_query($conn, "CREATE TABLE IF NOT EXISTS `tbl_catalog` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `catalog_title` VARCHAR(255) DEFAULT 'Complete Veterinary & A.I. Equipment Product Catalog',
+    `catalog_subtitle` TEXT,
+    `catalog_pdf` VARCHAR(255) DEFAULT 'assets/STRIDEWEL (2).pdf',
+    `btn_text` VARCHAR(100) DEFAULT 'Download Full Catalog (PDF)',
+    `version_label` VARCHAR(100) DEFAULT '2026 Edition (ISO 9001:2015)',
+    `file_size` VARCHAR(50) DEFAULT '4.8 MB',
+    `status` TINYINT(1) DEFAULT 1,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+$cat_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM `tbl_catalog`"));
+if (($cat_row['cnt'] ?? 0) == 0) {
+    mysqli_query($conn, "INSERT INTO `tbl_catalog` (`id`, `catalog_title`, `catalog_subtitle`, `catalog_pdf`, `btn_text`, `version_label`, `file_size`, `status`) VALUES
+    (1, 'Complete Veterinary & A.I. Equipment Product Catalog', 'Comprehensive product catalog featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.', 'assets/STRIDEWEL (2).pdf', 'Download Full Catalog (PDF)', '2026 Edition (ISO 9001:2015)', '4.8 MB', 1)");
+    echo "[+] Seeded row 1 into tbl_catalog\n";
+} else {
+    echo "[*] tbl_catalog ready\n";
+}
+
 echo "=== All tables and migrations executed successfully ===\n";

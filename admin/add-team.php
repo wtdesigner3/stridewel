@@ -12,9 +12,9 @@ if (isset($_POST['submit'])) {
 	$prourl = strtolower($purl);
 	$location = mysqli_real_escape_string($conn, $_POST['location']);
 	$heading = mysqli_real_escape_string($conn, $_POST['heading']);
-	$subheading = mysqli_real_escape_string($conn, $_POST['subheading']);
-	$description = mysqli_real_escape_string($conn, $_POST['description']);
-	$short_description = mysqli_real_escape_string($conn, $_POST['short_description']);
+	$subheading = mysqli_real_escape_string($conn, strip_tags($_POST['subheading'] ?? ''));
+	$description = mysqli_real_escape_string($conn, strip_tags($_POST['description'] ?? ''));
+	$short_description = mysqli_real_escape_string($conn, strip_tags($_POST['short_description'] ?? ''));
 	$status = mysqli_real_escape_string($conn, $_POST['status']);
 	$sort = mysqli_real_escape_string($conn, $_POST['sort']);
 	$alt = mysqli_real_escape_string($conn, $_POST['alt']);

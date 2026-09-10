@@ -17,6 +17,7 @@ $homeTestimonials = get_testimonials();
 $homeTrustItems = get_home_trust_items();
 $homeWhyData = get_home_why_data();
 $homePipelineData = get_home_pipeline_data();
+$catalogInfo = get_catalog_info();
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -36,15 +37,23 @@ require_once __DIR__ . '/includes/header.php';
 								<h4 class="sub_title"><i class="bi bi-award-fill"></i> <?= e($b['subtitle']) ?></h4>
 								<?php endif; ?>
 								<h1><?= !empty($b['title']) ? $b['title'] : 'Precision Bovine A.I. & <span>Field Insemination</span> Kits' ?></h1>
-								<p><?= e($b['description'] ?? '') ?></p>
+								<?php if (!empty($b['description'])): ?>
+								<p><?= e($b['description']) ?></p>
+								<?php endif; ?>
+								<?php if (!empty($b['button_text']) || !empty($b['btn2_text'])): ?>
 								<div class="hero_btn_group">
+									<?php if (!empty($b['button_text'])): ?>
 									<div class="hero_btn style_two buddy_btn">
-										<a href="<?= e($b['button_link'] ?? 'products') ?>"><?= e($b['button_text'] ?? 'Explore Products') ?> <span></span></a>
+										<a href="<?= e($b['button_link'] ?? 'products') ?>"><?= e($b['button_text']) ?> <span></span></a>
 									</div>
+									<?php endif; ?>
+									<?php if (!empty($b['btn2_text'])): ?>
 									<div class="hero_btn_secondary">
-										<a href="<?= e($b['btn2_link'] ?? '#quoteModal') ?>" class="<?= empty($b['btn2_link']) || $b['btn2_link'] === '#quoteModal' ? 'open_quote_modal' : '' ?>" <?= empty($b['btn2_link']) || $b['btn2_link'] === '#quoteModal' ? 'data-bs-toggle="modal" data-bs-target="#quoteModal"' : '' ?>><i class="bi bi-file-earmark-text-fill"></i> <?= e($b['btn2_text'] ?? 'Request Price Quote') ?></a>
+										<a href="<?= e($b['btn2_link'] ?? '#quoteModal') ?>" class="<?= empty($b['btn2_link']) || $b['btn2_link'] === '#quoteModal' ? 'open_quote_modal' : '' ?>" <?= empty($b['btn2_link']) || $b['btn2_link'] === '#quoteModal' ? 'data-bs-toggle="modal" data-bs-target="#quoteModal"' : '' ?>><i class="bi bi-file-earmark-text-fill"></i> <?= e($b['btn2_text']) ?></a>
 									</div>
+									<?php endif; ?>
 								</div>
+								<?php endif; ?>
 							</div>
 						</div>
 					</div>
@@ -138,9 +147,11 @@ require_once __DIR__ . '/includes/header.php';
 							<a href="about" class="btn btn-danger btn_about_primary">
 								<i class="bi bi-book-half me-1"></i> Read More About Us <i class="bi bi-arrow-right ms-1"></i>
 							</a>
-							<a href="assets/STRIDEWEL (2).pdf" target="_blank" class="btn btn-outline-dark btn_about_secondary">
-								<i class="bi bi-download me-1"></i> Download PDF Catalog
+							<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf']) && !empty($catalogInfo['btn_text'])): ?>
+							<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn btn-outline-dark btn_about_secondary">
+								<i class="bi bi-download me-1"></i> <?= e($catalogInfo['btn_text']) ?>
 							</a>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
@@ -157,16 +168,22 @@ require_once __DIR__ . '/includes/header.php';
 	<section class="category_showcase_section" id="categories-section" style="padding: 65px 0 60px; background: #f8fafc;">
 		<div class="container-fluid px-lg-5">
 			<div class="row align-items-center mb-30">
-				<div class="col-lg-8 col-md-12">
+				<div class="<?= (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf']) && !empty($catalogInfo['btn_text'])) ? 'col-lg-8' : 'col-12' ?> col-md-12">
 					<div class="section_title pb-0" style="margin-bottom: 0;">
+						<?php if (!empty($catalogInfo['version_label'])): ?>
+						<h4><i class="bi bi-grid-fill"></i> <?= e($catalogInfo['version_label']) ?></h4>
+						<?php else: ?>
 						<h4><i class="bi bi-grid-fill"></i> Complete Product Catalog</h4>
-						<h1>Explore Our <span>Complete Range of Products</span></h1>
-						<p>ISO 9001:2015 certified artificial insemination instruments, cryogenic storage tools, semen collection sets, and veterinary surgical equipment.</p>
+						<?php endif; ?>
+						<h1><?= !empty($catalogInfo['catalog_title']) ? e($catalogInfo['catalog_title']) : 'Explore Our <span>Complete Range of Products</span>' ?></h1>
+						<p><?= !empty($catalogInfo['catalog_subtitle']) ? nl2br(e($catalogInfo['catalog_subtitle'])) : 'ISO 9001:2015 certified artificial insemination instruments, cryogenic storage tools, semen collection sets, and veterinary surgical equipment.' ?></p>
 					</div>
 				</div>
+				<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf']) && !empty($catalogInfo['btn_text'])): ?>
 				<div class="col-lg-4 col-md-12 text-lg-end mt-3 mt-lg-0">
-					<a href="assets/STRIDEWEL (2).pdf" target="_blank" class="cat_catalog_download_btn"><i class="bi bi-file-earmark-pdf"></i> Download Full Catalog (PDF)</a>
+					<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="cat_catalog_download_btn"><i class="bi bi-file-earmark-pdf"></i> <?= e($catalogInfo['btn_text']) ?></a>
 				</div>
+				<?php endif; ?>
 			</div>
 
 			<!-- Category Filter Tabs -->
@@ -264,27 +281,39 @@ require_once __DIR__ . '/includes/header.php';
 	<section class="why_choose_area" style="padding: 75px 0 70px; background: #ffffff;">
 		<div class="container">
 			<div class="row align-items-center mb-40">
-				<div class="col-lg-8 col-md-12">
+				<div class="<?= (!empty($whyMeta['cta_text']) || !empty($whyMeta['btn_text'])) ? 'col-lg-8' : 'col-12' ?> col-md-12">
 					<div class="section_title pb-0" style="margin-bottom: 0;">
-						<h4><i class="bi bi-shield-fill-check"></i> <?= e($whyMeta['subheading'] ?? 'Why Choose Stridewel') ?></h4>
+						<?php if (!empty($whyMeta['badge']) || !empty($whyMeta['subheading'])): ?>
+						<h4><i class="bi bi-shield-fill-check"></i> <?= e(!empty($whyMeta['badge']) ? $whyMeta['badge'] : ($whyMeta['subheading'] ?? '')) ?></h4>
+						<?php endif; ?>
 						<h1><?= !empty($whyMeta['heading']) ? $whyMeta['heading'] : 'Precision Engineering & <span>Quality Manufacturing</span>' ?></h1>
-						<p><?= e($whyMeta['description'] ?? 'India\'s trusted manufacturer of veterinary breeding instruments and cryogenic storage technology, built to rigorous international standards.') ?></p>
+						<?php if (!empty($whyMeta['description'])): ?>
+						<p><?= e($whyMeta['description']) ?></p>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php if (!empty($whyMeta['cta_text']) || !empty($whyMeta['btn_text'])): ?>
 				<div class="col-lg-4 col-md-12 text-lg-end mt-3 mt-lg-0">
-					<a href="<?= e($whyMeta['btn_link'] ?? 'about') ?>" class="why_about_btn"><?= e($whyMeta['btn_text'] ?? 'About Our Factory') ?> <i class="bi bi-arrow-right"></i></a>
+					<a href="<?= e(!empty($whyMeta['cta_link']) ? $whyMeta['cta_link'] : ($whyMeta['btn_link'] ?? 'about')) ?>" class="why_about_btn"><?= e(!empty($whyMeta['cta_text']) ? $whyMeta['cta_text'] : ($whyMeta['btn_text'] ?? 'About Our Factory')) ?> <i class="bi bi-arrow-right"></i></a>
 				</div>
+				<?php endif; ?>
 			</div>
 
 			<div class="row g-4">
 				<?php foreach ($whyItems as $why): ?>
+				<?php if (!empty($why['title']) || !empty($why['description'])): ?>
 				<div class="col-lg-4 col-md-6">
 					<div class="why_card">
-						<div class="why_icon_box"><i class="<?= e($why['icon'] ?? 'bi bi-patch-check-fill') ?>"></i></div>
+						<?php if (!empty($why['icon'])): ?>
+						<div class="why_icon_box"><i class="<?= e($why['icon']) ?>"></i></div>
+						<?php endif; ?>
 						<h3 class="why_title"><?= e($why['title']) ?></h3>
+						<?php if (!empty($why['description'])): ?>
 						<p class="why_desc"><?= e($why['description']) ?></p>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php endif; ?>
 				<?php endforeach; ?>
 			</div>
 		</div>
@@ -305,57 +334,71 @@ require_once __DIR__ . '/includes/header.php';
 		<div class="container position-relative">
 			<!-- Section Header -->
 			<div class="row align-items-center mb-35">
-				<div class="col-lg-8 col-md-12">
+				<div class="<?= !empty($pipeMeta['btn_text']) ? 'col-lg-8' : 'col-12' ?> col-md-12">
+					<?php if (!empty($pipeMeta['badge'])): ?>
 					<div class="mfg_header_badge">
 						<i class="bi bi-shield-fill-check" style="color: #ed1c24;"></i>
-						<span><?= e($pipeMeta['badge'] ?? 'Direct Manufacturer & ISO 9001:2015 Certified Facility') ?></span>
+						<span><?= e($pipeMeta['badge']) ?></span>
 					</div>
+					<?php endif; ?>
 					<div class="section_title pb-0" style="margin-bottom: 0;">
 						<h1><?= !empty($pipeMeta['heading']) ? $pipeMeta['heading'] : 'Precision Engineering & <span>Manufacturing Pipeline</span>' ?></h1>
-						<p><?= e($pipeMeta['description'] ?? 'A look inside our state-of-the-art facility in New Delhi—combining Swiss CNC machining, medical cleanrooms, and stringent ISO 9001:2015 micro-calibration.') ?></p>
+						<?php if (!empty($pipeMeta['description'])): ?>
+						<p><?= e($pipeMeta['description']) ?></p>
+						<?php endif; ?>
 					</div>
 				</div>
+				<?php if (!empty($pipeMeta['btn_text'])): ?>
 				<div class="col-lg-4 col-md-12 text-lg-end mt-3 mt-lg-0">
-					<a href="<?= e($pipeMeta['btn_link'] ?? 'about') ?>" class="btn" style="background: #103755; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 11px 22px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(16,55,85,0.25); display: inline-flex; align-items: center; gap: 6px;"><i class="bi bi-building-check"></i> <?= e($pipeMeta['btn_text'] ?? 'Factory & Facility Tour') ?> <i class="bi bi-arrow-right"></i></a>
+					<a href="<?= e($pipeMeta['btn_link'] ?? 'about') ?>" class="btn" style="background: #103755; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 11px 22px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(16,55,85,0.25); display: inline-flex; align-items: center; gap: 6px;"><i class="bi bi-building-check"></i> <?= e($pipeMeta['btn_text']) ?> <i class="bi bi-arrow-right"></i></a>
 				</div>
+				<?php endif; ?>
 			</div>
 
 			<!-- Trust Stats Ribbon -->
 			<div class="mfg_stats_ribbon">
+				<?php if (!empty($pipeMeta['stat1_num']) || !empty($pipeMeta['stat1_lbl'])): ?>
 				<div class="mfg_stat_item">
 					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat1_icon'] ?? 'bi bi-gear-wide-connected') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num"><?= e($pipeMeta['stat1_num'] ?? '15+ CNC Centers') ?></div>
-						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat1_lbl'] ?? 'Swiss Machining & Robotic Polish') ?></div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat1_num'] ?? '') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat1_lbl'] ?? '') ?></div>
 					</div>
 				</div>
+				<?php endif; ?>
+				<?php if (!empty($pipeMeta['stat2_num']) || !empty($pipeMeta['stat2_lbl'])): ?>
 				<div class="mfg_stat_item">
 					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat2_icon'] ?? 'bi bi-shield-plus') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num"><?= e($pipeMeta['stat2_num'] ?? '100k+ Daily Sheaths') ?></div>
-						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat2_lbl'] ?? 'Cleanroom Automated Injection') ?></div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat2_num'] ?? '') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat2_lbl'] ?? '') ?></div>
 					</div>
 				</div>
+				<?php endif; ?>
+				<?php if (!empty($pipeMeta['stat3_num']) || !empty($pipeMeta['stat3_lbl'])): ?>
 				<div class="mfg_stat_item">
 					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat3_icon'] ?? 'bi bi-patch-check-fill') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num"><?= e($pipeMeta['stat3_num'] ?? '100% Micro-QA') ?></div>
-						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat3_lbl'] ?? 'Optical Calibration & Leak Testing') ?></div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat3_num'] ?? '') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat3_lbl'] ?? '') ?></div>
 					</div>
 				</div>
+				<?php endif; ?>
+				<?php if (!empty($pipeMeta['stat4_num']) || !empty($pipeMeta['stat4_lbl'])): ?>
 				<div class="mfg_stat_item">
 					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat4_icon'] ?? 'bi bi-truck') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num"><?= e($pipeMeta['stat4_num'] ?? '28+ Indian States') ?></div>
-						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat4_lbl'] ?? 'Institutional Tenders & Exports') ?></div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat4_num'] ?? '') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat4_lbl'] ?? '') ?></div>
 					</div>
 				</div>
+				<?php endif; ?>
 			</div>
 
 			<!-- Clean Process Cards -->
 			<div class="row g-4">
 				<?php foreach ($pipeItems as $idx => $step): 
-					$pillsArr = !empty($step['pills']) ? array_map('trim', explode(',', $step['pills'])) : [];
+					$pillsArr = !empty($step['pills']) ? array_filter(array_map('trim', explode(',', $step['pills']))) : [];
 					$cardImg = !empty($step['image']) ? $step['image'] : 'assets/images/manufacturing/mfg_1_ss_machining.jpg';
 				?>
 				<div class="col-lg-3 col-md-6">
@@ -367,9 +410,13 @@ require_once __DIR__ . '/includes/header.php';
 						<div class="mfg_card_content">
 							<div class="mfg_watermark"><?= e($step['step_num'] ?? sprintf('%02d', $idx + 1)) ?></div>
 							<div>
+								<?php if (!empty($step['phase_label'])): ?>
 								<span class="mfg_phase_label"><?= e($step['phase_label']) ?></span>
+								<?php endif; ?>
 								<h3 class="mfg_card_title"><?= e($step['title']) ?></h3>
+								<?php if (!empty($step['description'])): ?>
 								<p class="mfg_card_desc"><?= e($step['description']) ?></p>
+								<?php endif; ?>
 							</div>
 							<?php if (!empty($pillsArr)): ?>
 							<div class="mfg_pills_wrap">
@@ -500,16 +547,22 @@ require_once __DIR__ . '/includes/header.php';
 										</div>
 										<div class="testi_quote_icon"><i class="bi bi-quote"></i></div>
 									</div>
-									<p class="testi_text">“<?= e($t['tt_detail'] ?? '') ?>”</p>
+									<?php if (!empty($t['tt_detail'])): ?>
+									<p class="testi_text">“<?= e($t['tt_detail']) ?>”</p>
+									<?php endif; ?>
 									<div class="testi_author_box">
 										<?php if (!empty($t['tt_image']) && file_exists(__DIR__ . '/' . $t['tt_image'])): ?>
-											<img src="<?= e($t['tt_image']) ?>" alt="<?= e($t['tt_name']) ?>" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid #ed1c24;">
+											<img src="<?= e($t['tt_image']) ?>" alt="<?= e($t['tt_name'] ?? 'Client') ?>" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid #ed1c24;">
 										<?php else: ?>
 											<div class="testi_avatar"><?= e($initials ?: 'CL') ?></div>
 										<?php endif; ?>
 										<div class="testi_author_info">
-											<h4 class="testi_author_name"><?= e($t['tt_name'] ?? '') ?></h4>
-											<p class="testi_author_role"><?= e($t['tt_company'] ?? ($t['tt_location'] ?? 'Veterinary Specialist')) ?></p>
+											<?php if (!empty($t['tt_name'])): ?>
+											<h4 class="testi_author_name"><?= e($t['tt_name']) ?></h4>
+											<?php endif; ?>
+											<?php if (!empty($t['tt_company']) || !empty($t['tt_location'])): ?>
+											<p class="testi_author_role"><?= e(!empty($t['tt_company']) ? $t['tt_company'] : $t['tt_location']) ?></p>
+											<?php endif; ?>
 											<span class="testi_verified_badge"><i class="bi bi-patch-check-fill"></i> Verified Institutional Buyer</span>
 										</div>
 									</div>
@@ -550,11 +603,12 @@ require_once __DIR__ . '/includes/header.php';
 			<div class="blog_carousel owl-carousel owl-theme">
 				<?php foreach ($homeBlogs as $b): 
 					$blogUrl = 'blog/' . urlencode($b['slug'] ?? ('article-' . $b['id']));
-					$blogCat = $b['category_name'] ?? 'Veterinary Care';
+					$blogCat = $b['category_name'] ?? '';
 					$catColor = '#ed1c24';
 					if (stripos($blogCat, 'cryo') !== false) $catColor = '#0284c7';
 					elseif (stripos($blogCat, 'ruminant') !== false || stripos($blogCat, 'sheep') !== false) $catColor = '#16a34a';
 					elseif (stripos($blogCat, 'surgical') !== false) $catColor = '#7c3aed';
+					$bDesc = truncate_text($b['short_description'] ?? strip_tags($b['content'] ?? ''), 100);
 				?>
 				<div class="blog_carousel_item">
 					<div class="modern_blog_card">
@@ -562,19 +616,29 @@ require_once __DIR__ . '/includes/header.php';
 							<a href="<?= $blogUrl ?>">
 								<img src="<?= e($b['image_url'] ?? 'assets/images/species/species_dairy_cattle.jpg') ?>" alt="<?= e($b['title']) ?>">
 							</a>
+							<?php if (!empty($blogCat)): ?>
 							<span class="blog_cat_pill" style="background: <?= $catColor ?>;"><?= e($blogCat) ?></span>
+							<?php endif; ?>
 						</div>
 						<div class="blog_card_content">
 							<div class="blog_meta">
-								<span><i class="bi bi-calendar3 text-danger"></i> <?= date('M d, Y', strtotime($b['created_at'] ?? 'now')) ?></span>
-								<span><i class="bi bi-clock text-danger"></i> 5 min read</span>
+								<?php if (!empty($b['created_at'])): ?>
+								<span><i class="bi bi-calendar3 text-danger"></i> <?= date('M d, Y', strtotime($b['created_at'])) ?></span>
+								<?php endif; ?>
+								<?php if (!empty($b['read_time'])): ?>
+								<span><i class="bi bi-clock text-danger"></i> <?= e($b['read_time']) ?></span>
+								<?php endif; ?>
 							</div>
 							<h4 class="blog_card_title">
 								<a href="<?= $blogUrl ?>"><?= e($b['title']) ?></a>
 							</h4>
-							<p class="blog_card_desc"><?= e(truncate_text($b['short_description'] ?? strip_tags($b['content'] ?? ''), 100)) ?></p>
+							<?php if (!empty($bDesc)): ?>
+							<p class="blog_card_desc"><?= e($bDesc) ?></p>
+							<?php endif; ?>
 							<div class="blog_card_footer">
-								<span class="author_name"><?= e($b['author'] ?? 'Dr. R. K. Sharma') ?></span>
+								<?php if (!empty($b['author'])): ?>
+								<span class="author_name"><?= e($b['author']) ?></span>
+								<?php endif; ?>
 								<a href="<?= $blogUrl ?>" class="read_more_link">Read <i class="bi bi-arrow-right"></i></a>
 							</div>
 						</div>

@@ -87,7 +87,7 @@ $stat_metrics = [
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Verified Counter Statistics
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">

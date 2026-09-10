@@ -9,7 +9,7 @@ $error = "";
 if (isset($_POST['update_meta'])) {
     $badge = mysqli_real_escape_string($conn, trim($_POST['badge']));
     $heading = mysqli_real_escape_string($conn, trim($_POST['heading']));
-    $description = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $description = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $cta_text = mysqli_real_escape_string($conn, trim($_POST['cta_text']));
     $cta_link = mysqli_real_escape_string($conn, trim($_POST['cta_link']));
     $pdf_text = mysqli_real_escape_string($conn, trim($_POST['pdf_text']));
@@ -17,10 +17,13 @@ if (isset($_POST['update_meta'])) {
 
     $upd = mysqli_query($conn, "UPDATE `tbl_home_why_meta` SET 
         `badge`='$badge',
+        `subheading`='$badge',
         `heading`='$heading',
         `description`='$description',
         `cta_text`='$cta_text',
         `cta_link`='$cta_link',
+        `btn_text`='$cta_text',
+        `btn_link`='$cta_link',
         `pdf_text`='$pdf_text',
         `pdf_link`='$pdf_link'
         WHERE `id`=1");
@@ -53,7 +56,7 @@ if (isset($_GET['delete'])) {
 // 4. Handle Add Card
 if (isset($_POST['add_why_card'])) {
     $title = mysqli_real_escape_string($conn, trim($_POST['title']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
@@ -74,7 +77,7 @@ if (isset($_POST['add_why_card'])) {
 if (isset($_POST['edit_why_card'])) {
     $cid = (int)$_POST['card_id'];
     $title = mysqli_real_escape_string($conn, trim($_POST['title']));
-    $desc = mysqli_real_escape_string($conn, trim($_POST['description']));
+    $desc = mysqli_real_escape_string($conn, trim(strip_tags($_POST['description'] ?? '')));
     $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
@@ -130,7 +133,7 @@ if ($cq) {
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Why Choose Stridewel Management
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -205,7 +208,7 @@ if ($cq) {
                             <form method="POST">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark mb-1">Top Pill Badge</label>
-                                    <input type="text" name="badge" class="form-control" value="<?= htmlspecialchars($meta['badge']) ?>" placeholder="e.g. Engineered For Bovine Breeding Precision">
+                                    <input type="text" name="badge" class="form-control" value="<?= htmlspecialchars(!empty($meta['badge']) ? $meta['badge'] : ($meta['subheading'] ?? '')) ?>" placeholder="e.g. Engineered For Bovine Breeding Precision">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark mb-1">Section Main Heading</label>
@@ -213,7 +216,7 @@ if ($cq) {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark mb-1">Introductory Subtitle / Narrative</label>
-                                    <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($meta['description']) ?></textarea>
+                                    <textarea name="description" class="form-control no-ckeditor" rows="3"><?= htmlspecialchars(strip_tags($meta['description'])) ?></textarea>
                                 </div>
                                 <div class="row g-2 mb-3">
                                     <div class="col-6">
@@ -296,8 +299,7 @@ if ($cq) {
                                                 <td class="text-end pe-4">
                                                     <div class="btn-group btn-group-sm">
                                                         <button type="button" class="btn btn-outline-primary btn-sm rounded-2 me-1 edit-card-btn"
-                                                            data-toggle="modal"
-                                                            data-target="#editWhyModal"
+                                                            onclick="openEditWhyCard(this)"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#editWhyModal"
                                                             data-id="<?= $c['id'] ?>"
@@ -307,7 +309,7 @@ if ($cq) {
                                                             data-sort="<?= $c['sort_order'] ?>"
                                                             data-status="<?= $c['status'] ?>"
                                                             title="Edit Card">
-                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                            <i class="fa-solid fa-pen-to-square" style="pointer-events: none;"></i>
                                                         </button>
                                                         <a href="manage-home-why.php?delete=<?= $c['id'] ?>" class="btn btn-outline-danger btn-sm rounded-2" onclick="return confirm('Delete this value proposition card?');" title="Delete Card">
                                                             <i class="fa-solid fa-trash-can"></i>
@@ -432,35 +434,51 @@ if ($cq) {
     <script src="assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
     <script src="assets/js/apps.min.js"></script>
     <script>
+        // Global handler to populate Why Choose card modal immediately on click or event
+        function openEditWhyCard(btn) {
+            if (!btn) return;
+            var id = btn.getAttribute('data-id') || '';
+            var title = btn.getAttribute('data-title') || '';
+            var desc = btn.getAttribute('data-desc') || '';
+            var icon = btn.getAttribute('data-icon') || '';
+            var sort = btn.getAttribute('data-sort') || '0';
+            var status = btn.getAttribute('data-status');
+
+            var idEl = document.getElementById('editCardId');
+            var titleEl = document.getElementById('editCardTitle');
+            var descEl = document.getElementById('editCardDesc');
+            var iconEl = document.getElementById('editCardIcon');
+            var sortEl = document.getElementById('editCardSort');
+            var statusEl = document.getElementById('editCardStatus');
+
+            if (idEl) idEl.value = id;
+            if (titleEl) titleEl.value = title;
+            if (descEl) descEl.value = desc;
+            if (iconEl) iconEl.value = icon;
+            if (sortEl) sortEl.value = sort;
+            if (statusEl) statusEl.checked = (status === '1' || status == 1);
+        }
+
+        // Prevent jQuery UI sortable crash in apps.min.js
+        if (typeof jQuery !== 'undefined' && !jQuery.fn.sortable) {
+            jQuery.fn.sortable = function() { return this; };
+        }
+
         $(document).ready(function() {
             if (typeof App !== 'undefined' && typeof App.init === 'function') {
-                App.init();
+                try { App.init(); } catch(e) { console.warn('App.init:', e); }
+            }
+
+            var editWhyModal = document.getElementById('editWhyModal');
+            if (editWhyModal) {
+                editWhyModal.addEventListener('show.bs.modal', function(event) {
+                    var button = event.relatedTarget || document.querySelector('.edit-card-btn:focus') || document.activeElement;
+                    openEditWhyCard(button);
+                });
             }
 
             $(document).on('click', '.edit-card-btn', function(e) {
-                e.preventDefault();
-                var id = $(this).attr('data-id') || $(this).data('id');
-                var title = $(this).attr('data-title') || $(this).data('title');
-                var desc = $(this).attr('data-desc') || $(this).data('desc');
-                var icon = $(this).attr('data-icon') || $(this).data('icon');
-                var sort = $(this).attr('data-sort') || $(this).data('sort');
-                var status = $(this).attr('data-status') || $(this).data('status');
-
-                $('#editCardId').val(id);
-                $('#editCardTitle').val(title);
-                $('#editCardDesc').val(desc);
-                $('#editCardIcon').val(icon);
-                $('#editCardSort').val(sort);
-                $('#editCardStatus').prop('checked', status == 1 || status == '1');
-
-                if (typeof $.fn.modal !== 'undefined') {
-                    $('#editWhyModal').modal('show');
-                } else if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('editWhyModal')) || new bootstrap.Modal(document.getElementById('editWhyModal'));
-                    modal.show();
-                } else {
-                    $('#editWhyModal').show().addClass('show');
-                }
+                openEditWhyCard(this);
             });
         });
     </script>

@@ -41,34 +41,45 @@ require_once __DIR__ . '/includes/header.php';
 
 			<!-- 4-in-a-Row Articles Grid -->
 			<div class="row g-4" id="articlesGrid">
-				<?php foreach ($blogs as $b): 
-					$detailUrl = 'blog/' . urlencode($b['slug'] ?? ('article-' . $b['id']));
-					$catName = $b['category_name'] ?? 'Veterinary Care';
-				?>
-				<div class="col-xl-3 col-lg-3 col-md-6 col-12 blog_item_box">
-					<div class="blog_card_4col">
-						<div class="blog_thumb_wrap">
-							<a href="<?= $detailUrl ?>">
-								<img src="<?= e($b['image_url'] ?? 'assets/images/species/species_dairy_cattle.jpg') ?>" alt="<?= e($b['title']) ?>">
-							</a>
-							<span class="blog_cat_badge"><?= e($catName) ?></span>
-						</div>
-						<div class="blog_body">
-							<h4 class="blog_title">
+				<?php if (!empty($blogs)): ?>
+					<?php foreach ($blogs as $b): 
+						$detailUrl = 'blog/' . urlencode($b['slug'] ?? ('article-' . $b['id']));
+						$catName = $b['category_name'] ?? '';
+						$desc = truncate_text($b['short_description'] ?? strip_tags($b['content'] ?? ''), 120);
+					?>
+					<div class="col-xl-3 col-lg-3 col-md-6 col-12 blog_item_box">
+						<div class="blog_card_4col">
+							<div class="blog_thumb_wrap">
 								<a href="<?= $detailUrl ?>">
-									<?= e($b['title']) ?>
+									<img src="<?= e($b['image_url'] ?? 'assets/images/species/species_dairy_cattle.jpg') ?>" alt="<?= e($b['title']) ?>">
 								</a>
-							</h4>
-							<p class="blog_desc">
-								<?= e(truncate_text($b['short_description'] ?? strip_tags($b['content'] ?? ''), 120)) ?>
-							</p>
-							<div class="blog_footer_row">
-								<a href="<?= $detailUrl ?>" class="blog_read_btn"><span>Read Full Article</span><i class="bi bi-arrow-right"></i></a>
+								<?php if (!empty($catName)): ?>
+								<span class="blog_cat_badge"><?= e($catName) ?></span>
+								<?php endif; ?>
+							</div>
+							<div class="blog_body">
+								<h4 class="blog_title">
+									<a href="<?= $detailUrl ?>">
+										<?= e($b['title']) ?>
+									</a>
+								</h4>
+								<?php if (!empty($desc)): ?>
+								<p class="blog_desc">
+									<?= e($desc) ?>
+								</p>
+								<?php endif; ?>
+								<div class="blog_footer_row">
+									<a href="<?= $detailUrl ?>" class="blog_read_btn"><span>Read Full Article</span><i class="bi bi-arrow-right"></i></a>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<?php endforeach; ?>
+					<?php endforeach; ?>
+				<?php else: ?>
+					<div class="col-12 text-center py-5">
+						<p class="text-muted">No published articles available at this moment.</p>
+					</div>
+				<?php endif; ?>
 			</div>
 		</div>
 	</section>

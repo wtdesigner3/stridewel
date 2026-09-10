@@ -72,23 +72,33 @@ require_once __DIR__ . '/includes/header.php';
 				<div class="col-lg-8 col-md-12">
 
 					<!-- Header Tag & Title -->
+					<?php if (!empty($blog['category_name'])): ?>
 					<div class="article_category_pill mb-3" style="display: inline-block; background: #fef2f2; color: #ed1c24; font-weight: 700; font-size: 12px; padding: 5px 14px; border-radius: 20px; border: 1px solid #fecaca;">
-						<i class="bi bi-journal-text me-1"></i> <?= e($blog['category_name'] ?? 'A.I. Protocols') ?>
+						<i class="bi bi-journal-text me-1"></i> <?= e($blog['category_name']) ?>
 					</div>
+					<?php endif; ?>
 					<h1 class="article_main_title" style="font-size: 30px; font-weight: 800; color: #103755; line-height: 40px; margin-bottom: 18px;">
 						<?= e($blog['title']) ?>
 					</h1>
 
 					<div class="article_meta_bar mb-4" style="display: flex; gap: 18px; color: #64748b; font-size: 13.5px; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px;">
-						<span><i class="bi bi-person-fill text-danger me-1"></i> <?= e($blog['author'] ?? 'Dr. R. K. Sharma') ?></span>
-						<span><i class="bi bi-calendar3 text-danger me-1"></i> <?= date('F d, Y', strtotime($blog['created_at'] ?? 'now')) ?></span>
-						<span><i class="bi bi-clock text-danger me-1"></i> 5 min read</span>
+						<?php if (!empty($blog['author'])): ?>
+						<span><i class="bi bi-person-fill text-danger me-1"></i> <?= e($blog['author']) ?></span>
+						<?php endif; ?>
+						<?php if (!empty($blog['created_at'])): ?>
+						<span><i class="bi bi-calendar3 text-danger me-1"></i> <?= date('F d, Y', strtotime($blog['created_at'])) ?></span>
+						<?php endif; ?>
+						<?php if (!empty($blog['read_time'])): ?>
+						<span><i class="bi bi-clock text-danger me-1"></i> <?= e($blog['read_time']) ?></span>
+						<?php endif; ?>
 					</div>
 
 					<!-- Hero Media Box -->
+					<?php if (!empty($blog['image_url'])): ?>
 					<div class="article_hero_media mb-4" style="border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(16, 55, 85, 0.08); border: 1px solid #e2e8f0;">
-						<img src="<?= e($blog['image_url'] ?? 'assets/images/workflow/workflow_3_preservation.jpg') ?>" alt="<?= e($blog['title']) ?>" style="width: 100%; max-height: 420px; object-fit: cover; display: block;">
+						<img src="<?= e($blog['image_url']) ?>" alt="<?= e($blog['title']) ?>" style="width: 100%; max-height: 420px; object-fit: cover; display: block;">
 					</div>
+					<?php endif; ?>
 
 					<!-- Key Takeaways Callout -->
 					<?php if (!empty($blog['short_description'])): ?>

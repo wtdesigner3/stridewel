@@ -60,7 +60,7 @@ $wa_active   = ($contact['widget_wa_status'] ?? 1) && !empty($contact['widget_wa
                         <li class="breadcrumb-item"><a href="manage-settings-branding.php">Settings</a></li>
                         <li class="breadcrumb-item active">Floating Action Widgets</li>
                     </ol>
-                    <h1 class="page-header mb-0" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-0" style="font-size: 24px; font-weight: 800; color: #103755;">
                         <i class="fa-solid fa-phone-volume text-warning me-2"></i> Floating Action Widgets CMS
                     </h1>
                 </div>
@@ -110,7 +110,7 @@ $wa_active   = ($contact['widget_wa_status'] ?? 1) && !empty($contact['widget_wa
             <?php endif; ?>
 
             <!-- Live Floating Status Visual Banner -->
-            <div class="card border-0 shadow-sm rounded-3 mb-4 overflow-hidden" style="background: linear-gradient(135deg, #123023 0%, #1E4D38 100%);">
+            <div class="card border-0 shadow-sm rounded-3 mb-4 overflow-hidden" style="background: linear-gradient(135deg, #103755 0%, #1E4D38 100%);">
                 <div class="card-body p-4 text-white">
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                         <div class="d-flex align-items-center gap-3">
@@ -144,11 +144,11 @@ $wa_active   = ($contact['widget_wa_status'] ?? 1) && !empty($contact['widget_wa
                         <div class="card border-0 shadow-sm rounded-3 h-100 d-flex flex-column">
                             <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background: rgba(18, 48, 35, 0.1); color: #123023;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background: rgba(18, 48, 35, 0.1); color: #103755;">
                                         <i class="fa-solid fa-phone-volume fs-5"></i>
                                     </div>
                                     <div>
-                                        <h5 class="mb-0 fw-bold" style="color: #123023;">Direct Call Widget</h5>
+                                        <h5 class="mb-0 fw-bold" style="color: #103755;">Direct Call Widget</h5>
                                         <small class="text-muted">Floating one-tap dialing button</small>
                                     </div>
                                 </div>
@@ -210,7 +210,7 @@ $wa_active   = ($contact['widget_wa_status'] ?? 1) && !empty($contact['widget_wa
                                         <i class="fa-brands fa-whatsapp fs-4"></i>
                                     </div>
                                     <div>
-                                        <h5 class="mb-0 fw-bold" style="color: #123023;">WhatsApp Action Widget</h5>
+                                        <h5 class="mb-0 fw-bold" style="color: #103755;">WhatsApp Action Widget</h5>
                                         <small class="text-muted">Floating instant chat button</small>
                                     </div>
                                 </div>

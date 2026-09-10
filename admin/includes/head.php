@@ -38,6 +38,7 @@ $profile = get_site_profile();
 	<link href="assets/plugins/DataTables/media/css/dataTables.bootstrap.min.css" rel="stylesheet" />
 	<link href="assets/plugins/DataTables/extensions/Responsive/css/responsive.bootstrap.min.css" rel="stylesheet" />
 	<script src="assets/plugins/jquery/jquery-3.3.1.min.js"></script>
+	<script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
 	<link href="assets/plugins/select2/dist/css/select2.min.css" rel="stylesheet" />
 	<script src="assets/plugins/select2/dist/js/select2.min.js"></script>
 	<script src="assets/js/admin-custom.js?v=<?= file_exists(__DIR__ . '/../assets/js/admin-custom.js') ? filemtime(__DIR__ . '/../assets/js/admin-custom.js') : time() ?>"></script>

@@ -12,14 +12,14 @@ if (isset($_POST['update'])) {
 // 	$main_heading = mysqli_real_escape_string($conn, $_POST['main_heading']);
 // 	$main_subheading = mysqli_real_escape_string($conn, $_POST['main_subheading']);
 // 	$main_content = mysqli_real_escape_string($conn, $_POST['main_content']);
-	$content1 = mysqli_real_escape_string($conn,$_POST['content1']);
-	$content2 = mysqli_real_escape_string($conn,$_POST['content2']);
-	$content3 = mysqli_real_escape_string($conn,$_POST['content3']);
-	$content4 = mysqli_real_escape_string($conn,$_POST['content4']);
-	$heading1 = mysqli_real_escape_string($conn, $_POST['heading1']);
-	$heading2 = mysqli_real_escape_string($conn, $_POST['heading2']);
-	$heading3 = mysqli_real_escape_string($conn, $_POST['heading3']);
-	$heading4 = mysqli_real_escape_string($conn, $_POST['heading4']);
+	$content1 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['content1'] ?? '')));
+	$content2 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['content2'] ?? '')));
+	$content3 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['content3'] ?? '')));
+	$content4 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['content4'] ?? '')));
+	$heading1 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['heading1'] ?? '')));
+	$heading2 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['heading2'] ?? '')));
+	$heading3 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['heading3'] ?? '')));
+	$heading4 = mysqli_real_escape_string($conn, trim(strip_tags($_POST['heading4'] ?? '')));
     $oldicon1 = mysqli_real_escape_string($conn,$_POST['oldicon1']);
     $oldicon2 = mysqli_real_escape_string($conn,$_POST['oldicon2']);
     $oldicon3 = mysqli_real_escape_string($conn,$_POST['oldicon3']);
@@ -201,22 +201,22 @@ if (isset($_POST['update'])) {
 								    
 								<div class="form-group col-3">
 									<label for="banner">Enter Icon Content 1</label>
-									<textarea class="form-control" name="content1" placeholder="Content 1" ><?= $brec['content1'] ?></textarea>
+									<textarea class="form-control no-ckeditor" name="content1" rows="3" placeholder="Content 1" ><?= htmlspecialchars(strip_tags($brec['content1'] ?? '')) ?></textarea>
 								</div>
 								    
 								<div class="form-group col-3">
 									<label for="banner">Enter Icon Content 2</label>
-									<textarea class="form-control" name="content2" placeholder="Content 2" ><?= $brec['content2'] ?></textarea>
+									<textarea class="form-control no-ckeditor" name="content2" rows="3" placeholder="Content 2" ><?= htmlspecialchars(strip_tags($brec['content2'] ?? '')) ?></textarea>
 								</div>
 								    
 								<div class="form-group col-3">
 									<label for="banner">Enter Icon Content 3</label>
-									<textarea class="form-control" name="content3" placeholder="Content 3" ><?= $brec['content3'] ?></textarea>
+									<textarea class="form-control no-ckeditor" name="content3" rows="3" placeholder="Content 3" ><?= htmlspecialchars(strip_tags($brec['content3'] ?? '')) ?></textarea>
 								</div>
 								    
 								<div class="form-group col-3">
 									<label for="banner">Enter Icon Content 4</label>
-									<textarea class="form-control" name="content4" placeholder="Content 4" ><?= $brec['content4'] ?></textarea>
+									<textarea class="form-control no-ckeditor" name="content4" rows="3" placeholder="Content 4" ><?= htmlspecialchars(strip_tags($brec['content4'] ?? '')) ?></textarea>
 								</div>
 								
 								</div>

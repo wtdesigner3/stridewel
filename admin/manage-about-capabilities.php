@@ -15,7 +15,7 @@ if (isset($_POST['update_capabilities'])) {
         $ext = strtolower(pathinfo($_FILES['capabilities_image']['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg'];
         if (in_array($ext, $allowed)) {
-            $upload_dir = "../../uploads/about/";
+            $upload_dir = "../uploads/about/";
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0755, true);
             }
@@ -28,9 +28,9 @@ if (isset($_POST['update_capabilities'])) {
         }
     }
 
-    $subheading = mysqli_real_escape_string($conn, trim($_POST['capabilities_subheading']));
-    $heading = mysqli_real_escape_string($conn, trim($_POST['capabilities_heading']));
-    $badge_title = mysqli_real_escape_string($conn, trim($_POST['capabilities_badge_title']));
+    $subheading = mysqli_real_escape_string($conn, trim(strip_tags($_POST['capabilities_subheading'] ?? '')));
+    $heading = mysqli_real_escape_string($conn, trim(strip_tags($_POST['capabilities_heading'] ?? '', '<span><strong><em><i>')));
+    $badge_title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['capabilities_badge_title'] ?? '')));
     $content = mysqli_real_escape_string($conn, trim($_POST['capabilities_content']));
     $btn1_text = mysqli_real_escape_string($conn, trim($_POST['capabilities_btn1_text']));
     $btn1_link = mysqli_real_escape_string($conn, trim($_POST['capabilities_btn1_link']));
@@ -73,7 +73,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
             <!-- Header Title Bar & Breadcrumbs -->
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
-                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #123023;">
+                    <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
                         Supply Capabilities Management
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
@@ -136,7 +136,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                         <!-- Headings Card -->
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom">
-                                <h5 class="mb-0 fw-bold" style="color: #123023;">
+                                <h5 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-pen-nib text-warning me-2"></i> Section Headlines &amp; Badge
                                 </h5>
                             </div>
@@ -163,7 +163,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                         <!-- CKEditor Rich Narrative Card -->
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
-                                <h5 class="mb-0 fw-bold" style="color: #123023;">
+                                <h5 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-align-left text-primary me-2"></i> Capability Description &amp; Feature Points
                                 </h5>
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25" style="font-size: 11px;">
@@ -181,7 +181,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                         <!-- Action Buttons Management Card -->
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom">
-                                <h5 class="mb-0 fw-bold" style="color: #123023;">
+                                <h5 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-link text-info me-2"></i> Section Action Buttons
                                 </h5>
                             </div>
@@ -226,14 +226,14 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                     <div class="col-lg-4">
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom">
-                                <h5 class="mb-0 fw-bold" style="color: #123023;">
+                                <h5 class="mb-0 fw-bold" style="color: #103755;">
                                     <i class="fa-solid fa-image text-success me-2"></i> Featured Section Image
                                 </h5>
                             </div>
                             <div class="card-body p-4 bg-white">
                                 <?php if (!empty($about['capabilities_image'])): ?>
                                     <div class="mb-3 text-center p-2 border rounded-3 bg-light">
-                                        <img src="../../<?= htmlspecialchars($about['capabilities_image']) ?>" alt="Capabilities Image" style="max-height: 220px; width: 100%; object-fit: cover; border-radius: 8px;">
+                                        <img src="../<?= htmlspecialchars($about['capabilities_image']) ?>" alt="Capabilities Image" style="max-height: 220px; width: 100%; object-fit: cover; border-radius: 8px;">
                                     </div>
                                 <?php endif; ?>
                                 <label class="form-label fw-bold text-dark mb-1">Replace Section Image</label>
@@ -244,7 +244,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                             </div>
                         </div>
 
-                        <button type="submit" name="update_capabilities" class="btn btn-warning btn-lg w-100 fw-bold shadow-sm py-3 rounded-pill d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #C5A059 0%, #D4AF37 100%); border: none; color: #123023;">
+                        <button type="submit" name="update_capabilities" class="btn btn-warning btn-lg w-100 fw-bold shadow-sm py-3 rounded-pill d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #ed1c24 0%, #D4AF37 100%); border: none; color: #103755;">
                             <i class="fa-solid fa-floppy-disk"></i> Save Capabilities Section
                         </button>
                     </div>

@@ -1,9 +1,14 @@
 <?php
 require('checksession.php');
 require('../inc/function.php');
-$b = $_REQUEST['bid'];
+$b = (int)($_REQUEST['id'] ?? $_REQUEST['bid'] ?? $_REQUEST['cid'] ?? 0);
 $bdata = mysqli_query($conn, "SELECT * FROM `tbl_banner` where `bnr_id`='$b'");
 $brec = mysqli_fetch_array($bdata);
+if (!$brec && isset($b)) {
+    $bdata = mysqli_query($conn, "SELECT * FROM `tbl_banner` ORDER BY `bnr_id` DESC LIMIT 1");
+    $brec = mysqli_fetch_array($bdata);
+    if ($brec) $b = (int)$brec['bnr_id'];
+}
 if (isset($_POST['update'])) {
   $title = mysqli_real_escape_string($conn, $_POST['title']);
   $subtitle = mysqli_real_escape_string($conn, $_POST['subtitle']);

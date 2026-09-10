@@ -7,6 +7,7 @@ $page_seo = 'products';
 
 $allCategories = get_all_categories();
 $allProducts = get_all_products();
+$catalogInfo = get_catalog_info();
 
 // Pre-filter category from query string if present
 $selectedCategory = clean_input($_GET['cat'] ?? '*');
@@ -26,6 +27,17 @@ require_once __DIR__ . '/includes/header.php';
 						<i class="bi bi-chevron-right" style="font-size: 11px; opacity: 0.6;"></i>
 						<span class="current">Products</span>
 					</div>
+					<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf'])): ?>
+					<div class="mt-3">
+						<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn btn-sm btn-danger fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #ed1c24 0%, #c41219 100%); border: none;">
+							<i class="bi bi-file-earmark-pdf-fill fs-6"></i>
+							<span><?= e($catalogInfo['btn_text'] ?? 'Download Full Catalog (PDF)') ?></span>
+							<?php if (!empty($catalogInfo['file_size'])): ?>
+								<span class="badge bg-white text-danger px-2 py-0.5 rounded-pill" style="font-size: 10.5px; font-weight: 700;"><?= e($catalogInfo['file_size']) ?></span>
+							<?php endif; ?>
+						</a>
+					</div>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>
@@ -69,21 +81,27 @@ require_once __DIR__ . '/includes/header.php';
 				<div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-4 product-item <?= e($catSlug) ?>" data-name="<?= strtolower(e($p['product_name'])) ?>" data-code="<?= strtolower(e($p['product_code'])) ?>">
 					<div class="product_catalog_card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; height: 100%; display: flex; flex-direction: column; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 4px 14px rgba(16, 55, 85, 0.04);">
 						<div style="height: 190px; display: flex; align-items: center; justify-content: center; position: relative; background: #f8fafc; border-radius: 8px; margin-bottom: 14px; overflow: hidden;">
-							<span style="position: absolute; top: 10px; left: 10px; background: #103755; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; z-index: 2;"><?= e($badge) ?></span>
+							<?php if (!empty($p['product_code'])): ?>
+							<span style="position: absolute; top: 10px; left: 10px; background: #103755; color: #ffffff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; z-index: 2;"><?= e($p['product_code']) ?></span>
+							<?php endif; ?>
 							<a href="<?= $detailUrl ?>" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
 								<img src="<?= e($p['image_url'] ?? 'assets/prodcuts-images/AI-01.png') ?>" alt="<?= e($p['product_name']) ?>" onerror="this.src='assets/prodcuts-images/AI-01.png'" style="max-height: 150px; max-width: 88%; object-fit: contain; transition: transform 0.3s ease;">
 							</a>
 						</div>
 						<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-							<span style="font-size: 11px; font-weight: 700; color: #ed1c24; text-transform: uppercase; letter-spacing: 0.5px;"><?= e($p['category_name'] ?? 'Veterinary') ?></span>
+							<?php if (!empty($p['category_name'])): ?>
+							<span style="font-size: 11px; font-weight: 700; color: #ed1c24; text-transform: uppercase; letter-spacing: 0.5px;"><?= e($p['category_name']) ?></span>
+							<?php endif; ?>
 							<span style="font-size: 11px; font-weight: 600; color: #64748b;"><i class="bi bi-shield-check text-success"></i> ISO OEM</span>
 						</div>
 						<h4 style="font-size: 15px; font-weight: 800; color: #103755; margin: 0 0 8px 0; line-height: 1.35; flex-grow: 1;">
 							<a href="<?= $detailUrl ?>" style="color: inherit; text-decoration: none;"><?= e($p['product_name']) ?></a>
 						</h4>
+						<?php if (!empty($p['short_description'])): ?>
 						<p style="font-size: 12.5px; color: #64748b; line-height: 18px; margin: 0 0 14px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-							<?= e($p['short_description'] ?? '') ?>
+							<?= e($p['short_description']) ?>
 						</p>
+						<?php endif; ?>
 						<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 12px; margin-top: auto;">
 							<a href="<?= $detailUrl ?>" style="font-size: 12.5px; font-weight: 700; color: #103755; text-decoration: none; display: flex; align-items: center; gap: 4px;">Specs <i class="bi bi-arrow-right text-danger"></i></a>
 							<a href="#quoteModal" class="open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal" data-product="<?= e($p['product_name']) ?> (<?= e($p['product_code']) ?>)" style="font-size: 11.5px; font-weight: 800; background: rgba(237, 28, 36, 0.08); color: #ed1c24; border: 1px solid rgba(237, 28, 36, 0.2); padding: 5px 10px; border-radius: 6px; text-decoration: none;">Get Quote</a>

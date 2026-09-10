@@ -85,6 +85,22 @@ while ($cat_row = mysqli_fetch_assoc($categories_q)) {
 				</div>
 			</div>
 
+			<!-- Quick Sub-Menu Navigation -->
+			<div class="cms-subnav-strip mb-4">
+				<a href="manage-blogs.php" class="cms-subnav-pill active">
+					<i class="fa-solid fa-newspaper"></i> All Articles
+				</a>
+				<a href="add-blogs.php" class="cms-subnav-pill">
+					<i class="fa-solid fa-circle-plus"></i> Add Article
+				</a>
+				<a href="manage-blog-categories.php" class="cms-subnav-pill">
+					<i class="fa-solid fa-tags"></i> Blog Categories
+				</a>
+				<a href="../blog.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
+					<i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live Blog Page
+				</a>
+			</div>
+
 			<?php if ($msg != ""): ?>
 				<div class="alert alert-success alert-dismissible fade show" role="alert">
 					<i class="fa-solid fa-circle-check me-2"></i> <?= $msg ?>
@@ -141,7 +157,7 @@ while ($cat_row = mysqli_fetch_assoc($categories_q)) {
 								<?php if (mysqli_num_rows($blogs) > 0): ?>
 									<?php while ($b = mysqli_fetch_assoc($blogs)): ?>
 										<?php 
-										$img_src = !empty($b['b_image']) ? (strpos($b['b_image'], 'assets/') === 0 ? '../../' . $b['b_image'] : '../../uploads/blogs/' . $b['b_image']) : '../../assets/img/inner-page/news/01.jpg';
+										$img_src = !empty($b['b_image']) ? (strpos($b['b_image'], 'assets/') === 0 ? '../' . $b['b_image'] : '../uploads/blogs/' . $b['b_image']) : '../assets/images/workflow/workflow_3_preservation.jpg';
 										?>
 										<tr class="article-row" 
 										    data-id="<?= $b['b_id'] ?>"
@@ -158,7 +174,7 @@ while ($cat_row = mysqli_fetch_assoc($categories_q)) {
 											<!-- Image -->
 											<td>
 												<div class="table-thumb-box">
-													<img src="<?= htmlspecialchars($img_src) ?>" alt="" onerror="this.src='../../assets/img/inner-page/news/01.jpg'">
+													<img src="<?= htmlspecialchars($img_src) ?>" alt="" onerror="this.src='../assets/images/workflow/workflow_3_preservation.jpg'">
 												</div>
 											</td>
 
@@ -204,7 +220,7 @@ while ($cat_row = mysqli_fetch_assoc($categories_q)) {
 											<!-- Actions -->
 											<td style="text-align: end;">
 												<div class="d-inline-flex gap-1">
-													<a href="../blog-detail.php?url=<?= urlencode($b['b_url']) ?>" target="_blank" class="btn-action-square btn-action-view" title="Open on Live Site">
+													<a href="../blog-details.php?slug=<?= urlencode($b['b_url']) ?>" target="_blank" class="btn-action-square btn-action-view" title="Open on Live Site">
 														<i class="fa-solid fa-arrow-up-right-from-square"></i>
 													</a>
 													<a href="edit-blogs.php?id=<?= $b['b_id'] ?>" class="btn-action-square btn-action-edit" title="Edit Article">
