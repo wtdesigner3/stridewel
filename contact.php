@@ -200,20 +200,6 @@ require_once __DIR__ . '/includes/header.php';
 									<span class="info_value">ISO 9001:2015 QMS Standard</span>
 								</div>
 							</div>
-							<div class="facility_info_row">
-								<div class="info_icon orange"><i class="bi bi-clock-fill"></i></div>
-								<div class="info_text">
-									<span class="info_label">Operating Hours</span>
-									<span class="info_value">Mon - Sat: 09:30 - 18:30 IST</span>
-								</div>
-							</div>
-							<div class="facility_info_row">
-								<div class="info_icon purple"><i class="bi bi-truck"></i></div>
-								<div class="info_text">
-									<span class="info_label">Supply &amp; Dispatch</span>
-									<span class="info_value">Pan-India &amp; Global Exports within 48h</span>
-								</div>
-							</div>
 						</div>
 
 						<!-- Embedded Map Card -->
