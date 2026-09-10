@@ -387,7 +387,7 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 	<script src="assets/js/jquery.meanmenu.js"></script>
 	<script src="assets/js/jquery.scrollUp.js"></script>
 	<script src="assets/js/jquery.barfiller.js"></script>
-	<script src="assets/js/theme.js"></script>
+	<script src="assets/js/theme.js?v=<?= @filemtime(__DIR__ . '/../assets/js/theme.js') ?: '2.0' ?>"></script>
 
 	<!-- Unified Inquiry & Drawer Handling Script -->
 	<script>

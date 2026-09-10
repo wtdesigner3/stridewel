@@ -153,17 +153,20 @@
             }
         });
 
-        // Modern FAQ Accordion Toggle
-        $(document).on('click', '.faq_question', function () {
+        // Modern FAQ Accordion Toggle (Smooth, Single-Open, No Double Triggers)
+        $(document).off('click', '.faq_question').on('click', '.faq_question', function (e) {
+            e.preventDefault();
             var $item = $(this).closest('.faq_item');
+            var $answer = $item.find('.faq_answer');
+
             if ($item.hasClass('active')) {
                 $item.removeClass('active');
-                $item.find('.faq_answer').slideUp(250);
+                $answer.stop(true, true).slideUp(250);
             } else {
-                $('.faq_item').removeClass('active');
-                $('.faq_answer').slideUp(250);
+                // Collapse any other open accordion item smoothly
+                $('.faq_item.active').not($item).removeClass('active').find('.faq_answer').stop(true, true).slideUp(250);
                 $item.addClass('active');
-                $item.find('.faq_answer').slideDown(250);
+                $answer.stop(true, true).slideDown(250);
             }
         });
 
