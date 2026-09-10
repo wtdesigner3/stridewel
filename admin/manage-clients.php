@@ -92,10 +92,10 @@ $mqry .= " order by sort asc";
 												<th width="1%">Sort</th>
 												<th width="1%">Status</th>
 												<th width="1%">Edit</th>
-												<!--<th width="1%">Delete</th>-->
-												<!--<th width="1%">-->
-												<!--	<input type="checkbox" id="select_all">-->
-												<!--</th>-->
+												<th width="1%">Delete</th>
+												<th width="1%">
+													<input type="checkbox" id="select_all">
+												</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -120,12 +120,12 @@ $mqry .= " order by sort asc";
 													<td>
 														<a href="edit-clients.php?bid=<?php echo $web['id']; ?>" class='label label-sm label-primary' title="Edit"><i class="fa fa-edit"></i> Edit</a>
 													</td>
-													<!--<td>-->
-													<!--	<a href="delete/clients.php?bid=<?php echo $web['id']; ?>" onClick="if(confirm('Are You Sure Want To Delete This Record')){ return true;} else { return false; }" class='label label-sm label-danger'><i class="fa fa-trash"></i> Delete</a>-->
-													<!--</td>-->
-													<!--<td width="1%">-->
-													<!--	<input type="checkbox" class="checkbox" value="<?php echo $web['id']; ?>" name="bb[]" id="bb[]">-->
-													<!--</td>-->
+													<td>
+														<a href="delete/clients.php?bid=<?php echo $web['id']; ?>" onClick="if(confirm('Are You Sure Want To Delete This Record')){ return true;} else { return false; }" class='label label-sm label-danger'><i class="fa fa-trash"></i> Delete</a>
+													</td>
+													<td width="1%">
+														<input type="checkbox" class="checkbox" value="<?php echo $web['id']; ?>" name="bb[]" id="bb[]">
+													</td>
 												</tr>
 											<?php $count++;
 											} ?>

@@ -28,6 +28,8 @@ $profile = get_site_profile();
 			<?php 
 			$product_pages = ['manage-products.php', 'manage-categories.php', 'add-product.php', 'edit-product.php'];
 			$is_product_active = in_array($current_page, $product_pages);
+			$sidebar_categories = function_exists('get_all_categories') ? get_all_categories(false) : [];
+			$sidebar_cat_count = count($sidebar_categories);
 			?>
 			<li class="has-sub <?= $is_product_active ? 'active expand' : '' ?>">
 				<a href="javascript:void(0);" class="sidebar-parent-toggle d-flex align-items-center justify-content-between">
@@ -39,7 +41,7 @@ $profile = get_site_profile();
 				</a>
 				<ul class="sub-menu" style="<?= $is_product_active ? 'display: block;' : '' ?>">
 					<li class="<?= ($current_page == 'manage-categories.php') ? 'active' : '' ?>">
-						<a href="manage-categories.php">Categories (6)</a>
+						<a href="manage-categories.php">Categories <?= $sidebar_cat_count > 0 ? "({$sidebar_cat_count})" : '' ?></a>
 					</li>
 					<li class="<?= ($current_page == 'manage-products.php' && !isset($_GET['cat'])) ? 'active' : '' ?>">
 						<a href="manage-products.php">All Catalog Items</a>
@@ -52,20 +54,80 @@ $profile = get_site_profile();
 
 			<li class="nav-header" style="color: #6C8176; letter-spacing: 1px; font-size: 11px; padding: 16px 20px 6px;">WEBSITE PAGES CMS</li>
 
-			<!-- Home Page CMS -->
-			<li class="<?= (strpos($current_page, 'manage-home') !== false) ? 'active' : '' ?>">
-				<a href="manage-home-hero.php">
-					<i class="fa-solid fa-house"></i>
-					<span>Home Page Carousel</span>
+			<!-- Home Page CMS Submenu -->
+			<?php 
+			$home_pages = ['manage-home-hero.php', 'manage-home-trust.php', 'manage-home-why.php', 'manage-home-pipeline.php', 'manage-home.php', 'manage-home-choose.php'];
+			$is_home_active = in_array($current_page, $home_pages);
+			?>
+			<li class="has-sub <?= $is_home_active ? 'active expand' : '' ?>">
+				<a href="javascript:void(0);" class="sidebar-parent-toggle d-flex align-items-center justify-content-between">
+					<div>
+						<i class="fa-solid fa-house"></i>
+						<span>Home Page CMS</span>
+					</div>
+					<b class="caret"></b>
 				</a>
+				<ul class="sub-menu" style="<?= $is_home_active ? 'display: block;' : '' ?>">
+					<li class="<?= ($current_page == 'manage-home-hero.php') ? 'active' : '' ?>">
+						<a href="manage-home-hero.php">Hero Banner Slides</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-home-trust.php') ? 'active' : '' ?>">
+						<a href="manage-home-trust.php">Quality Trust Bar</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-about-story.php') ? 'active' : '' ?>">
+						<a href="manage-about-story.php">Company Overview</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-categories.php') ? 'active' : '' ?>">
+						<a href="manage-categories.php">Product Categories</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-home-why.php') ? 'active' : '' ?>">
+						<a href="manage-home-why.php">Why Choose Stridewel</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-home-pipeline.php') ? 'active' : '' ?>">
+						<a href="manage-home-pipeline.php">Manufacturing Pipeline</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-faq.php') ? 'active' : '' ?>">
+						<a href="manage-faq.php">Technical FAQs</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-testimonial.php') ? 'active' : '' ?>">
+						<a href="manage-testimonial.php">Client Testimonials</a>
+					</li>
+				</ul>
 			</li>
 
-			<!-- About Us CMS -->
-			<li class="<?= (strpos($current_page, 'manage-about') !== false) ? 'active' : '' ?>">
-				<a href="manage-about-story.php">
-					<i class="fa-solid fa-building-wheat"></i>
-					<span>About Us CMS</span>
+			<!-- About Us CMS Submenu -->
+			<?php 
+			$about_pages = ['manage-about-story.php', 'manage-about-timeline.php', 'manage-about-mission.php', 'manage-about-stats.php', 'manage-about-industries.php', 'manage-about-cta.php', 'manage-about-capabilities.php', 'manage-about.php'];
+			$is_about_active = in_array($current_page, $about_pages);
+			?>
+			<li class="has-sub <?= $is_about_active ? 'active expand' : '' ?>">
+				<a href="javascript:void(0);" class="sidebar-parent-toggle d-flex align-items-center justify-content-between">
+					<div>
+						<i class="fa-solid fa-building-wheat"></i>
+						<span>About Us CMS</span>
+					</div>
+					<b class="caret"></b>
 				</a>
+				<ul class="sub-menu" style="<?= $is_about_active ? 'display: block;' : '' ?>">
+					<li class="<?= ($current_page == 'manage-about-story.php') ? 'active' : '' ?>">
+						<a href="manage-about-story.php">Heritage &amp; 40+ Yrs Story</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-about-timeline.php') ? 'active' : '' ?>">
+						<a href="manage-about-timeline.php">Milestones &amp; Timeline</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-about-mission.php') ? 'active' : '' ?>">
+						<a href="manage-about-mission.php">Mission, Vision &amp; Policy</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-about-stats.php') ? 'active' : '' ?>">
+						<a href="manage-about-stats.php">Verified Stats Counters</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-about-industries.php') ? 'active' : '' ?>">
+						<a href="manage-about-industries.php">Institutional Supply Partners</a>
+					</li>
+					<li class="<?= ($current_page == 'manage-about-cta.php') ? 'active' : '' ?>">
+						<a href="manage-about-cta.php">Inquiry CTA &amp; PDF Catalog</a>
+					</li>
+				</ul>
 			</li>
 
 			<!-- FAQ Management -->

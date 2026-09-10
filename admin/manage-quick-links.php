@@ -24,6 +24,14 @@ if (isset($_POST['Delete']) && isset($_POST['bb'])) {
 	}
 }
 
+if (isset($_GET['delete'])) {
+    $del_id = (int)$_GET['delete'];
+    mysqli_query($conn, "delete from tbl_quick_links where id='$del_id'");
+    $_SESSION['warning'] = "Record Deleted successfully";
+    header("Location: manage-quick-links.php");
+    exit;
+}
+
 $mqry = "select * from tbl_quick_links ";
 $mqry .= " order by sort asc";
 
@@ -92,10 +100,9 @@ $mqry .= " order by sort asc";
 											<tr>
 												<th width="1%">No</th>
 												<th class="text-nowrap">Title</th>
-												<th class="text-nowrap">Description</th>
-												<!--<th width="1%">Status</th>-->
+												<th width="1%">Sort</th>
 												<th width="1%">Edit</th>
-												<!--<th width="1%">Delete</th>-->
+												<th width="1%">Delete</th>
 												<th width="1%">
 													<input type="checkbox" id="select_all">
 												</th>
@@ -111,18 +118,12 @@ $mqry .= " order by sort asc";
 													<td width="1%" class="f-s-600 text-inverse"><?= $count; ?></td>
 													<td style="font-weight:700; color:#000;"><?= $web['title']; ?></td>
 													<td style="font-weight:700; color:#000;"><?= substr(strip_tags($web['description']), 0, 150).' ...'; ?></td>
-													<!--<td>-->
-													<!--	<div class="switcher">-->
-													<!--		<input type="checkbox" onClick="updateId('<?php echo $web['id']; ?>')" name="switcher_checkbox_1" id="switcher_checkbox_<?php echo $count; ?>" <?php if ($web['status'] == '1') { echo "checked"; } else { } ?> value="1">-->
-													<!--		<label for="switcher_checkbox_<?php echo $count; ?>"></label>-->
-													<!--	</div>-->
-													<!--</td>-->
 													<td>
 														<a href="edit-quick-links.php?bid=<?php echo $web['id']; ?>" class='label label-sm label-primary' title="Edit"><i class="fa fa-edit"></i> Edit</a>
 													</td>
-													<!--<td>-->
-													<!--	<a href="delete/quick-links.php?bid=<?php echo $web['id']; ?>" onClick="if(confirm('Are You Sure Want To Delete This Record')){ return true;} else { return false; }" class='label label-sm label-danger'><i class="fa fa-trash"></i> Delete</a>-->
-													<!--</td>-->
+													<td>
+														<a href="manage-quick-links.php?delete=<?php echo $web['id']; ?>" onClick="if(confirm('Are You Sure Want To Delete This Record')){ return true;} else { return false; }" class='label label-sm label-danger'><i class="fa fa-trash"></i> Delete</a>
+													</td>
 													<td width="1%">
 														<input type="checkbox" class="checkbox" value="<?php echo $web['id']; ?>" name="bb[]" id="bb[]">
 													</td>

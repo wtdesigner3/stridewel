@@ -242,7 +242,7 @@ if ($res = mysqli_query($conn, "SELECT count(*) as c FROM `tbl_enquiry` WHERE `s
 														</a>
 													<?php endif; ?>
 
-													<button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#inquiryModal<?= $row['id'] ?>" title="View / Update Inquiry">
+													<button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#inquiryModal<?= $row['id'] ?>" data-bs-toggle="modal" data-bs-target="#inquiryModal<?= $row['id'] ?>" title="View / Update Inquiry">
 														<i class="fa-solid fa-pen-to-square"></i>
 													</button>
 
@@ -264,7 +264,7 @@ if ($res = mysqli_query($conn, "SELECT count(*) as c FROM `tbl_enquiry` WHERE `s
 																<h5 class="modal-title fw-bold mb-0">Inquiry #<?= $row['id'] ?> &bull; <?= htmlspecialchars($clientName) ?></h5>
 																<small class="text-muted"><?= htmlspecialchars($clientOrg) ?> &bull; <?= htmlspecialchars($productName) ?></small>
 															</div>
-															<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+															<button type="button" class="btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close"></button>
 														</div>
 														<div class="modal-body p-4">
 															<div class="row g-3 mb-4 p-3 bg-light rounded border">
@@ -322,12 +322,12 @@ if ($res = mysqli_query($conn, "SELECT count(*) as c FROM `tbl_enquiry` WHERE `s
 
 																<div class="col-md-12">
 																	<label class="form-label fw-bold">Internal Follow-up Notes / Remarks</label>
-																	<textarea name="notes" class="form-control" rows="3" placeholder="Add quotation details, tender numbers, pricing per unit, or follow-up logs..."><?= htmlspecialchars($row['notes'] ?? '') ?></textarea>
+																	<textarea name="notes" class="form-control no-ckeditor" rows="3" placeholder="Add quotation details, tender numbers, pricing per unit, or follow-up logs..."><?= htmlspecialchars($row['notes'] ?? '') ?></textarea>
 																</div>
 															</div>
 														</div>
 														<div class="modal-footer bg-light">
-															<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+															<button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">Close</button>
 															<button type="submit" name="update_status" class="btn btn-danger">Save Changes</button>
 														</div>
 													</form>

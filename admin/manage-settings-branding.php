@@ -82,7 +82,7 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                     </h1>
                 </div>
                 <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
-                    <a href="../../index.php" target="_blank" class="btn btn-outline-success btn-sm px-3">
+                    <a href="../index.php" target="_blank" class="btn btn-outline-success btn-sm px-3">
                         <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Live Website
                     </a>
                 </div>
@@ -103,7 +103,7 @@ $profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` W
                     <i class="fa-solid fa-phone-volume"></i> Floating Action Widgets
                 </a>
                 <div class="ms-auto">
-                    <a href="../../index.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
+                    <a href="../index.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live
                     </a>
                 </div>

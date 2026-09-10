@@ -1,5 +1,5 @@
 <?php
-// Backward compatibility redirect: Homepage Intro is managed in manage-home-intro.php
-header("Location: manage-home-intro.php");
+// Seamless redirect to unified About Us & Corporate Story management
+header("Location: manage-about-story.php");
 exit();
 ?>

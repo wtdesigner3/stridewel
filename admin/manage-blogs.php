@@ -79,7 +79,7 @@ while ($cat_row = mysqli_fetch_assoc($categories_q)) {
 					<a href="add-blogs.php" class="btn btn-warning fw-bold shadow-sm px-3">
 						<i class="fa-solid fa-plus-circle me-1"></i> Add New Article
 					</a>
-					<a href="../../blog.php" target="_blank" class="btn btn-outline-success btn-sm px-3">
+					<a href="../blog.php" target="_blank" class="btn btn-outline-success btn-sm px-3">
 						<i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Live Blog
 					</a>
 				</div>
@@ -204,7 +204,7 @@ while ($cat_row = mysqli_fetch_assoc($categories_q)) {
 											<!-- Actions -->
 											<td style="text-align: end;">
 												<div class="d-inline-flex gap-1">
-													<a href="../../blog-detail.php?url=<?= urlencode($b['b_url']) ?>" target="_blank" class="btn-action-square btn-action-view" title="Open on Live Site">
+													<a href="../blog-detail.php?url=<?= urlencode($b['b_url']) ?>" target="_blank" class="btn-action-square btn-action-view" title="Open on Live Site">
 														<i class="fa-solid fa-arrow-up-right-from-square"></i>
 													</a>
 													<a href="edit-blogs.php?id=<?= $b['b_id'] ?>" class="btn-action-square btn-action-edit" title="Edit Article">

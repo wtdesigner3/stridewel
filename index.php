@@ -13,6 +13,10 @@ $homeFaqs = get_faqs(5);
 $homeBlogs = get_blogs(6);
 $homeBanners = get_banners();
 $aboutInfo = get_about_info();
+$homeTestimonials = get_testimonials();
+$homeTrustItems = get_home_trust_items();
+$homeWhyData = get_home_why_data();
+$homePipelineData = get_home_pipeline_data();
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -63,22 +67,22 @@ require_once __DIR__ . '/includes/header.php';
 				<div class="col-lg-5 col-md-12 mb-4 mb-lg-0">
 					<div class="about_thumb_wrapper" style="position: relative;">
 						<div class="about_main_img_box" style="position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 45px rgba(16,37,65,0.12); border: 1px solid #e2e8f0;">
-							<img src="assets/images/about/about_stridewel_lab.jpg" 
+							<img src="<?= e($aboutInfo['story_image'] ?? 'assets/images/about/about_stridewel_lab.jpg') ?>" 
 								alt="Stridewel International Manufacturing Facility" 
 								style="width: 100%; height: 460px; object-fit: cover; display: block; transition: transform 0.5s ease;">
 							<div class="about_img_overlay_badge" style="position: absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(16,37,65,0.94); backdrop-filter: blur(8px); padding: 18px 22px; border-radius: 12px; border-left: 4px solid #ed1c24; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
 								<div style="color: #ffffff; font-weight: 800; font-size: 15px;">
-									<i class="bi bi-award-fill text-danger me-2"></i> ISO 9001:2015 QMS Manufacturing Plant
+									<i class="bi bi-award-fill text-danger me-2"></i> <?= e($aboutInfo['story_badge_title'] ?? 'ISO 9001:2015 QMS Manufacturing Plant') ?>
 								</div>
 								<div style="color: #cbd5e1; font-size: 13px; margin-top: 4px; line-height: 1.4;">
-									26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015, India
+									<?= e($aboutInfo['story_badge_subtitle'] ?? '26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015, India') ?>
 								</div>
 							</div>
 						</div>
 						<!-- Floating Experience Badge -->
 						<div class="about_exp_float_badge" style="position: absolute; top: -16px; right: -12px; background: linear-gradient(135deg, #ed1c24 0%, #c41219 100%); color: #ffffff; padding: 14px 20px; border-radius: 14px; box-shadow: 0 10px 25px rgba(237,28,36,0.35); text-align: center; border: 3px solid #ffffff; z-index: 3;">
-							<div style="font-size: 26px; font-weight: 900; line-height: 1;">40+</div>
-							<div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Years Heritage</div>
+							<div style="font-size: 26px; font-weight: 900; line-height: 1;"><?= e(explode(' ', $aboutInfo['story_badge_exp'] ?? '40+ Years Heritage')[0] ?? '40+') ?></div>
+							<div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;"><?= e(implode(' ', array_slice(explode(' ', $aboutInfo['story_badge_exp'] ?? '40+ Years Heritage'), 1)) ?: 'Years Heritage') ?></div>
 						</div>
 					</div>
 				</div>
@@ -232,42 +236,17 @@ require_once __DIR__ . '/includes/header.php';
 		style="padding: 45px 0; background: #0c2336; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08);">
 		<div class="container">
 			<div class="row g-4 align-items-center text-center text-md-start">
+				<?php foreach ($homeTrustItems as $ti): ?>
 				<div class="col-lg-3 col-md-6">
 					<div class="trust_item">
-						<div class="trust_icon"><i class="bi bi-award-fill"></i></div>
+						<div class="trust_icon"><i class="<?= e($ti['icon'] ?? 'bi bi-patch-check-fill') ?>"></i></div>
 						<div class="trust_text">
-							<h5>ISO 9001:2015 Certified</h5>
-							<p>QMS Certified Facility in New Delhi</p>
+							<h5><?= e($ti['title']) ?></h5>
+							<p><?= e($ti['subtitle']) ?></p>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="trust_item">
-						<div class="trust_icon"><i class="bi bi-shield-check"></i></div>
-						<div class="trust_text">
-							<h5>Surgical Grade SS 304/316</h5>
-							<p>Corrosion-Resistant Precision Alloy</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="trust_item">
-						<div class="trust_icon"><i class="bi bi-box-seam-fill"></i></div>
-						<div class="trust_text">
-							<h5>Sterile Cleanroom Packaging</h5>
-							<p>Hygienic 50/Pack &amp; Sealed Cartons</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-6">
-					<div class="trust_item">
-						<div class="trust_icon"><i class="bi bi-globe-americas"></i></div>
-						<div class="trust_text">
-							<h5>Make In India &amp; Export Ready</h5>
-							<p>Supplying 28+ States &amp; Global Markets</p>
-						</div>
-					</div>
-				</div>
+				<?php endforeach; ?>
 			</div>
 		</div>
 	</section>
@@ -278,70 +257,35 @@ require_once __DIR__ . '/includes/header.php';
 	<!--==================================================-->
 	<!-- Start Why Choose Stridewel Section -->
 	<!--==================================================-->
+	<?php 
+	$whyMeta = $homeWhyData['meta'] ?? [];
+	$whyItems = $homeWhyData['items'] ?? [];
+	?>
 	<section class="why_choose_area" style="padding: 75px 0 70px; background: #ffffff;">
 		<div class="container">
 			<div class="row align-items-center mb-40">
 				<div class="col-lg-8 col-md-12">
 					<div class="section_title pb-0" style="margin-bottom: 0;">
-						<h4><i class="bi bi-shield-fill-check"></i> Why Choose Stridewel</h4>
-						<h1>Precision Engineering &amp; <span>Quality Manufacturing</span></h1>
-						<p>India's trusted manufacturer of veterinary breeding instruments and cryogenic storage technology, built to rigorous international standards.</p>
+						<h4><i class="bi bi-shield-fill-check"></i> <?= e($whyMeta['subheading'] ?? 'Why Choose Stridewel') ?></h4>
+						<h1><?= !empty($whyMeta['heading']) ? $whyMeta['heading'] : 'Precision Engineering & <span>Quality Manufacturing</span>' ?></h1>
+						<p><?= e($whyMeta['description'] ?? 'India\'s trusted manufacturer of veterinary breeding instruments and cryogenic storage technology, built to rigorous international standards.') ?></p>
 					</div>
 				</div>
 				<div class="col-lg-4 col-md-12 text-lg-end mt-3 mt-lg-0">
-					<a href="about" class="why_about_btn">About Our Factory <i class="bi bi-arrow-right"></i></a>
+					<a href="<?= e($whyMeta['btn_link'] ?? 'about') ?>" class="why_about_btn"><?= e($whyMeta['btn_text'] ?? 'About Our Factory') ?> <i class="bi bi-arrow-right"></i></a>
 				</div>
 			</div>
 
 			<div class="row g-4">
-				<!-- Card 1 -->
+				<?php foreach ($whyItems as $why): ?>
 				<div class="col-lg-4 col-md-6">
 					<div class="why_card">
-						<div class="why_icon_box"><i class="bi bi-patch-check-fill"></i></div>
-						<h3 class="why_title">ISO 9001:2015 Certified</h3>
-						<p class="why_desc">Manufactured in cleanroom controlled environments under stringent QMS quality protocols from raw surgical stainless steel to final testing.</p>
+						<div class="why_icon_box"><i class="<?= e($why['icon'] ?? 'bi bi-patch-check-fill') ?>"></i></div>
+						<h3 class="why_title"><?= e($why['title']) ?></h3>
+						<p class="why_desc"><?= e($why['description']) ?></p>
 					</div>
 				</div>
-				<!-- Card 2 -->
-				<div class="col-lg-4 col-md-6">
-					<div class="why_card">
-						<div class="why_icon_box"><i class="bi bi-bullseye"></i></div>
-						<h3 class="why_title">Precision Compatibility</h3>
-						<p class="why_desc">Dual-step precision plungers and French sheath designs engineered for 100% seamless seating with 0.25ml and 0.5ml semen straws.</p>
-					</div>
-				</div>
-				<!-- Card 3 -->
-				<div class="col-lg-4 col-md-6">
-					<div class="why_card">
-						<div class="why_icon_box"><i class="bi bi-snow2"></i></div>
-						<h3 class="why_title">Cryogenic Efficiency</h3>
-						<p class="why_desc">Super-vacuum multi-layer insulation technology ensuring ultra-low liquid nitrogen evaporation rates and long biological holding times.</p>
-					</div>
-				</div>
-				<!-- Card 4 -->
-				<div class="col-lg-4 col-md-6">
-					<div class="why_card">
-						<div class="why_icon_box"><i class="bi bi-diagram-3-fill"></i></div>
-						<h3 class="why_title">Complete Solution Chain</h3>
-						<p class="why_desc">Full product spectrum covering Semen Collection, Laboratory Motility Analysis, Cryogenic Storage, Thawing, and Field Insemination.</p>
-					</div>
-				</div>
-				<!-- Card 5 -->
-				<div class="col-lg-4 col-md-6">
-					<div class="why_card">
-						<div class="why_icon_box"><i class="bi bi-building-fill-check"></i></div>
-						<h3 class="why_title">Institutional Supply Partner</h3>
-						<p class="why_desc">Trusted supplier for State Animal Husbandry Departments, Milk Producer Federations, Livestock Development Boards, and Global Exporters.</p>
-					</div>
-				</div>
-				<!-- Card 6 -->
-				<div class="col-lg-4 col-md-6">
-					<div class="why_card">
-						<div class="why_icon_box"><i class="bi bi-headset"></i></div>
-						<h3 class="why_title">Expert Technical Advisory</h3>
-						<p class="why_desc">Direct factory technical assistance, usage guidance, custom branding for tenders, and rapid replacement support across India.</p>
-					</div>
-				</div>
+				<?php endforeach; ?>
 			</div>
 		</div>
 	</section>
@@ -352,6 +296,10 @@ require_once __DIR__ . '/includes/header.php';
 	<!--==================================================-->
 	<!-- Start Manufacturing Excellence & Quality Pipeline -->
 	<!--==================================================-->
+	<?php
+	$pipeMeta = $homePipelineData['meta'] ?? [];
+	$pipeItems = $homePipelineData['items'] ?? [];
+	?>
 	<section class="mfg_pipeline_wrapper">
 		<div class="mfg_bg_pattern"></div>
 		<div class="container position-relative">
@@ -360,143 +308,80 @@ require_once __DIR__ . '/includes/header.php';
 				<div class="col-lg-8 col-md-12">
 					<div class="mfg_header_badge">
 						<i class="bi bi-shield-fill-check" style="color: #ed1c24;"></i>
-						<span>Direct Manufacturer &amp; ISO 9001:2015 Certified Facility</span>
+						<span><?= e($pipeMeta['badge'] ?? 'Direct Manufacturer & ISO 9001:2015 Certified Facility') ?></span>
 					</div>
 					<div class="section_title pb-0" style="margin-bottom: 0;">
-						<h1>Precision Engineering &amp; <span>Manufacturing Pipeline</span></h1>
-						<p>A look inside our state-of-the-art facility in New Delhi—combining Swiss CNC machining, medical cleanrooms, and stringent ISO 9001:2015 micro-calibration.</p>
+						<h1><?= !empty($pipeMeta['heading']) ? $pipeMeta['heading'] : 'Precision Engineering & <span>Manufacturing Pipeline</span>' ?></h1>
+						<p><?= e($pipeMeta['description'] ?? 'A look inside our state-of-the-art facility in New Delhi—combining Swiss CNC machining, medical cleanrooms, and stringent ISO 9001:2015 micro-calibration.') ?></p>
 					</div>
 				</div>
 				<div class="col-lg-4 col-md-12 text-lg-end mt-3 mt-lg-0">
-					<a href="about" class="btn" style="background: #103755; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 11px 22px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(16,55,85,0.25); display: inline-flex; align-items: center; gap: 6px;"><i class="bi bi-building-check"></i> Factory &amp; Facility Tour <i class="bi bi-arrow-right"></i></a>
+					<a href="<?= e($pipeMeta['btn_link'] ?? 'about') ?>" class="btn" style="background: #103755; color: #ffffff; font-weight: 700; font-size: 13.5px; padding: 11px 22px; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 14px rgba(16,55,85,0.25); display: inline-flex; align-items: center; gap: 6px;"><i class="bi bi-building-check"></i> <?= e($pipeMeta['btn_text'] ?? 'Factory & Facility Tour') ?> <i class="bi bi-arrow-right"></i></a>
 				</div>
 			</div>
 
 			<!-- Trust Stats Ribbon -->
 			<div class="mfg_stats_ribbon">
 				<div class="mfg_stat_item">
-					<div class="mfg_stat_icon"><i class="bi bi-gear-wide-connected"></i></div>
+					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat1_icon'] ?? 'bi bi-gear-wide-connected') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num">15+ CNC Centers</div>
-						<div class="mfg_stat_lbl">Swiss Machining &amp; Robotic Polish</div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat1_num'] ?? '15+ CNC Centers') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat1_lbl'] ?? 'Swiss Machining & Robotic Polish') ?></div>
 					</div>
 				</div>
 				<div class="mfg_stat_item">
-					<div class="mfg_stat_icon"><i class="bi bi-shield-plus"></i></div>
+					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat2_icon'] ?? 'bi bi-shield-plus') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num">100k+ Daily Sheaths</div>
-						<div class="mfg_stat_lbl">Cleanroom Automated Injection</div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat2_num'] ?? '100k+ Daily Sheaths') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat2_lbl'] ?? 'Cleanroom Automated Injection') ?></div>
 					</div>
 				</div>
 				<div class="mfg_stat_item">
-					<div class="mfg_stat_icon"><i class="bi bi-patch-check-fill"></i></div>
+					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat3_icon'] ?? 'bi bi-patch-check-fill') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num">100% Micro-QA</div>
-						<div class="mfg_stat_lbl">Optical Calibration &amp; Leak Testing</div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat3_num'] ?? '100% Micro-QA') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat3_lbl'] ?? 'Optical Calibration & Leak Testing') ?></div>
 					</div>
 				</div>
 				<div class="mfg_stat_item">
-					<div class="mfg_stat_icon"><i class="bi bi-truck"></i></div>
+					<div class="mfg_stat_icon"><i class="<?= e($pipeMeta['stat4_icon'] ?? 'bi bi-truck') ?>"></i></div>
 					<div>
-						<div class="mfg_stat_num">28+ Indian States</div>
-						<div class="mfg_stat_lbl">Institutional Tenders &amp; Exports</div>
+						<div class="mfg_stat_num"><?= e($pipeMeta['stat4_num'] ?? '28+ Indian States') ?></div>
+						<div class="mfg_stat_lbl"><?= e($pipeMeta['stat4_lbl'] ?? 'Institutional Tenders & Exports') ?></div>
 					</div>
 				</div>
 			</div>
 
-			<!-- 4 Clean Brand Cards -->
+			<!-- Clean Process Cards -->
 			<div class="row g-4">
-				<!-- Card 1: CNC Machining -->
+				<?php foreach ($pipeItems as $idx => $step): 
+					$pillsArr = !empty($step['pills']) ? array_map('trim', explode(',', $step['pills'])) : [];
+					$cardImg = !empty($step['image']) ? $step['image'] : 'assets/images/manufacturing/mfg_1_ss_machining.jpg';
+				?>
 				<div class="col-lg-3 col-md-6">
 					<div class="mfg_unique_card">
 						<div class="mfg_card_top_glow"></div>
 						<div class="mfg_img_container">
-							<img src="assets/images/manufacturing/mfg_1_ss_machining.jpg" alt="Precision Stainless Steel Machining">
+							<img src="<?= e($cardImg) ?>" alt="<?= e($step['title']) ?>" onerror="this.src='assets/images/manufacturing/mfg_1_ss_machining.jpg'">
 						</div>
 						<div class="mfg_card_content">
-							<div class="mfg_watermark">01</div>
+							<div class="mfg_watermark"><?= e($step['step_num'] ?? sprintf('%02d', $idx + 1)) ?></div>
 							<div>
-								<span class="mfg_phase_label">CNC Tooling &amp; Forging</span>
-								<h3 class="mfg_card_title">Precision SS Engineering</h3>
-								<p class="mfg_card_desc">Swiss CNC machining and fine hand-polishing of medical-grade SS 304/316 instruments with micro-tolerance standards.</p>
+								<span class="mfg_phase_label"><?= e($step['phase_label']) ?></span>
+								<h3 class="mfg_card_title"><?= e($step['title']) ?></h3>
+								<p class="mfg_card_desc"><?= e($step['description']) ?></p>
 							</div>
+							<?php if (!empty($pillsArr)): ?>
 							<div class="mfg_pills_wrap">
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Universal A.I. Guns</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Surgical Forceps</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> SS Trays &amp; Scissor</span>
+								<?php foreach ($pillsArr as $pill): ?>
+									<span class="mfg_pill"><i class="bi bi-check2"></i> <?= e($pill) ?></span>
+								<?php endforeach; ?>
 							</div>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
-
-				<!-- Card 2: Cleanroom Molding -->
-				<div class="col-lg-3 col-md-6">
-					<div class="mfg_unique_card">
-						<div class="mfg_card_top_glow"></div>
-						<div class="mfg_img_container">
-							<img src="assets/images/manufacturing/mfg_2_cleanroom_molding.jpg" alt="Cleanroom Polymer Molding">
-						</div>
-						<div class="mfg_card_content">
-							<div class="mfg_watermark">02</div>
-							<div>
-								<span class="mfg_phase_label">Medical Polymers</span>
-								<h3 class="mfg_card_title">Cleanroom Extrusion</h3>
-								<p class="mfg_card_desc">Automated injection molding and extrusion of non-toxic virgin French A.I. sheaths, goblets, and protective veterinary gloves.</p>
-							</div>
-							<div class="mfg_pills_wrap">
-								<span class="mfg_pill"><i class="bi bi-check2"></i> French A.I. Sheaths</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Cryo Goblets</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Gynae Gloves</span>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Card 3: ISO QA Testing -->
-				<div class="col-lg-3 col-md-6">
-					<div class="mfg_unique_card">
-						<div class="mfg_card_top_glow"></div>
-						<div class="mfg_img_container">
-							<img src="assets/images/manufacturing/mfg_3_qa_calibration.jpg" alt="ISO 9001:2015 QA Calibration">
-						</div>
-						<div class="mfg_card_content">
-							<div class="mfg_watermark">03</div>
-							<div>
-								<span class="mfg_phase_label">Quality Assurance</span>
-								<h3 class="mfg_card_title">ISO 9001:2015 Calibration</h3>
-								<p class="mfg_card_desc">Stringent optical micro-calibration, straw-seating fitment checks, smooth-tip inspection, and zero-defect QA protocols.</p>
-							</div>
-							<div class="mfg_pills_wrap">
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Optical Micrometers</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Straw Seating Test</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Zero-Defect Standard</span>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Card 4: Institutional Supply -->
-				<div class="col-lg-3 col-md-6">
-					<div class="mfg_unique_card">
-						<div class="mfg_card_top_glow"></div>
-						<div class="mfg_img_container">
-							<img src="assets/images/manufacturing/mfg_4_institutional_logistics.jpg" alt="Institutional Logistics &amp; Packaging">
-						</div>
-						<div class="mfg_card_content">
-							<div class="mfg_watermark">04</div>
-							<div>
-								<span class="mfg_phase_label">Fulfillment &amp; Logistics</span>
-								<h3 class="mfg_card_title">Institutional Supply</h3>
-								<p class="mfg_card_desc">Sterile cleanroom boxing, batch barcoding, and rapid bulk dispatch for State Animal Husbandry &amp; Milk Producer Federations.</p>
-							</div>
-							<div class="mfg_pills_wrap">
-								<span class="mfg_pill"><i class="bi bi-check2"></i> 28+ States Dispatch</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Milk Federations</span>
-								<span class="mfg_pill"><i class="bi bi-check2"></i> Export Ready</span>
-							</div>
-						</div>
-					</div>
-				</div>
+				<?php endforeach; ?>
 			</div>
 		</div>
 	</section>
@@ -595,68 +480,43 @@ require_once __DIR__ . '/includes/header.php';
 			<div class="row">
 				<div class="col-12">
 					<div class="testi_list owl-carousel">
-						<!-- Slide 1 -->
-						<div class="testi_slide_item">
-							<div class="modern_testi_card">
-								<div class="testi_top_row">
-									<div class="testi_stars">
-										<i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+						<?php if (!empty($homeTestimonials)): ?>
+							<?php foreach ($homeTestimonials as $t): 
+								$initials = '';
+								$nameParts = explode(' ', trim($t['tt_name'] ?? 'Client'));
+								foreach (array_slice($nameParts, 0, 2) as $np) {
+									$initials .= strtoupper(substr($np, 0, 1));
+								}
+								$rating = (int)($t['tt_rating'] ?? 5);
+								if ($rating < 1) $rating = 5;
+							?>
+							<div class="testi_slide_item">
+								<div class="modern_testi_card">
+									<div class="testi_top_row">
+										<div class="testi_stars">
+											<?php for ($i = 0; $i < $rating; $i++): ?>
+												<i class="bi bi-star-fill"></i>
+											<?php endfor; ?>
+										</div>
+										<div class="testi_quote_icon"><i class="bi bi-quote"></i></div>
 									</div>
-									<div class="testi_quote_icon"><i class="bi bi-quote"></i></div>
-								</div>
-								<p class="testi_text">“Stridewel’s Universal A.I. Guns and French Sheaths have significantly improved our first-service conception rates across our 400-head Holstein dairy herd. The stainless steel plunger precision and sheath fit are exceptional.”</p>
-								<div class="testi_author_box">
-									<div class="testi_avatar">RS</div>
-									<div class="testi_author_info">
-										<h4 class="testi_author_name">Dr. R. K. Sharma</h4>
-										<p class="testi_author_role">Senior Breeding Consultant, Punjab</p>
-										<span class="testi_verified_badge"><i class="bi bi-patch-check-fill"></i> Verified Institutional Buyer</span>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<!-- Slide 2 -->
-						<div class="testi_slide_item">
-							<div class="modern_testi_card">
-								<div class="testi_top_row">
-									<div class="testi_stars">
-										<i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-									</div>
-									<div class="testi_quote_icon"><i class="bi bi-quote"></i></div>
-								</div>
-								<p class="testi_text">“We have been using Stridewel Cryogenic LN2 containers for our district artificial insemination program. The holding time is exceptional and the canisters keep our pedigree semen straws safely preserved in tough field conditions.”</p>
-								<div class="testi_author_box">
-									<div class="testi_avatar">RP</div>
-									<div class="testi_author_info">
-										<h4 class="testi_author_name">Rajesh V. Patel</h4>
-										<p class="testi_author_role">Dairy Farm Director, Gujarat</p>
-										<span class="testi_verified_badge"><i class="bi bi-patch-check-fill"></i> Commercial Dairy Partner</span>
+									<p class="testi_text">“<?= e($t['tt_detail'] ?? '') ?>”</p>
+									<div class="testi_author_box">
+										<?php if (!empty($t['tt_image']) && file_exists(__DIR__ . '/' . $t['tt_image'])): ?>
+											<img src="<?= e($t['tt_image']) ?>" alt="<?= e($t['tt_name']) ?>" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid #ed1c24;">
+										<?php else: ?>
+											<div class="testi_avatar"><?= e($initials ?: 'CL') ?></div>
+										<?php endif; ?>
+										<div class="testi_author_info">
+											<h4 class="testi_author_name"><?= e($t['tt_name'] ?? '') ?></h4>
+											<p class="testi_author_role"><?= e($t['tt_company'] ?? ($t['tt_location'] ?? 'Veterinary Specialist')) ?></p>
+											<span class="testi_verified_badge"><i class="bi bi-patch-check-fill"></i> Verified Institutional Buyer</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-
-						<!-- Slide 3 -->
-						<div class="testi_slide_item">
-							<div class="modern_testi_card">
-								<div class="testi_top_row">
-									<div class="testi_stars">
-										<i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-									</div>
-									<div class="testi_quote_icon"><i class="bi bi-quote"></i></div>
-								</div>
-								<p class="testi_text">“Direct factory dispatch and batch quality control make Stridewel our primary choice for annual veterinary supplies. Their shoulder gloves, drenching guns, and surgical trays consistently meet government tender specs.”</p>
-								<div class="testi_author_box">
-									<div class="testi_avatar">AS</div>
-									<div class="testi_author_info">
-										<h4 class="testi_author_name">Dr. Anil Sengupta</h4>
-										<p class="testi_author_role">Chief Livestock Officer, Animal Husbandry</p>
-										<span class="testi_verified_badge"><i class="bi bi-patch-check-fill"></i> State Veterinary Dept Supplier</span>
-									</div>
-								</div>
-							</div>
-						</div>
+							<?php endforeach; ?>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>

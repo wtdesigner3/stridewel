@@ -25,6 +25,7 @@ $profile = get_site_profile();
 	<link href="assets/css/default/style-responsive.min.css" rel="stylesheet" />
 	<link href="assets/css/default/theme/default.css" rel="stylesheet" id="theme" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	
 	<!-- Latest CKEditor 5 Super-Build -->
 	<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>

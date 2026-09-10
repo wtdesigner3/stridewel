@@ -9,14 +9,18 @@ $error = "";
 if (isset($_POST['update_story'])) {
     $cur_q = mysqli_query($conn, "SELECT `story_image` FROM `tbl_about` WHERE `id`=1");
     $cur = mysqli_fetch_assoc($cur_q);
-    $img = $cur['story_image'] ?? 'assets/img/about/about-thumb.jpg';
+    $img = $cur['story_image'] ?? 'assets/images/about/about_stridewel_lab.jpg';
 
     if (!empty($_FILES['story_image']['name'])) {
         $ext = strtolower(pathinfo($_FILES['story_image']['name'], PATHINFO_EXTENSION));
         $allowed = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg'];
         if (in_array($ext, $allowed)) {
+            $upload_dir = "../uploads/about/";
+            if (!is_dir($upload_dir)) {
+                @mkdir($upload_dir, 0777, true);
+            }
             $new_name = "about_story_" . time() . "." . $ext;
-            if (move_uploaded_file($_FILES['story_image']['tmp_name'], "../../uploads/about/" . $new_name)) {
+            if (move_uploaded_file($_FILES['story_image']['tmp_name'], $upload_dir . $new_name)) {
                 $img = "uploads/about/" . $new_name;
             }
         }
@@ -27,6 +31,7 @@ if (isset($_POST['update_story'])) {
     $content = mysqli_real_escape_string($conn, trim($_POST['story_content']));
     $badge_title = mysqli_real_escape_string($conn, trim($_POST['story_badge_title']));
     $badge_subtitle = mysqli_real_escape_string($conn, trim($_POST['story_badge_subtitle']));
+    $badge_exp = mysqli_real_escape_string($conn, trim($_POST['story_badge_exp']));
 
     $upd = mysqli_query($conn, "UPDATE `tbl_about` SET 
         `story_subheading`='$subheading',
@@ -34,6 +39,7 @@ if (isset($_POST['update_story'])) {
         `story_content`='$content',
         `story_badge_title`='$badge_title',
         `story_badge_subtitle`='$badge_subtitle',
+        `story_badge_exp`='$badge_exp',
         `story_image`='$img'
         WHERE `id`=1");
 
@@ -63,7 +69,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                         Heritage &amp; Corporate Story
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
-                        Manage the primary company story, origin background narrative with CKEditor, experience metrics, and estate photo for the About Us page.
+                        Manage the primary company story, origin background narrative with CKEditor, experience badge metrics, and facility photo.
                     </p>
                 </div>
                 <ol class="breadcrumb mb-0">
@@ -74,26 +80,26 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
             </div>
 
             <!-- Quick Sub-Menu Switcher Pills -->
-            <div class="cms-subnav-strip">
+            <div class="cms-subnav-strip mb-4">
                 <a href="manage-about-story.php" class="cms-subnav-pill active">
                     <i class="fa-solid fa-landmark"></i> Heritage &amp; Story
                 </a>
+                <a href="manage-about-timeline.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Milestones &amp; Heritage
+                </a>
                 <a href="manage-about-mission.php" class="cms-subnav-pill">
-                    <i class="fa-solid fa-bullseye"></i> Mission &amp; Vision
-                </a>
-                <a href="manage-about-industries.php" class="cms-subnav-pill">
-                    <i class="fa-solid fa-boxes-packing"></i> Industries We Serve
-                </a>
-                <a href="manage-about-capabilities.php" class="cms-subnav-pill">
-                    <i class="fa-solid fa-truck-ramp-box"></i> Supply Capabilities
+                    <i class="fa-solid fa-bullseye"></i> Mission, Vision &amp; Policy
                 </a>
                 <a href="manage-about-stats.php" class="cms-subnav-pill">
                     <i class="fa-solid fa-chart-line"></i> Verified Statistics
                 </a>
+                <a href="manage-about-industries.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-boxes-packing"></i> Institutional Supply Partners
+                </a>
                 <a href="manage-about-cta.php" class="cms-subnav-pill">
                     <i class="fa-solid fa-bullhorn"></i> CTA Banner
                 </a>
-                <a href="../../about.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
+                <a href="../about.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live About Page
                 </a>
             </div>
@@ -122,18 +128,18 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom">
                                 <h5 class="mb-0 fw-bold" style="color: #123023;">
-                                    <i class="fa-solid fa-pen-nib text-warning me-2"></i> Heritage Content &amp; Narrative
+                                    <i class="fa-solid fa-pen-nib text-danger me-2"></i> Heritage Content &amp; Narrative
                                 </h5>
                             </div>
                             <div class="card-body p-4 bg-white">
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-4">
                                         <label class="form-label fw-bold text-dark mb-1">Subtitle Badge</label>
-                                        <input type="text" name="story_subheading" class="form-control" value="<?= htmlspecialchars($about['story_subheading'] ?? '') ?>" placeholder="e.g. ABOUT ANTARA GLOBALE (Leave blank to hide)">
+                                        <input type="text" name="story_subheading" class="form-control" value="<?= htmlspecialchars($about['story_subheading'] ?? '') ?>" placeholder="e.g. Welcome to Stridewel International">
                                     </div>
                                     <div class="col-md-8">
                                         <label class="form-label fw-bold text-dark mb-1">Main Section Heading</label>
-                                        <input type="text" name="story_heading" class="form-control" value="<?= htmlspecialchars($about['story_heading'] ?? '') ?>" placeholder="e.g. Quality Food Products & Ingredients for Global Buyers (Leave blank to hide)">
+                                        <input type="text" name="story_heading" class="form-control" value="<?= htmlspecialchars($about['story_heading'] ?? '') ?>" placeholder="e.g. Four Decades of Dedicated Veterinary & Breeding Excellence">
                                     </div>
                                 </div>
 
@@ -143,22 +149,26 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                                         <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25" style="font-size: 11px;"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Full CKEditor 5 Super-Build</span>
                                     </label>
                                     <textarea name="story_content" id="editor_story" class="form-control ckeditor" rows="10"><?= htmlspecialchars($about['story_content'] ?? '') ?></textarea>
-                                    <small class="text-muted mt-1 d-block">Use headings, bold formatting, links, lists, and quotes. Content is rendered dynamically on the About Us page.</small>
+                                    <small class="text-muted mt-1 d-block">Use headings, bold formatting, links, lists, and quotes. Content is rendered dynamically on both Home and About Us pages.</small>
                                 </div>
 
                                 <!-- Floating Trust Badge Configuration -->
                                 <div class="p-3 bg-light rounded-3 border">
                                     <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2" style="font-size: 14px;">
-                                        <i class="fa-solid fa-shield-halved text-warning"></i> Photo Overlay Floating Badge Content
+                                        <i class="fa-solid fa-shield-halved text-danger"></i> Photo Overlay Floating Badge Content
                                     </h6>
                                     <div class="row g-3">
-                                        <div class="col-md-5">
-                                            <label class="form-label fw-bold text-dark mb-1">Badge Header Title</label>
-                                            <input type="text" name="story_badge_title" class="form-control" value="<?= htmlspecialchars($about['story_badge_title'] ?? 'Dependable Sourcing Partner') ?>" placeholder="e.g. Dependable Sourcing Partner">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold text-dark mb-1">Experience Badge (Corner)</label>
+                                            <input type="text" name="story_badge_exp" class="form-control" value="<?= htmlspecialchars($about['story_badge_exp'] ?? '40+ Years Heritage') ?>" placeholder="e.g. 40+ Years Heritage">
                                         </div>
-                                        <div class="col-md-7">
-                                            <label class="form-label fw-bold text-dark mb-1">Badge Subtitle &amp; Narrative</label>
-                                            <input type="text" name="story_badge_subtitle" class="form-control" value="<?= htmlspecialchars($about['story_badge_subtitle'] ?? '15+ Years Origin Experience • Direct Cooperative Ties') ?>" placeholder="e.g. 15+ Years Origin Experience • Direct Cooperative Ties">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold text-dark mb-1">Badge Header Title</label>
+                                            <input type="text" name="story_badge_title" class="form-control" value="<?= htmlspecialchars($about['story_badge_title'] ?? 'ISO 9001:2015 Manufacturing Plant') ?>" placeholder="e.g. ISO 9001:2015 Manufacturing Plant">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold text-dark mb-1">Badge Subtitle &amp; Address</label>
+                                            <input type="text" name="story_badge_subtitle" class="form-control" value="<?= htmlspecialchars($about['story_badge_subtitle'] ?? '26-A, 2nd Floor, DLF Industrial Area, Moti Nagar, New Delhi-110015') ?>" placeholder="e.g. 26-A, DLF Industrial Area, Moti Nagar">
                                         </div>
                                     </div>
                                 </div>
@@ -177,7 +187,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                             <div class="card-body p-4 bg-white">
                                 <?php if (!empty($about['story_image'])): ?>
                                     <div class="mb-3 text-center p-2 border rounded-3 bg-light">
-                                        <img src="../../<?= htmlspecialchars($about['story_image']) ?>" alt="Story Image" style="max-height: 220px; width: 100%; object-fit: cover; border-radius: 8px;">
+                                        <img src="../<?= htmlspecialchars($about['story_image']) ?>" alt="Story Image" style="max-height: 220px; width: 100%; object-fit: cover; border-radius: 8px;" onerror="this.src='../assets/images/about/about_stridewel_lab.jpg'">
                                     </div>
                                 <?php endif; ?>
                                 <label class="form-label fw-bold text-dark mb-1">Replace Section Image</label>
@@ -186,7 +196,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                             </div>
                         </div>
 
-                        <button type="submit" name="update_story" class="btn btn-warning btn-lg w-100 fw-bold shadow-sm py-3 rounded-pill">
+                        <button type="submit" name="update_story" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm py-3 rounded-pill">
                             <i class="fa-solid fa-floppy-disk me-2"></i> Save Heritage Story
                         </button>
                     </div>

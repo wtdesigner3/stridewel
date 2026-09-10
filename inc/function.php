@@ -1241,3 +1241,150 @@ function get_testimonials($limit = 0) {
         ]
     ];
 }
+
+/**
+ * Fetch Home Dark Trust Bar Items (ISO 9001:2015 etc.)
+ */
+function get_home_trust_items() {
+    global $conn;
+    if ($conn) {
+        $q = @mysqli_query($conn, "SELECT * FROM `tbl_home_trust` WHERE `status`=1 ORDER BY `sort_order` ASC, `id` ASC");
+        if ($q && mysqli_num_rows($q) > 0) {
+            $list = [];
+            while ($r = mysqli_fetch_assoc($q)) {
+                $list[] = $r;
+            }
+            return $list;
+        }
+    }
+    return [
+        ['id' => 1, 'title' => 'ISO 9001:2015 Certified', 'subtitle' => 'QMS Certified Facility in New Delhi', 'icon' => 'bi bi-award-fill'],
+        ['id' => 2, 'title' => 'Surgical Grade SS 304/316', 'subtitle' => 'Corrosion-Resistant Precision Alloy', 'icon' => 'bi bi-shield-check'],
+        ['id' => 3, 'title' => 'Sterile Cleanroom Packaging', 'subtitle' => 'Hygienic 50/Pack & Sealed Cartons', 'icon' => 'bi bi-box-seam-fill'],
+        ['id' => 4, 'title' => 'Make In India & Export Ready', 'subtitle' => 'Supplying 28+ States & Global Markets', 'icon' => 'bi bi-globe-americas']
+    ];
+}
+
+/**
+ * Fetch "Why Choose Stridewel" Section Data
+ */
+function get_home_why_data() {
+    global $conn;
+    $meta = [
+        'subheading' => 'Why Choose Stridewel',
+        'heading' => 'Precision Engineering & <span>Quality Manufacturing</span>',
+        'description' => 'India\'s trusted manufacturer of veterinary breeding instruments and cryogenic storage technology, built to rigorous international standards.',
+        'btn_text' => 'About Our Factory',
+        'btn_link' => 'about'
+    ];
+    $items = [];
+
+    if ($conn) {
+        $mq = @mysqli_query($conn, "SELECT * FROM `tbl_home_why_meta` WHERE `id`=1 LIMIT 1");
+        if ($mq && ($mrow = mysqli_fetch_assoc($mq))) {
+            $meta = $mrow;
+        }
+        $iq = @mysqli_query($conn, "SELECT * FROM `tbl_home_why` WHERE `status`=1 ORDER BY `sort_order` ASC, `id` ASC");
+        if ($iq && mysqli_num_rows($iq) > 0) {
+            while ($r = mysqli_fetch_assoc($iq)) {
+                $items[] = $r;
+            }
+        }
+    }
+
+    if (empty($items)) {
+        $items = [
+            ['id' => 1, 'title' => 'ISO 9001:2015 Certified', 'description' => 'Manufactured in cleanroom controlled environments under stringent QMS quality protocols from raw surgical stainless steel to final testing.', 'icon' => 'bi bi-patch-check-fill'],
+            ['id' => 2, 'title' => 'Precision Compatibility', 'description' => 'Dual-step precision plungers and French sheath designs engineered for 100% seamless seating with 0.25ml and 0.5ml semen straws.', 'icon' => 'bi bi-bullseye'],
+            ['id' => 3, 'title' => 'Cryogenic Efficiency', 'description' => 'Super-vacuum multi-layer insulation technology ensuring ultra-low liquid nitrogen evaporation rates and long biological holding times.', 'icon' => 'bi bi-snow2'],
+            ['id' => 4, 'title' => 'Complete Solution Chain', 'description' => 'Full product spectrum covering Semen Collection, Laboratory Motility Analysis, Cryogenic Storage, Thawing, and Field Insemination.', 'icon' => 'bi bi-diagram-3-fill'],
+            ['id' => 5, 'title' => 'Institutional Supply Partner', 'description' => 'Trusted supplier for State Animal Husbandry Departments, Milk Producer Federations, Livestock Development Boards, and Global Exporters.', 'icon' => 'bi bi-building-fill-check'],
+            ['id' => 6, 'title' => 'Expert Technical Advisory', 'description' => 'Direct factory technical assistance, usage guidance, custom branding for tenders, and rapid replacement support across India.', 'icon' => 'bi bi-headset']
+        ];
+    }
+
+    return ['meta' => $meta, 'items' => $items];
+}
+
+/**
+ * Fetch "Manufacturing Pipeline" Section Data
+ */
+function get_home_pipeline_data() {
+    global $conn;
+    $meta = [
+        'badge' => 'Direct Manufacturer & ISO 9001:2015 Certified Facility',
+        'heading' => 'Precision Engineering & <span>Manufacturing Pipeline</span>',
+        'description' => 'A look inside our state-of-the-art facility in New Delhi—combining Swiss CNC machining, medical cleanrooms, and stringent ISO 9001:2015 micro-calibration.',
+        'btn_text' => 'Factory & Facility Tour',
+        'btn_link' => 'about',
+        'stat1_num' => '15+ CNC Centers', 'stat1_lbl' => 'Swiss Machining & Robotic Polish', 'stat1_icon' => 'bi bi-gear-wide-connected',
+        'stat2_num' => '100k+ Daily Sheaths', 'stat2_lbl' => 'Cleanroom Automated Injection', 'stat2_icon' => 'bi bi-shield-plus',
+        'stat3_num' => '100% Micro-QA', 'stat3_lbl' => 'Optical Calibration & Leak Testing', 'stat3_icon' => 'bi bi-patch-check-fill',
+        'stat4_num' => '28+ Indian States', 'stat4_lbl' => 'Institutional Tenders & Exports', 'stat4_icon' => 'bi bi-truck'
+    ];
+    $items = [];
+
+    if ($conn) {
+        $mq = @mysqli_query($conn, "SELECT * FROM `tbl_home_pipeline_meta` WHERE `id`=1 LIMIT 1");
+        if ($mq && ($mrow = mysqli_fetch_assoc($mq))) {
+            $meta = $mrow;
+        }
+        $iq = @mysqli_query($conn, "SELECT * FROM `tbl_home_pipeline` WHERE `status`=1 ORDER BY `sort_order` ASC, `id` ASC");
+        if ($iq && mysqli_num_rows($iq) > 0) {
+            while ($r = mysqli_fetch_assoc($iq)) {
+                $items[] = $r;
+            }
+        }
+    }
+
+    if (empty($items)) {
+        $items = [
+            ['id' => 1, 'step_num' => '01', 'phase_label' => 'CNC Tooling & Forging', 'title' => 'Precision SS Engineering', 'description' => 'Swiss CNC machining and fine hand-polishing of medical-grade SS 304/316 instruments with micro-tolerance standards.', 'pills' => 'Universal A.I. Guns, Surgical Forceps, SS Trays & Scissor', 'image' => 'assets/images/manufacturing/mfg_1_ss_machining.jpg'],
+            ['id' => 2, 'step_num' => '02', 'phase_label' => 'Medical Polymers', 'title' => 'Cleanroom Extrusion', 'description' => 'Automated injection molding and extrusion of non-toxic virgin French A.I. sheaths, goblets, and protective veterinary gloves.', 'pills' => 'French A.I. Sheaths, Cryo Goblets, Gynae Gloves', 'image' => 'assets/images/manufacturing/mfg_2_cleanroom_molding.jpg'],
+            ['id' => 3, 'step_num' => '03', 'phase_label' => 'Quality Assurance', 'title' => 'ISO 9001:2015 Calibration', 'description' => 'Stringent optical micro-calibration, straw-seating fitment checks, smooth-tip inspection, and zero-defect QA protocols.', 'pills' => 'Optical Micrometers, Straw Seating Test, Zero-Defect Standard', 'image' => 'assets/images/manufacturing/mfg_3_qa_calibration.jpg'],
+            ['id' => 4, 'step_num' => '04', 'phase_label' => 'Fulfillment & Logistics', 'title' => 'Institutional Supply', 'description' => 'Sterile cleanroom boxing, batch barcoding, and rapid bulk dispatch for State Animal Husbandry & Milk Producer Federations.', 'pills' => '28+ States Dispatch, Milk Federations, Export Ready', 'image' => 'assets/images/manufacturing/mfg_4_institutional_logistics.jpg']
+        ];
+    }
+
+    return ['meta' => $meta, 'items' => $items];
+}
+
+/**
+ * Fetch "Milestones & Heritage Journey" Timeline Data
+ */
+function get_timeline_data() {
+    global $conn;
+    $meta = [
+        'badge' => 'Milestones & Heritage Journey',
+        'heading' => 'Four Decades of <span>Pioneering Animal Husbandry</span> (1982 – Present)',
+        'description' => 'Tracing our journey from Dr. N. Burdizzo\'s sole Indian agency to in-house manufacturing, Minitube Germany partnership, and regular veterinary R&D.'
+    ];
+    $items = [];
+
+    if ($conn) {
+        $mq = @mysqli_query($conn, "SELECT * FROM `tbl_timeline_meta` WHERE `id`=1 LIMIT 1");
+        if ($mq && ($mrow = mysqli_fetch_assoc($mq))) {
+            $meta = $mrow;
+        }
+        $iq = @mysqli_query($conn, "SELECT * FROM `tbl_timeline` WHERE `status`=1 ORDER BY `sort_order` ASC, `id` ASC");
+        if ($iq && mysqli_num_rows($iq) > 0) {
+            while ($r = mysqli_fetch_assoc($iq)) {
+                $items[] = $r;
+            }
+        }
+    }
+
+    if (empty($items)) {
+        $items = [
+            ['id' => 1, 'year' => '1982', 'year_tag' => 'Founding', 'title' => 'Italian Burdizzo Castrators', 'card_tag' => 'Import Pioneer', 'description' => 'Commenced business by marketing world-famous Italian Burdizzo Castrators manufactured by Dr. N. Burdizzo in Italy.'],
+            ['id' => 2, 'year' => '1985', 'year_tag' => 'Sole Agency', 'title' => 'Appointed Sole Agents for India', 'card_tag' => 'Exclusive Agency', 'description' => 'Appointed Sole Agents for India in 1985, adding comprehensive Veterinary Equipments and Surgical Instruments to cater to Veterinary Hospitals all over India.'],
+            ['id' => 3, 'year' => '1986', 'year_tag' => 'Semen Tech', 'title' => 'Frozen Semen Tech & Embryo Transfer', 'card_tag' => 'Bull Station Supply', 'description' => 'Entered the upcoming field of Frozen Semen Technology and Embryo Transfer, selling indigenously manufactured A.I. Consumables and Frozen Semen Bull Station equipment.'],
+            ['id' => 4, 'year' => '2012', 'year_tag' => 'Manufacturing', 'title' => 'In-House Manufacturing Plant', 'card_tag' => 'OEM Production', 'description' => 'Set up dedicated manufacturing facility producing A.I. Sheaths, Guns, Gloves, Plastic Goblets, Artificial Vaginas, Silicone Cones, LN2 Dipsticks, Aprons, Kit Bags, Cryojar Bags, plus precision surgical instruments.'],
+            ['id' => 5, 'year' => '2016', 'year_tag' => 'Partnership', 'title' => 'Associated with M/s Minitube Germany', 'card_tag' => 'Cryogenic Systems', 'description' => 'Associated with M/s Minitube Germany for marketing high State-of-the-Art Cryogenic Systems for Advanced Animal Reproductive Technology to State Livestock Development Agencies/Boards across India.'],
+            ['id' => 6, 'year' => 'Present', 'year_tag' => 'Regular R&D', 'title' => 'Continuous In-House R&D', 'card_tag' => 'Innovation', 'description' => 'Dedicated to work tirelessly for the veterinary industry by doing Research & Development (R&D) on a regular basis, delivering cutting-edge solutions to global livestock breeders.']
+        ];
+    }
+
+    return ['meta' => $meta, 'items' => $items];
+}
+

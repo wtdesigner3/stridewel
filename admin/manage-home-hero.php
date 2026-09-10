@@ -6,9 +6,9 @@ $msg = "";
 $error = "";
 
 // Ensure upload directory exists
-$upload_dir = "../../uploads/home/";
+$upload_dir = "../uploads/home/";
 if (!is_dir($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
+    @mkdir($upload_dir, 0777, true);
 }
 
 // 1. Handle Single Status Toggle (GET fallback)
@@ -27,7 +27,7 @@ if (isset($_GET['delete'])) {
     $get_img = mysqli_query($conn, "SELECT `image` FROM `tbl_hero_slides` WHERE `id`=$del_id");
     if ($img_row = mysqli_fetch_assoc($get_img)) {
         if (!empty($img_row['image']) && strpos($img_row['image'], 'uploads/home/') !== false) {
-            $file_to_del = "../../" . $img_row['image'];
+            $file_to_del = "../" . $img_row['image'];
             if (file_exists($file_to_del)) {
                 @unlink($file_to_del);
             }
@@ -55,7 +55,7 @@ if (isset($_POST['batch_action']) && !empty($_POST['selected_ids'])) {
         $img_q = mysqli_query($conn, "SELECT `image` FROM `tbl_hero_slides` WHERE `id` IN ($id_list)");
         while ($img_row = mysqli_fetch_assoc($img_q)) {
             if (!empty($img_row['image']) && strpos($img_row['image'], 'uploads/home/') !== false) {
-                $file_to_del = "../../" . $img_row['image'];
+                $file_to_del = "../" . $img_row['image'];
                 if (file_exists($file_to_del)) {
                     @unlink($file_to_del);
                 }
@@ -190,20 +190,32 @@ if ($slides_query) {
             </div>
 
             <!-- Quick Sub-Menu Switcher Pills -->
-            <div class="cms-subnav-strip">
+            <div class="cms-subnav-strip mb-4">
                 <a href="manage-home-hero.php" class="cms-subnav-pill active">
                     <i class="fa-solid fa-images"></i> Hero Carousel Banners
                 </a>
-                <a href="manage-home-intro.php" class="cms-subnav-pill">
-                    <i class="fa-solid fa-file-lines"></i> Corporate Story Intro
+                <a href="manage-home-trust.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-shield-halved"></i> Quality Trust Bar
                 </a>
-                <a href="manage-home-pillars.php" class="cms-subnav-pill">
-                    <i class="fa-solid fa-gem"></i> Why Choose Us Pillars
+                <a href="manage-about-story.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-building"></i> Company Overview
                 </a>
-                <a href="manage-home-terroir.php" class="cms-subnav-pill">
-                    <i class="fa-solid fa-mountain"></i> Origin Terroir Belts
+                <a href="manage-categories.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-boxes-stacked"></i> Product Categories
                 </a>
-                <a href="../../index.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
+                <a href="manage-home-why.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-award"></i> Why Choose Stridewel
+                </a>
+                <a href="manage-home-pipeline.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-industry"></i> Manufacturing Pipeline
+                </a>
+                <a href="manage-faq.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-circle-question"></i> Homepage FAQs
+                </a>
+                <a href="manage-testimonial.php" class="cms-subnav-pill">
+                    <i class="fa-solid fa-comments"></i> Testimonials
+                </a>
+                <a href="../index.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live Homepage
                 </a>
             </div>
@@ -249,7 +261,7 @@ if ($slides_query) {
 
                     <!-- Add New Slide Button -->
                     <div>
-                        <button type="button" class="btn btn-antara-gold px-4 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#addSlideModal">
+                        <button type="button" class="btn btn-antara-gold px-4 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2" data-toggle="modal" data-target="#addSlideModal" data-bs-toggle="modal" data-bs-target="#addSlideModal">
                             <i class="fa-solid fa-plus"></i> Add Slide
                         </button>
                     </div>
@@ -344,7 +356,7 @@ if ($slides_query) {
                                             <!-- Action Buttons -->
                                             <td style="text-align: center;">
                                                 <div class="d-inline-flex gap-1 justify-content-center">
-                                                    <button type="button" class="btn-action-square btn-action-edit" data-bs-toggle="modal" data-bs-target="#editSlideModal<?= $s['id'] ?>" title="Edit Slide">
+                                                    <button type="button" class="btn-action-square btn-action-edit" data-toggle="modal" data-target="#editSlideModal<?= $s['id'] ?>" data-bs-toggle="modal" data-bs-target="#editSlideModal<?= $s['id'] ?>" title="Edit Slide">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                     <a href="manage-home-hero.php?delete=<?= $s['id'] ?>" class="btn-action-square btn-action-delete" onclick="return confirm('Are you sure you want to delete this hero slide?');" title="Delete Slide">
@@ -590,7 +602,7 @@ if ($slides_query) {
         const toastEl = document.getElementById('crudToast');
         const toastMessage = document.getElementById('crudToastMessage');
         const toastIcon = document.getElementById('crudToastIcon');
-        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        const toast = (toastEl && typeof bootstrap !== 'undefined' && bootstrap.Toast) ? new bootstrap.Toast(toastEl, { delay: 3000 }) : null;
 
         // Helper: Update batch action bar state
         function updateBatchBar() {

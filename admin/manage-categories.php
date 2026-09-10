@@ -6,9 +6,9 @@ $msg = "";
 $error = "";
 
 // Ensure upload directory exists
-$upload_dir = "../../uploads/categories/";
+$upload_dir = "../uploads/categories/";
 if (!is_dir($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
+    @mkdir($upload_dir, 0777, true);
 }
 
 // 1. Handle Single Status Toggle (GET fallback)
@@ -27,7 +27,7 @@ if (isset($_GET['delete'])) {
     $get_img = mysqli_query($conn, "SELECT `image` FROM `tbl_category` WHERE `id`=$del_id");
     if ($img_row = mysqli_fetch_assoc($get_img)) {
         if (!empty($img_row['image']) && strpos($img_row['image'], 'uploads/categories/') !== false) {
-            $file_to_del = "../../" . $img_row['image'];
+            $file_to_del = "../" . $img_row['image'];
             if (file_exists($file_to_del)) {
                 @unlink($file_to_del);
             }
@@ -54,7 +54,7 @@ if (isset($_POST['batch_action']) && !empty($_POST['selected_ids'])) {
         $img_q = mysqli_query($conn, "SELECT `image` FROM `tbl_category` WHERE `id` IN ($id_list)");
         while ($img_row = mysqli_fetch_assoc($img_q)) {
             if (!empty($img_row['image']) && strpos($img_row['image'], 'uploads/categories/') !== false) {
-                $file_to_del = "../../" . $img_row['image'];
+                $file_to_del = "../" . $img_row['image'];
                 if (file_exists($file_to_del)) {
                     @unlink($file_to_del);
                 }
@@ -227,7 +227,7 @@ if ($cats_q) {
 
                     <!-- Add Category Button -->
                     <div>
-                        <button type="button" class="btn btn-primary px-4 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #2563EB; border-color: #2563EB;" data-bs-toggle="modal" data-bs-target="#addCatModal">
+                        <button type="button" class="btn btn-primary px-4 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #2563EB; border-color: #2563EB;" data-toggle="modal" data-target="#addCatModal" data-bs-toggle="modal" data-bs-target="#addCatModal">
                             <i class="fa-solid fa-plus"></i> Add Category
                         </button>
                     </div>
@@ -318,7 +318,7 @@ if ($cats_q) {
                                             <!-- Action Buttons (Edit pencil & Delete trash) -->
                                             <td style="text-align: center;">
                                                 <div class="d-inline-flex gap-1 justify-content-center">
-                                                    <button type="button" class="btn-action-square btn-action-edit" data-bs-toggle="modal" data-bs-target="#editCatModal<?= $cat['id'] ?>" title="Edit Category">
+                                                    <button type="button" class="btn-action-square btn-action-edit" data-toggle="modal" data-target="#editCatModal<?= $cat['id'] ?>" data-bs-toggle="modal" data-bs-target="#editCatModal<?= $cat['id'] ?>" title="Edit Category">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                     <a href="manage-categories.php?delete=<?= $cat['id'] ?>" class="btn-action-square btn-action-delete" onclick="return confirm('Are you sure you want to delete this category?');" title="Delete Category">
@@ -408,7 +408,7 @@ if ($cats_q) {
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label fw-bold text-dark">Description</label>
-                                <textarea name="desc" class="form-control" rows="3" placeholder="Category highlights and commodity description..."></textarea>
+                                <textarea name="desc" class="form-control no-ckeditor" rows="3" placeholder="Category highlights and commodity description..."></textarea>
                             </div>
                             <div class="col-md-8">
                                 <label class="form-label fw-bold text-dark">Category Image</label>
@@ -481,7 +481,7 @@ if ($cats_q) {
                                     </div>
                                     <div class="col-md-12">
                                         <label class="form-label fw-bold text-dark">Description</label>
-                                        <textarea name="desc" class="form-control" rows="3"><?= htmlspecialchars($cat['desc']) ?></textarea>
+                                        <textarea name="desc" class="form-control no-ckeditor" rows="3"><?= htmlspecialchars($cat['desc']) ?></textarea>
                                     </div>
                                     <div class="col-md-12">
                                         <label class="form-label fw-bold text-dark">Current Image</label>
@@ -539,7 +539,7 @@ if ($cats_q) {
         const toastEl = document.getElementById('crudToast');
         const toastMessage = document.getElementById('crudToastMessage');
         const toastIcon = document.getElementById('crudToastIcon');
-        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        const toast = (toastEl && typeof bootstrap !== 'undefined' && bootstrap.Toast) ? new bootstrap.Toast(toastEl, { delay: 3000 }) : null;
 
         function updateBatchBar() {
             const checkedBoxes = document.querySelectorAll('.row-select-cb:checked');

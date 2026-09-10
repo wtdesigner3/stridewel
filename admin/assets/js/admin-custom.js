@@ -1,7 +1,64 @@
 /**
- * Antara Globale - Admin Dashboard Custom Enhancements (CMS 2.0)
- * Global Select2 auto-initialization with search, modal handling, and form controls
+ * Stridewel International - Admin Dashboard Custom Enhancements (CMS 2.0)
+ * Global Select2, CKEditor 5, Modal/Toast Bootstrap Compatibility Shims
  */
+
+// Global Bootstrap 5 to Bootstrap 4 Compatibility Shim
+(function() {
+    if (typeof window.bootstrap === 'undefined') {
+        window.bootstrap = {};
+    }
+    if (!window.bootstrap.Modal) {
+        window.bootstrap.Modal = function(element, options) {
+            this.element = typeof element === 'string' ? document.querySelector(element) : element;
+            this.show = function() { if (window.jQuery && this.element) window.jQuery(this.element).modal('show'); };
+            this.hide = function() { if (window.jQuery && this.element) window.jQuery(this.element).modal('hide'); };
+            this.toggle = function() { if (window.jQuery && this.element) window.jQuery(this.element).modal('toggle'); };
+        };
+        window.bootstrap.Modal.getInstance = function(element) {
+            return new window.bootstrap.Modal(element);
+        };
+        window.bootstrap.Modal.getOrCreateInstance = function(element, options) {
+            return new window.bootstrap.Modal(element, options);
+        };
+    }
+    if (!window.bootstrap.Toast) {
+        window.bootstrap.Toast = function(element, options) {
+            this.element = typeof element === 'string' ? document.querySelector(element) : element;
+            this.options = options || { delay: 3000 };
+            this.show = function() {
+                if (!this.element) return;
+                var $el = window.jQuery ? window.jQuery(this.element) : null;
+                if ($el && typeof $el.toast === 'function') {
+                    $el.toast(this.options).toast('show');
+                } else {
+                    this.element.classList.add('show');
+                    var el = this.element;
+                    var delay = (this.options && this.options.delay) || 3000;
+                    setTimeout(function() {
+                        if (el) el.classList.remove('show');
+                    }, delay);
+                }
+            };
+            this.hide = function() {
+                if (!this.element) return;
+                var $el = window.jQuery ? window.jQuery(this.element) : null;
+                if ($el && typeof $el.toast === 'function') {
+                    $el.toast('hide');
+                } else {
+                    this.element.classList.remove('show');
+                }
+            };
+        };
+        window.bootstrap.Toast.getInstance = function(element) {
+            return new window.bootstrap.Toast(element);
+        };
+        window.bootstrap.Toast.getOrCreateInstance = function(element, options) {
+            return new window.bootstrap.Toast(element, options);
+        };
+    }
+})();
+
 (function($) {
     'use strict';
 
@@ -158,8 +215,8 @@
     window.initAdminCKEditor = function(context) {
         var $scope = context ? $(context) : $(document);
         $scope.find('textarea.ckeditor, textarea[id*="editor"], textarea[name*="content"], textarea[name*="desc"], textarea[name*="detail"], textarea[data-ckeditor="true"]').each(function() {
-            // Avoid initializing simple short inputs or badge fields if excluded
-            if ($(this).hasClass('no-ckeditor') || $(this).attr('rows') === '1' || $(this).data('no-ckeditor') || (this.name && this.name.indexOf('badge') !== -1)) {
+            // Avoid initializing simple short inputs, badge fields, or plain textareas inside modals
+            if ($(this).hasClass('no-ckeditor') || $(this).attr('rows') === '1' || $(this).data('no-ckeditor') || (this.name && this.name.indexOf('badge') !== -1) || ($(this).closest('.modal').length > 0 && !$(this).hasClass('ckeditor') && !$(this).data('ckeditor'))) {
                 return;
             }
             window.initCKEditor5OnElement(this);
@@ -213,15 +270,23 @@
         });
 
         // 5. Bootstrap 4 / 5 Modal Compatibility
-        $(document).on('click', '[data-bs-dismiss="modal"]', function(e) {
+        $(document).on('click', '[data-bs-dismiss="modal"], [data-dismiss="modal"], .modal-close-btn, .close, .btn-close', function(e) {
             e.preventDefault();
             $(this).closest('.modal').modal('hide');
         });
-        $(document).on('click', '[data-bs-toggle="modal"]', function(e) {
-            var target = $(this).data('bs-target') || $(this).attr('data-target') || $(this).attr('href');
+        $(document).on('click', '[data-bs-toggle="modal"], [data-toggle="modal"]', function(e) {
+            var target = $(this).attr('data-bs-target') || $(this).attr('data-target') || $(this).data('bsTarget') || $(this).data('target') || $(this).attr('href');
             if (target && $(target).length) {
                 e.preventDefault();
                 $(target).modal('show');
+            }
+        });
+
+        // 5.1 Bootstrap 4 / 5 Tab Compatibility
+        $(document).on('click', '[data-bs-toggle="tab"], [data-toggle="tab"], [data-bs-toggle="pill"], [data-toggle="pill"]', function(e) {
+            e.preventDefault();
+            if (typeof $.fn.tab === 'function') {
+                $(this).tab('show');
             }
         });
 

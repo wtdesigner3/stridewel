@@ -6,9 +6,9 @@ $msg = "";
 $error = "";
 
 // Ensure upload directory exists
-$upload_dir = __DIR__ . '/../../uploads/testimonials/';
+$upload_dir = __DIR__ . '/../uploads/testimonials/';
 if (!is_dir($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
+    @mkdir($upload_dir, 0777, true);
 }
 
 // 1. Handle Status Toggle via GET
@@ -151,10 +151,10 @@ $cnt_disabled = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FRO
                     </h1>
                 </div>
                 <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
-                    <button type="button" class="btn btn-warning fw-bold shadow-sm px-3" data-bs-toggle="modal" data-bs-target="#addModal">
+                    <button type="button" class="btn btn-warning fw-bold shadow-sm px-3" data-toggle="modal" data-target="#addModal" data-bs-toggle="modal" data-bs-target="#addModal">
                         <i class="fa-solid fa-plus-circle me-1"></i> Add New Testimonial
                     </button>
-                    <a href="../../index.php#testimonials" target="_blank" class="btn btn-outline-success btn-sm px-3">
+                    <a href="../index.php" target="_blank" class="btn btn-outline-success btn-sm px-3">
                         <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Live Site
                     </a>
                 </div>
@@ -303,7 +303,7 @@ $cnt_disabled = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FRO
                                             <!-- Action Buttons -->
                                             <td style="text-align: end;">
                                                 <div class="d-inline-flex gap-1 justify-content-end">
-                                                    <button type="button" class="btn-action-square btn-action-edit" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['tt_id'] ?>" title="Edit Review">
+                                                    <button type="button" class="btn-action-square btn-action-edit" data-toggle="modal" data-target="#editModal<?= $row['tt_id'] ?>" data-bs-toggle="modal" data-bs-target="#editModal<?= $row['tt_id'] ?>" title="Edit Review">
                                                         <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                     <a href="manage-testimonial.php?del_id=<?= $row['tt_id'] ?>" onclick="return confirm('Are you sure you want to delete this testimonial?');" class="btn-action-square btn-action-delete" title="Delete Review">
@@ -367,7 +367,7 @@ $cnt_disabled = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FRO
                                                                 </div>
                                                                 <div class="col-12">
                                                                     <label class="form-label fw-bold">Review Endorsement / Testimonial Text <span class="text-danger">*</span></label>
-                                                                    <textarea name="tt_detail" class="form-control" rows="4" placeholder="Enter the complete endorsement quote from the client..." required><?= htmlspecialchars($row['tt_detail']) ?></textarea>
+                                                                    <textarea name="tt_detail" class="form-control no-ckeditor" rows="4" placeholder="Enter the complete endorsement quote from the client..." required><?= htmlspecialchars($row['tt_detail']) ?></textarea>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -464,7 +464,7 @@ $cnt_disabled = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FRO
                             </div>
                             <div class="col-12">
                                 <label class="form-label fw-bold">Review Endorsement / Testimonial Text <span class="text-danger">*</span></label>
-                                <textarea name="tt_detail" class="form-control" rows="4" placeholder="Enter the complete endorsement quote from the client..." required></textarea>
+                                <textarea name="tt_detail" class="form-control no-ckeditor" rows="4" placeholder="Enter the complete endorsement quote from the client..." required></textarea>
                             </div>
                         </div>
                     </div>
@@ -501,7 +501,7 @@ $cnt_disabled = mysqli_fetch_assoc(mysqli_query($conn, "SELECT count(*) as c FRO
         const toastEl = document.getElementById('crudToast');
         const toastMessage = document.getElementById('crudToastMessage');
         const toastIcon = document.getElementById('crudToastIcon');
-        const toast = toastEl ? new bootstrap.Toast(toastEl, { delay: 3000 }) : null;
+        const toast = (toastEl && typeof bootstrap !== 'undefined' && bootstrap.Toast) ? new bootstrap.Toast(toastEl, { delay: 3000 }) : null;
         const filterTabs = document.querySelectorAll('.filter-tab');
 
         let currentFilter = 'all';

@@ -107,7 +107,7 @@ $about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE
                 <a href="manage-about-cta.php" class="cms-subnav-pill">
                     <i class="fa-solid fa-bullhorn"></i> CTA Banner
                 </a>
-                <a href="../../about.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
+                <a href="../about.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live About Page
                 </a>
             </div>

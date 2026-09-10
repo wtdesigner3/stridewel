@@ -127,12 +127,12 @@ if (isset($_POST['update_password'])) {
 						<div class="panel-heading p-0">
 							<ul class="nav nav-executive-tabs px-3" id="profileTabs" role="tablist">
 								<li class="nav-item">
-									<button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
+									<button class="nav-link active" id="details-tab" data-toggle="tab" data-target="#details" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
 										<i class="fa-solid fa-user-pen me-2"></i>Account Details
 									</button>
 								</li>
 								<li class="nav-item">
-									<button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
+									<button class="nav-link" id="password-tab" data-toggle="tab" data-target="#password" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
 										<i class="fa-solid fa-key me-2"></i>Change Password
 									</button>
 								</li>
