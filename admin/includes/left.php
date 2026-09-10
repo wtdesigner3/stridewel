@@ -15,10 +15,24 @@ $profile = get_site_profile();
 				</a>
 			</li>
 
+			<?php 
+			$pending_inquiries_cnt = 0;
+			if (isset($conn) && $conn) {
+				$pi_res = @mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_enquiry` WHERE `status`='Pending' OR `status`='pending' OR `status`='New'");
+				if ($pi_res && ($pi_row = mysqli_fetch_assoc($pi_res))) {
+					$pending_inquiries_cnt = (int)$pi_row['c'];
+				}
+			}
+			?>
 			<li class="<?php echo ($current_page == 'manage-enquiries.php') ? 'active' : ''; ?>">
-				<a href="manage-enquiries.php">
-					<i class="fa-solid fa-inbox"></i>
-					<span>RFQ Leads &amp; CRM</span>
+				<a href="manage-enquiries.php" class="d-flex align-items-center justify-content-between">
+					<div>
+						<i class="fa-solid fa-inbox"></i>
+						<span>RFQ Leads &amp; CRM</span>
+					</div>
+					<?php if ($pending_inquiries_cnt > 0): ?>
+						<span class="badge bg-danger rounded-pill px-2" style="font-size: 10px;"><?= $pending_inquiries_cnt ?></span>
+					<?php endif; ?>
 				</a>
 			</li>
 

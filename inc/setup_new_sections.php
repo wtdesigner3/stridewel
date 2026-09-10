@@ -239,4 +239,21 @@ if (($cat_row['cnt'] ?? 0) == 0) {
     echo "[*] tbl_catalog ready\n";
 }
 
+// 8. Ensure tbl_enquiry has source_form and ip_address columns
+$chk_sf = mysqli_query($conn, "SHOW COLUMNS FROM `tbl_enquiry` LIKE 'source_form'");
+if (mysqli_num_rows($chk_sf) == 0) {
+    mysqli_query($conn, "ALTER TABLE `tbl_enquiry` ADD `source_form` VARCHAR(255) DEFAULT 'Website Form'");
+    echo "[+] Added source_form column to tbl_enquiry\n";
+} else {
+    echo "[*] source_form column already exists in tbl_enquiry\n";
+}
+
+$chk_ip = mysqli_query($conn, "SHOW COLUMNS FROM `tbl_enquiry` LIKE 'ip_address'");
+if (mysqli_num_rows($chk_ip) == 0) {
+    mysqli_query($conn, "ALTER TABLE `tbl_enquiry` ADD `ip_address` VARCHAR(60) DEFAULT NULL");
+    echo "[+] Added ip_address column to tbl_enquiry\n";
+} else {
+    echo "[*] ip_address column already exists in tbl_enquiry\n";
+}
+
 echo "=== All tables and migrations executed successfully ===\n";

@@ -123,42 +123,28 @@ require_once __DIR__ . '/includes/header.php';
 						</p>
 
 						<form id="contactPageForm" method="POST" action="submit-inquiry.php">
-							<input type="hidden" name="inquiry_type" value="Contact Page RFQ">
-							<input type="hidden" name="source_page" value="Contact Us Page">
+							<input type="hidden" name="source_form" value="Contact Us Page Form">
 
 							<div class="row g-3">
 								<div class="col-md-6">
 									<label class="form_input_label">Your Full Name <span class="req">*</span></label>
-									<input type="text" name="name" class="form-control contact_input" placeholder="Dr. / Officer Name" required>
+									<input type="text" name="name" class="form-control contact_input" placeholder="e.g. Dr. Rajesh Sharma" required>
 								</div>
 								<div class="col-md-6">
 									<label class="form_input_label">Phone / WhatsApp Number <span class="req">*</span></label>
 									<input type="tel" name="phone" class="form-control contact_input" placeholder="+91 98100 46038" required>
 								</div>
-								<div class="col-md-6">
-									<label class="form_input_label">Official Email Address <span class="req">*</span></label>
+								<div class="col-12">
+									<label class="form_input_label">Email Address <span class="req">*</span></label>
 									<input type="email" name="email" class="form-control contact_input" placeholder="stridewel@gmail.com" required>
 								</div>
-								<div class="col-md-6">
-									<label class="form_input_label">Organization / Department</label>
-									<input type="text" name="organization" class="form-control contact_input" placeholder="Dairy Fed / Vet Hospital / Agency">
-								</div>
 								<div class="col-12">
-									<label class="form_input_label">Equipment / Category of Interest <span class="req">*</span></label>
-									<select name="product_interest" class="form-select contact_input" required>
-										<option value="" selected disabled>Select primary equipment or category...</option>
-										<?php foreach ($allProducts as $p): ?>
-										<option value="<?= e($p['product_name']) ?> (<?= e($p['product_code']) ?>)"><?= e($p['product_name']) ?> (<?= e($p['product_code']) ?>)</option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-								<div class="col-12">
-									<label class="form_input_label">Requirement Details &amp; Quantity <span class="req">*</span></label>
-									<textarea name="message" class="form-control contact_input contact_textarea" rows="4" placeholder="Mention item codes (e.g. SAI 01, SAI 03), required quantity, institutional tender reference, or customization requests..." required></textarea>
+									<label class="form_input_label">Message / Inquiry Details <span class="req">*</span></label>
+									<textarea name="message" class="form-control contact_input contact_textarea" rows="4" placeholder="Write your message, required veterinary equipment, quantity, or questions here..." required></textarea>
 								</div>
 								<div class="col-12 pt-2">
 									<button type="submit" class="btn_contact_submit" id="contactSubmitBtn">
-										<i class="bi bi-send-fill me-2"></i> Submit Official Inquiry
+										<i class="bi bi-send-fill me-2"></i> Submit Inquiry
 									</button>
 								</div>
 							</div>

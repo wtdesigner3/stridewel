@@ -287,47 +287,35 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 				<!-- Modal Body / Form -->
 				<div class="modal-body">
 					<form id="quoteEnquiryForm" method="POST" action="submit-inquiry.php">
-						<input type="hidden" name="inquiry_type" value="Price Quotation">
+						<input type="hidden" name="source_form" id="quoteSourceForm" value="Quick Quote Popup Modal">
+						<input type="hidden" name="product_interest" id="quoteProduct" value="">
+
+						<div id="quoteProductBadgeWrap" style="display: none; margin-bottom: 12px;">
+							<span class="badge bg-primary text-white px-3 py-2" style="font-size: 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+								<i class="bi bi-box-seam"></i> Inquiring For: <strong id="quoteProductBadgeText"></strong>
+							</span>
+						</div>
+
 						<div class="modal_form_grid">
 							<div class="form_row_dual">
 								<div class="modal_input_group">
 									<label for="quoteName">Full Name <span>*</span></label>
-									<input type="text" name="name" id="quoteName" class="form-control" placeholder="Dr. / Officer Name" required>
+									<input type="text" name="name" id="quoteName" class="form-control" placeholder="Dr. / Officer / Client Name" required>
 								</div>
 								<div class="modal_input_group">
 									<label for="quotePhone">Phone / WhatsApp <span>*</span></label>
-									<input type="tel" name="phone" id="quotePhone" class="form-control" placeholder="+91 98100 xxxxx" required>
-								</div>
-							</div>
-
-							<div class="form_row_dual">
-								<div class="modal_input_group">
-									<label for="quoteEmail">Official Email <span>*</span></label>
-									<input type="email" name="email" id="quoteEmail" class="form-control" placeholder="procurement@organization.com" required>
-								</div>
-								<div class="modal_input_group">
-									<label for="quoteOrg">Organization / Department</label>
-									<input type="text" name="organization" id="quoteOrg" class="form-control" placeholder="Dairy Fed / Vet Hospital / Govt. Agency">
+									<input type="tel" name="phone" id="quotePhone" class="form-control" placeholder="+91 98100 46038" required>
 								</div>
 							</div>
 
 							<div class="modal_input_group">
-								<label for="quoteProduct">Select Equipment / Category <span>*</span></label>
-								<select name="product_interest" id="quoteProduct" class="form-select" required>
-									<option value="" selected disabled>Choose product or category...</option>
-									<?php foreach ($allProducts as $p): 
-										$pName = $p['name'] ?? $p['product_name'] ?? 'Veterinary Tool';
-										$pCode = $p['code'] ?? $p['product_code'] ?? '';
-									?>
-									<option value="<?= e($pName) ?><?= !empty($pCode) ? ' (' . e($pCode) . ')' : '' ?>"><?= e($pName) ?><?= !empty($pCode) ? ' (' . e($pCode) . ')' : '' ?></option>
-									<?php endforeach; ?>
-									<option value="Complete Institutional Tender / Full Catalog">Complete Institutional Tender / Full Catalog</option>
-								</select>
+								<label for="quoteEmail">Email Address <span>*</span></label>
+								<input type="email" name="email" id="quoteEmail" class="form-control" placeholder="name@organization.com" required>
 							</div>
 
 							<div class="modal_input_group">
-								<label for="quoteMessage">Quantity &amp; Tender Requirements</label>
-								<textarea name="message" id="quoteMessage" rows="3" class="form-control" placeholder="Specify estimated quantities, tender specifications, delivery location or questions..."></textarea>
+								<label for="quoteMessage">Message / Requirements <span>*</span></label>
+								<textarea name="message" id="quoteMessage" rows="3" class="form-control" placeholder="Please specify your requirements, quantity needed, or inquiry details..." required></textarea>
 							</div>
 
 							<div class="modal_submit_wrap">
@@ -421,11 +409,32 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 			});
 		});
 
-		// Auto-populate product select when opening modal from specific product card
+		// Handle opening quote modal from specific product card or general buttons
 		$(document).on('click', '.open_quote_modal', function() {
 			var prod = $(this).data('product');
 			if (prod) {
 				$('#quoteProduct').val(prod);
+				$('#quoteSourceForm').val('Product Quote: ' + prod);
+				$('#quoteProductBadgeText').text(prod);
+				$('#quoteProductBadgeWrap').show();
+			} else {
+				$('#quoteProduct').val('');
+				$('#quoteSourceForm').val('Quick Quote Popup Modal');
+				$('#quoteProductBadgeWrap').hide();
+			}
+		});
+
+		// Reset modal form state when modal closes
+		$('#quoteModal').on('hidden.bs.modal', function () {
+			$('#quoteProductBadgeWrap').hide();
+			$('#quoteProduct').val('');
+			$('#quoteSourceForm').val('Quick Quote Popup Modal');
+			// If already submitted, reset for next use
+			if ($('#quoteSuccessAlert').is(':visible')) {
+				$('#quoteSuccessAlert').hide();
+				$('#quoteEnquiryForm')[0].reset();
+				$('#quoteEnquiryForm').show();
+				$('#quoteSubmitBtn').prop('disabled', false).html('<i class="bi bi-send-fill"></i> Submit Quotation Request');
 			}
 		});
 	});

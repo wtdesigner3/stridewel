@@ -1,74 +1,96 @@
 <?php
+/**
+ * Stridewel International - Inquiries & RFQ Lead Processor
+ * Receives minimal form submissions (Name, Number, Email, Message)
+ * Records lead in database with form origin source and dispatches instant email to website owner.
+ */
+
 require_once __DIR__ . '/inc/config.php';
 require_once __DIR__ . '/inc/function.php';
 
-// Set JSON headers
+// Set JSON header for AJAX endpoints
 header('Content-Type: application/json; charset=UTF-8');
 
+// Ensure request is POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode([
         'status' => 'error',
-        'message' => 'Invalid request method.'
+        'message' => 'Invalid request method. Only POST requests are accepted.'
     ]);
     exit;
 }
 
-$name = clean_input($_POST['name'] ?? '');
-$phone = clean_input($_POST['phone'] ?? '');
-$email = clean_input($_POST['email'] ?? '');
-$organization = clean_input($_POST['organization'] ?? $_POST['company'] ?? '');
-$productInterest = clean_input($_POST['product_interest'] ?? $_POST['product_name'] ?? $_POST['subject'] ?? 'General Inquiry');
-$message = clean_input($_POST['message'] ?? $_POST['comments'] ?? '');
-$inquiryType = clean_input($_POST['inquiry_type'] ?? 'Web Lead');
-$sourcePage = clean_input($_POST['source_page'] ?? $_SERVER['HTTP_REFERER'] ?? 'Website Form');
-$ipAddress = clean_input($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+// 1. Sanitize & Normalize Inputs
+$fullName = clean_input($_POST['name'] ?? $_POST['full_name'] ?? '');
+$phone    = clean_input($_POST['phone'] ?? $_POST['number'] ?? '');
+$email    = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+$message  = clean_input($_POST['message'] ?? $_POST['comments'] ?? '');
 
-if (empty($name) || empty($phone)) {
+// Contextual details
+$sourceForm      = clean_input($_POST['source_form'] ?? $_POST['source_page'] ?? 'Website Inquiry Form');
+$productInterest = clean_input($_POST['product_interest'] ?? $_POST['product_name'] ?? '');
+$companyName     = clean_input($_POST['organization'] ?? $_POST['company'] ?? '');
+$ipAddress       = clean_input($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+
+// 2. Validate Required 4 Fields
+if (empty($fullName) || empty($phone) || empty($email) || empty($message)) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'Please provide at least your name and phone number.'
+        'message' => 'Please fill in all 4 required fields: Name, Phone / WhatsApp Number, Email, and Message.'
     ]);
     exit;
 }
 
-// Insert into tbl_enquiry if DB is connected
-global $db;
-$inserted = false;
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Please enter a valid email address.'
+    ]);
+    exit;
+}
 
-if ($db instanceof PDO) {
+// 3. Database Insertion into tbl_enquiry using prepared statement
+global $conn;
+$inserted = false;
+$lead_id = 0;
+
+if ($conn && $conn instanceof mysqli) {
     try {
-        $stmt = $db->prepare("INSERT INTO tbl_enquiry (name, email, phone, organization, product_name, message, inquiry_type, source_page, ip_address, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'New', NOW())");
-        $inserted = $stmt->execute([
-            $name,
-            $email,
-            $phone,
-            $organization,
-            $productInterest,
-            $message,
-            $inquiryType,
-            $sourcePage,
-            $ipAddress
-        ]);
+        $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `source_form`, `ip_address`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+        if ($stmt) {
+            $stmt->bind_param("ssssssss", $fullName, $email, $phone, $companyName, $productInterest, $message, $sourceForm, $ipAddress);
+            $inserted = $stmt->execute();
+            $lead_id = $stmt->insert_id;
+            $stmt->close();
+        }
     } catch (Exception $e) {
-        error_log("Enquiry insert error: " . $e->getMessage());
-    }
-} elseif (is_object($db) && method_exists($db, 'prepare')) {
-    $stmt = $db->prepare("INSERT INTO tbl_enquiry (name, email, phone, organization, product_name, message, inquiry_type, source_page, ip_address, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'New', NOW())");
-    if ($stmt) {
-        $stmt->bind_param("sssssssss", $name, $email, $phone, $organization, $productInterest, $message, $inquiryType, $sourcePage, $ipAddress);
-        $inserted = $stmt->execute();
+        error_log("Enquiry database insert exception: " . $e->getMessage());
     }
 }
 
-// If redirect is requested (non-AJAX standard form submission)
+// 4. Dispatch Email Alert to Website Owner
+if (function_exists('send_enquiry_notification_email')) {
+    send_enquiry_notification_email([
+        'full_name' => $fullName,
+        'phone' => $phone,
+        'email' => $email,
+        'message' => $message,
+        'source_form' => $sourceForm,
+        'product_interest' => $productInterest,
+        'ip_address' => $ipAddress
+    ]);
+}
+
+// 5. If non-AJAX form with redirect requested
 if (!empty($_POST['redirect_back'])) {
     header("Location: " . $_POST['redirect_back'] . "?inquiry_status=success");
     exit;
 }
 
+// 6. Return Clean Success JSON Response
 echo json_encode([
     'status' => 'success',
-    'message' => 'Thank you! Your quotation request has been received. Our team will contact you shortly.',
-    'lead_id' => $inserted ? (is_object($db) && isset($db->lastInsertId) ? $db->lastInsertId() : ($db->insert_id ?? 1)) : 1
+    'message' => 'Thank you! Your inquiry has been received. Our technical sales team will contact you shortly.',
+    'lead_id' => $lead_id
 ]);
 exit;
