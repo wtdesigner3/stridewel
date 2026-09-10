@@ -78,7 +78,7 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 	<div class="buddy-header-area style_two" id="sticky-header">
 		<div class="container-fluid">
 			<div class="row align-items-center">
-				<div class="col-xl-2 col-lg-2 col-md-6 col-6">
+				<div class="col-xl-2 col-lg-2 col-md-4 col-4 header_logo_col">
 					<div class="header-logo">
 						<a href="index"><img src="assets/images/logo.png" alt="<?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>" style="max-height: 44px; width: auto;"></a>
 					</div>
@@ -175,13 +175,14 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 						</ul>
 					</div>
 				</div>
-				<div class="col-xl-4 col-lg-4 col-md-6 col-6">			
+				<div class="col-xl-4 col-lg-4 col-md-8 col-8 header_action_col">			
 					<div class="header_quote_wrap text-end d-flex justify-content-end align-items-center">
 						<?php if (!empty($headerCatalog['status']) && !empty($headerCatalog['catalog_pdf'])): ?>
 						<a href="<?= e($headerCatalog['catalog_pdf']) ?>" target="_blank" download class="header_catalog_btn" title="<?= e($headerCatalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>">
 							<i class="bi bi-file-earmark-pdf-fill"></i>
 							<span class="catalog_text_desktop d-none d-xl-inline">Download Catalog</span>
-							<span class="catalog_text_tablet d-inline d-xl-none">Catalog</span>
+							<span class="catalog_text_tablet d-none d-sm-inline d-xl-none">Catalog</span>
+							<span class="catalog_text_mobile d-inline d-sm-none">PDF</span>
 						</a>
 						<?php endif; ?>
 						<a href="#quoteModal" class="header_quote_btn open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal"><i class="bi bi-file-earmark-text-fill"></i> <span>Get Quote</span></a>
