@@ -51,6 +51,9 @@ if (isset($_POST['login'])) {
             $_SESSION['admin_email'] = $admin_data['email'] ?? 'info@stridewel.com';
             $_SESSION['admin_user'] = $admin_data['username'] ?? 'admin';
             $_SESSION['success'] = "Welcome to Stridewel International Management Console!";
+            if (function_exists('ensure_admin_database_schema') && isset($conn) && $conn) {
+                ensure_admin_database_schema($conn);
+            }
             header('Location: index.php');
             exit();
         } else {

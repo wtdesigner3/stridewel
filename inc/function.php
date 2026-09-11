@@ -1003,9 +1003,24 @@ function ensure_admin_database_schema($conn = null) {
     if (!$conn || !($conn instanceof mysqli)) {
         return;
     }
+    if (session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['admin_schema_synced'])) {
+        return;
+    }
     static $schema_synced = false;
     if ($schema_synced) return;
     $schema_synced = true;
+
+    $get_table_count = function($tbl) use ($conn) {
+        try {
+            if (!$conn || !($conn instanceof mysqli)) return 0;
+            $res = @mysqli_query($conn, "SELECT COUNT(*) as c FROM `$tbl`");
+            if ($res instanceof mysqli_result) {
+                $row = mysqli_fetch_assoc($res);
+                return (int)($row['c'] ?? 0);
+            }
+        } catch (Throwable $t) {}
+        return 0;
+    };
 
     try {
         // 1. Ensure tbl_about columns exist
@@ -1062,7 +1077,7 @@ function ensure_admin_database_schema($conn = null) {
 
         $existing_about_cols = [];
         $res = @mysqli_query($conn, "SHOW COLUMNS FROM `tbl_about`");
-        if ($res) {
+        if ($res instanceof mysqli_result) {
             while ($row = mysqli_fetch_assoc($res)) {
                 $existing_about_cols[] = strtolower($row['Field']);
             }
@@ -1096,7 +1111,7 @@ function ensure_admin_database_schema($conn = null) {
 
         $existing_contact_cols = [];
         $res = @mysqli_query($conn, "SHOW COLUMNS FROM `tbl_contact`");
-        if ($res) {
+        if ($res instanceof mysqli_result) {
             while ($row = mysqli_fetch_assoc($res)) {
                 $existing_contact_cols[] = strtolower($row['Field']);
             }
@@ -1127,8 +1142,7 @@ function ensure_admin_database_schema($conn = null) {
             `description` TEXT
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $meta_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_timeline_meta`"))['c'] ?? 0;
-        if ($meta_cnt == 0) {
+        if ($get_table_count('tbl_timeline_meta') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_timeline_meta` (`id`, `badge`, `heading`, `description`) VALUES
             (1, 'Milestones & Heritage Journey', 'Four Decades of <span>Pioneering Animal Husbandry</span> (1982 – Present)', 'Tracing our journey from Dr. N. Burdizzo\'s sole Indian agency to in-house manufacturing, Minitube Germany partnership, and regular veterinary R&D.')");
         }
@@ -1146,8 +1160,7 @@ function ensure_admin_database_schema($conn = null) {
             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $t_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_timeline`"))['c'] ?? 0;
-        if ($t_cnt == 0) {
+        if ($get_table_count('tbl_timeline') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_timeline` (`year`, `year_tag`, `title`, `card_tag`, `description`, `icon`, `sort_order`, `status`) VALUES
             ('1982', 'Founding', 'Italian Burdizzo Castrators', 'Import Pioneer', 'Commenced business by marketing world-famous Italian Burdizzo Castrators manufactured by Dr. N. Burdizzo in Italy.', 'bi-calendar-check', 1, 1),
             ('1985', 'Sole Agency', 'Appointed Sole Agents for India', 'Exclusive Agency', 'Appointed Sole Agents for India in 1985, adding comprehensive Veterinary Equipments and Surgical Instruments to cater to Veterinary Hospitals all over India.', 'bi-award', 2, 1),
@@ -1168,8 +1181,7 @@ function ensure_admin_database_schema($conn = null) {
             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $trust_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_home_trust`"))['c'] ?? 0;
-        if ($trust_cnt == 0) {
+        if ($get_table_count('tbl_home_trust') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_home_trust` (`title`, `subtitle`, `icon`, `sort_order`, `status`) VALUES
             ('ISO 9001:2015 Certified', 'QMS Certified Facility in New Delhi', 'bi-patch-check-fill', 1, 1),
             ('Surgical Grade SS 304/316', 'Corrosion-Resistant Precision Alloy', 'bi-shield-check', 2, 1),
@@ -1192,8 +1204,7 @@ function ensure_admin_database_schema($conn = null) {
             `pdf_link` VARCHAR(255) DEFAULT 'uploads/catalog/stridewel_catalog_1789024165.pdf'
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $why_meta_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_home_why_meta`"))['c'] ?? 0;
-        if ($why_meta_cnt == 0) {
+        if ($get_table_count('tbl_home_why_meta') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_home_why_meta` (`id`, `badge`, `subheading`, `heading`, `description`, `cta_text`, `cta_link`, `btn_text`, `btn_link`, `pdf_text`, `pdf_link`) VALUES
             (1, 'Engineered For Bovine Breeding Precision', 'Engineered For Bovine Breeding Precision', 'Why Choose Stridewel International', 'Four decades of engineering mastery, ISO 9001:2015 certified in-house manufacturing, and exclusive partnership with global leaders like Dr. N. Burdizzo (Italy) and Minitube Germany.', 'Explore All Product Categories', 'shop.php', 'Explore All Product Categories', 'shop.php', 'Download Complete PDF Catalogue', 'uploads/catalog/stridewel_catalog_1789024165.pdf')");
         }
@@ -1208,8 +1219,7 @@ function ensure_admin_database_schema($conn = null) {
             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $why_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_home_why`"))['c'] ?? 0;
-        if ($why_cnt == 0) {
+        if ($get_table_count('tbl_home_why') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_home_why` (`title`, `description`, `icon`, `sort_order`, `status`) VALUES
             ('ISO 9001:2015 Certified Plant', 'Every A.I. sheath, gun, and surgical tool is manufactured under strict quality management systems ensuring zero-defect delivery.', 'bi-award-fill', 1, 1),
             ('Sole Indian Agent for Burdizzo', 'Appointed since 1985 as sole authorized agents for world-renowned Dr. N. Burdizzo Italy castrators across the Indian subcontinent.', 'bi-shield-shaded', 2, 1),
@@ -1236,8 +1246,7 @@ function ensure_admin_database_schema($conn = null) {
             `bottom_note` VARCHAR(255) DEFAULT 'Need custom OEM branding, custom length A.I. guns, or bulk institutional supply quotes?'
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $pipe_meta_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_home_pipeline_meta`"))['c'] ?? 0;
-        if ($pipe_meta_cnt == 0) {
+        if ($get_table_count('tbl_home_pipeline_meta') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_home_pipeline_meta` (`id`, `badge`, `heading`, `description`, `stat_1_val`, `stat_1_label`, `stat_2_val`, `stat_2_label`, `stat_3_val`, `stat_3_label`, `stat_4_val`, `stat_4_label`, `bottom_note`) VALUES
             (1, 'Direct Manufacturer & ISO 9001:2015 Certified Facility', 'Precision Veterinary Manufacturing & Quality Assurance Pipeline', 'From Swiss CNC metal machining to automated cleanroom injection molding, explore how Stridewel delivers certified, zero-defect instruments to veterinarians and dairy boards across 28+ states.', 'SS 304/316', 'Medical-Grade Stainless Steel', '100% Virgin', 'Non-Toxic Polymer Molding', 'Optical Micrometer', 'Precision Calibration & Fitment', '48-Hour Dispatch', 'Direct Factory Wholesale Orders', 'Need custom OEM branding, custom length A.I. guns, or bulk institutional supply quotes?')");
         }
@@ -1255,8 +1264,7 @@ function ensure_admin_database_schema($conn = null) {
             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $pipe_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_home_pipeline`"))['c'] ?? 0;
-        if ($pipe_cnt == 0) {
+        if ($get_table_count('tbl_home_pipeline') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_home_pipeline` (`step_num`, `phase_label`, `title`, `description`, `pills`, `image`, `sort_order`, `status`) VALUES
             ('01', 'CNC Tooling & Forging', 'Precision SS Engineering', 'Swiss CNC machining and fine hand-polishing of medical-grade SS 304/316 instruments with micro-tolerance standards.', 'Universal A.I. Guns, Surgical Forceps, SS Trays & Scissor', 'assets/images/manufacturing/mfg_1_ss_machining.jpg', 1, 1),
             ('02', 'Medical Polymers', 'Cleanroom Extrusion', 'Automated injection molding and extrusion of non-toxic virgin French A.I. sheaths, goblets, and protective veterinary gloves.', 'French A.I. Sheaths, Cryo Goblets, Gynae Gloves', 'assets/images/manufacturing/mfg_2_cleanroom_molding.jpg', 2, 1),
@@ -1273,8 +1281,7 @@ function ensure_admin_database_schema($conn = null) {
             `status` TINYINT(1) DEFAULT 1
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $fc_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_faq_categories`"))['c'] ?? 0;
-        if ($fc_cnt == 0) {
+        if ($get_table_count('tbl_faq_categories') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_faq_categories` (`name`, `slug`, `sort_order`, `status`) VALUES
             ('General Inquiries', 'general-inquiries', 1, 1),
             ('Artificial Insemination Equipment', 'artificial-insemination-equipment', 2, 1),
@@ -1291,8 +1298,7 @@ function ensure_admin_database_schema($conn = null) {
             `status` TINYINT(1) DEFAULT 1
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-        $bc_cnt = @mysqli_fetch_assoc(@mysqli_query($conn, "SELECT COUNT(*) as c FROM `tbl_blog_categories`"))['c'] ?? 0;
-        if ($bc_cnt == 0) {
+        if ($get_table_count('tbl_blog_categories') == 0) {
             @mysqli_query($conn, "INSERT INTO `tbl_blog_categories` (`name`, `slug`, `sort_order`, `status`) VALUES
             ('Cryogenics', 'cryogenics', 1, 1),
             ('Artificial Insemination', 'artificial-insemination', 2, 1),
@@ -1330,6 +1336,10 @@ function ensure_admin_database_schema($conn = null) {
         ];
         foreach ($supplemental_tables as $st_sql) {
             @mysqli_query($conn, $st_sql);
+        }
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $_SESSION['admin_schema_synced'] = true;
         }
 
     } catch (Throwable $e) {
