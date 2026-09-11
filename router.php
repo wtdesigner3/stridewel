@@ -93,6 +93,16 @@ if ($path === 'faq' || $path === 'faq.php') {
     exit;
 }
 
+if ($path === 'catalog' || $path === 'download-catalog') {
+    $pdf = __DIR__ . '/uploads/catalog/stridewel_catalog_1789024165.pdf';
+    if (file_exists($pdf)) {
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="Stridewel_Product_Catalog.pdf"');
+        readfile($pdf);
+        exit;
+    }
+}
+
 if ($path === 'sitemap' || $path === 'sitemap.xml' || $path === 'sitemap.php') {
     require __DIR__ . '/sitemap.php';
     exit;
