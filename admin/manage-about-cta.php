@@ -7,8 +7,8 @@ $error = "";
 
 // Handle CTA Section Update
 if (isset($_POST['update_cta'])) {
-    $cur_q = mysqli_query($conn, "SELECT `cta_bg_image` FROM `tbl_about` WHERE `id`=1");
-    $cur = mysqli_fetch_assoc($cur_q);
+    $cur_q = @mysqli_query($conn, "SELECT `cta_bg_image` FROM `tbl_about` WHERE `id`=1");
+    $cur = ($cur_q && mysqli_num_rows($cur_q) > 0) ? mysqli_fetch_assoc($cur_q) : [];
     $bg_img = $cur['cta_bg_image'] ?? 'assets/images/banners/banner_institutional_supply.jpg';
 
     // Handle background image upload
@@ -54,7 +54,8 @@ if (isset($_POST['update_cta'])) {
 }
 
 // Fetch Latest Record
-$about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1"));
+$about_q = @mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1");
+$about = ($about_q && mysqli_num_rows($about_q) > 0) ? mysqli_fetch_assoc($about_q) : [];
 $cta_bg = !empty($about['cta_bg_image']) ? $about['cta_bg_image'] : "assets/images/banners/banner_institutional_supply.jpg";
 ?>
 <!DOCTYPE html>

@@ -7,9 +7,9 @@ $error = "";
 
 // Handle Capabilities Section Update (CKEditor & Image)
 if (isset($_POST['update_capabilities'])) {
-    $cur_q = mysqli_query($conn, "SELECT `capabilities_image` FROM `tbl_about` WHERE `id`=1");
-    $cur = mysqli_fetch_assoc($cur_q);
-    $img = $cur['capabilities_image'] ?? 'assets/img/commodities/shipping-logistics-port.jpg';
+    $cur_q = @mysqli_query($conn, "SELECT `capabilities_image` FROM `tbl_about` WHERE `id`=1");
+    $cur = ($cur_q && mysqli_num_rows($cur_q) > 0) ? mysqli_fetch_assoc($cur_q) : [];
+    $img = $cur['capabilities_image'] ?? 'assets/images/about/about_stridewel_lab.jpg';
 
     if (!empty($_FILES['capabilities_image']['name'])) {
         $ext = strtolower(pathinfo($_FILES['capabilities_image']['name'], PATHINFO_EXTENSION));
@@ -59,7 +59,8 @@ if (isset($_POST['update_capabilities'])) {
 }
 
 // Fetch Latest Record
-$about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1"));
+$about_q = @mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1");
+$about = ($about_q && mysqli_num_rows($about_q) > 0) ? mysqli_fetch_assoc($about_q) : [];
 ?>
 <!DOCTYPE html>
 <html lang="en">

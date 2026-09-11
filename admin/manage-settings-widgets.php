@@ -38,7 +38,8 @@ if (isset($_POST['update_widgets'])) {
 }
 
 // Fetch Current Record
-$contact = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_contact` WHERE `con_id`=1"));
+$contact_q = @mysqli_query($conn, "SELECT * FROM `tbl_contact` WHERE `con_id`=1");
+$contact = ($contact_q && mysqli_num_rows($contact_q) > 0) ? mysqli_fetch_assoc($contact_q) : get_contact_info();
 
 $call_active = ($contact['widget_call_status'] ?? 1) && !empty($contact['widget_call_phone'] ?? $contact['con_phone1'] ?? '');
 $wa_active   = ($contact['widget_wa_status'] ?? 1) && !empty($contact['widget_wa_number'] ?? $contact['con_whatsaap'] ?? '');

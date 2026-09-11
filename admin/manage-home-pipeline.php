@@ -118,7 +118,8 @@ if (isset($_POST['edit_step'])) {
     $sort = (int)($_POST['sort_order'] ?? 0);
     $status = isset($_POST['status']) ? 1 : 0;
 
-    $cur_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT `image` FROM `tbl_home_pipeline` WHERE `id`=$sid"));
+    $cur_q = @mysqli_query($conn, "SELECT `image` FROM `tbl_home_pipeline` WHERE `id`=$sid");
+    $cur_row = ($cur_q && mysqli_num_rows($cur_q) > 0) ? mysqli_fetch_assoc($cur_q) : [];
     $image_path = $cur_row['image'] ?? 'assets/images/manufacturing/mfg_1_ss_machining.jpg';
 
     if (!empty($_FILES['image']['name'])) {
@@ -164,7 +165,11 @@ if (isset($_GET['msg'])) {
 }
 
 // Fetch Section Meta
-$meta = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_home_pipeline_meta` WHERE `id`=1 LIMIT 1"));
+$meta = null;
+$mq = @mysqli_query($conn, "SELECT * FROM `tbl_home_pipeline_meta` WHERE `id`=1 LIMIT 1");
+if ($mq && mysqli_num_rows($mq) > 0) {
+    $meta = mysqli_fetch_assoc($mq);
+}
 if (!$meta) {
     $meta = [
         'badge' => 'Direct Manufacturer & ISO 9001:2015 Certified Facility',
@@ -180,8 +185,8 @@ if (!$meta) {
 
 // Fetch Process Steps
 $steps = [];
-$sq = mysqli_query($conn, "SELECT * FROM `tbl_home_pipeline` ORDER BY `sort_order` ASC, `id` ASC");
-if ($sq) {
+$sq = @mysqli_query($conn, "SELECT * FROM `tbl_home_pipeline` ORDER BY `sort_order` ASC, `id` ASC");
+if ($sq && mysqli_num_rows($sq) > 0) {
     while ($row = mysqli_fetch_assoc($sq)) {
         $steps[] = $row;
     }

@@ -30,7 +30,8 @@ if (isset($_POST['edit_stat_metric'])) {
 }
 
 // Fetch Latest Record
-$about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1"));
+$about_q = @mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1");
+$about = ($about_q && mysqli_num_rows($about_q) > 0) ? mysqli_fetch_assoc($about_q) : [];
 
 $stat_metrics = [
     1 => [

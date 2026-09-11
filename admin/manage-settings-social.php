@@ -29,7 +29,8 @@ if (isset($_POST['update_social'])) {
 }
 
 // Fetch Current Contact Record
-$contact = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_contact` WHERE `con_id`=1"));
+$contact_q = @mysqli_query($conn, "SELECT * FROM `tbl_contact` WHERE `con_id`=1");
+$contact = ($contact_q && mysqli_num_rows($contact_q) > 0) ? mysqli_fetch_assoc($contact_q) : get_contact_info();
 ?>
 <!DOCTYPE html>
 <html lang="en">

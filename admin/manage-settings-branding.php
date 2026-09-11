@@ -10,11 +10,11 @@ if (isset($_POST['update_branding'])) {
     $pro_title = mysqli_real_escape_string($conn, trim($_POST['pro_title']));
     
     // Fetch existing logos
-    $cur_prof_q = mysqli_query($conn, "SELECT `pro_logo`, `pro_dark_logo`, `pro_favicon` FROM `tbl_profile` WHERE `pro_id`=1");
-    $cur_prof = mysqli_fetch_assoc($cur_prof_q);
-    $logo = $cur_prof['pro_logo'] ?? 'assets/img/logo/antara-logo-white.svg';
-    $dark_logo = $cur_prof['pro_dark_logo'] ?? 'assets/img/logo/antara-logo-dark.svg';
-    $favicon = $cur_prof['pro_favicon'] ?? 'assets/img/logo/favicon.png';
+    $cur_prof_q = @mysqli_query($conn, "SELECT `pro_logo`, `pro_dark_logo`, `pro_favicon` FROM `tbl_profile` WHERE `pro_id`=1");
+    $cur_prof = ($cur_prof_q && mysqli_num_rows($cur_prof_q) > 0) ? mysqli_fetch_assoc($cur_prof_q) : [];
+    $logo = $cur_prof['pro_logo'] ?? 'assets/images/logo.png';
+    $dark_logo = $cur_prof['pro_dark_logo'] ?? 'assets/images/logo.png';
+    $favicon = $cur_prof['pro_favicon'] ?? 'assets/images/fav-icon/icon.png';
 
     $upload_dir = "../uploads/logo/";
     if (!is_dir($upload_dir)) {
@@ -63,7 +63,8 @@ if (isset($_POST['update_branding'])) {
 }
 
 // Fetch Current Records
-$profile = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_profile` WHERE `pro_id`=1"));
+$prof_q = @mysqli_query($conn, "SELECT * FROM `tbl_profile` WHERE `pro_id`=1");
+$profile = ($prof_q && mysqli_num_rows($prof_q) > 0) ? mysqli_fetch_assoc($prof_q) : get_site_profile();
 ?>
 <!DOCTYPE html>
 <html lang="en">

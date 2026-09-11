@@ -99,23 +99,27 @@ if (isset($_GET['msg'])) {
 }
 
 // Fetch Section Meta
-$meta = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_home_why_meta` WHERE `id`=1 LIMIT 1"));
+$meta = null;
+$mq = @mysqli_query($conn, "SELECT * FROM `tbl_home_why_meta` WHERE `id`=1 LIMIT 1");
+if ($mq && mysqli_num_rows($mq) > 0) {
+    $meta = mysqli_fetch_assoc($mq);
+}
 if (!$meta) {
     $meta = [
         'badge' => 'Engineered For Bovine Breeding Precision',
         'heading' => 'Why Choose Stridewel International',
         'description' => 'Four decades of engineering mastery, ISO 9001:2015 certified in-house manufacturing, and exclusive partnership with global leaders like Dr. N. Burdizzo (Italy) and Minitube Germany.',
         'cta_text' => 'Explore All Product Categories',
-        'cta_link' => 'products',
-        'pdf_text' => 'Download Complete PDF Catalog',
-        'pdf_link' => 'assets/STRIDEWEL (2).pdf'
+        'cta_link' => 'shop.php',
+        'pdf_text' => 'Download Complete PDF Catalogue',
+        'pdf_link' => 'uploads/catalog/stridewel_catalog_1789024165.pdf'
     ];
 }
 
 // Fetch Cards
 $cards = [];
-$cq = mysqli_query($conn, "SELECT * FROM `tbl_home_why` ORDER BY `sort_order` ASC, `id` ASC");
-if ($cq) {
+$cq = @mysqli_query($conn, "SELECT * FROM `tbl_home_why` ORDER BY `sort_order` ASC, `id` ASC");
+if ($cq && mysqli_num_rows($cq) > 0) {
     while ($row = mysqli_fetch_assoc($cq)) {
         $cards[] = $row;
     }

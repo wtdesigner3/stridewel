@@ -104,7 +104,11 @@ if (isset($_GET['msg'])) {
 }
 
 // Fetch Section Meta
-$meta = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_timeline_meta` WHERE `id`=1 LIMIT 1"));
+$meta = null;
+$mq = @mysqli_query($conn, "SELECT * FROM `tbl_timeline_meta` WHERE `id`=1 LIMIT 1");
+if ($mq && mysqli_num_rows($mq) > 0) {
+    $meta = mysqli_fetch_assoc($mq);
+}
 if (!$meta) {
     $meta = [
         'badge' => 'Milestones & Heritage Journey',
@@ -115,8 +119,8 @@ if (!$meta) {
 
 // Fetch Milestones
 $milestones = [];
-$tq = mysqli_query($conn, "SELECT * FROM `tbl_timeline` ORDER BY `sort_order` ASC, `id` ASC");
-if ($tq) {
+$tq = @mysqli_query($conn, "SELECT * FROM `tbl_timeline` ORDER BY `sort_order` ASC, `id` ASC");
+if ($tq && mysqli_num_rows($tq) > 0) {
     while ($row = mysqli_fetch_assoc($tq)) {
         $milestones[] = $row;
     }

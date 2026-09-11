@@ -20,8 +20,8 @@ if (isset($_POST['update_footprint'])) {
     $channel_4_title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_4_title'] ?? '')));
     $channel_4_sub = mysqli_real_escape_string($conn, trim(strip_tags($_POST['channel_4_sub'] ?? '')));
 
-    $cur_q = mysqli_query($conn, "SELECT `footprint_image` FROM `tbl_about` WHERE `id`=1");
-    $cur = mysqli_fetch_assoc($cur_q);
+    $cur_q = @mysqli_query($conn, "SELECT `footprint_image` FROM `tbl_about` WHERE `id`=1");
+    $cur = ($cur_q && mysqli_num_rows($cur_q) > 0) ? mysqli_fetch_assoc($cur_q) : [];
     $img = $cur['footprint_image'] ?? 'assets/images/banners/banner_institutional_supply.jpg';
 
     if (!empty($_FILES['footprint_image']['name'])) {
@@ -66,7 +66,8 @@ if (isset($_POST['update_footprint'])) {
 }
 
 // Fetch Latest Record
-$about = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1"));
+$about_q = @mysqli_query($conn, "SELECT * FROM `tbl_about` WHERE `id`=1");
+$about = ($about_q && mysqli_num_rows($about_q) > 0) ? mysqli_fetch_assoc($about_q) : [];
 $footprint_img = !empty($about['footprint_image']) ? $about['footprint_image'] : 'assets/images/banners/banner_institutional_supply.jpg';
 ?>
 <!DOCTYPE html>

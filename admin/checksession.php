@@ -6,4 +6,9 @@ if (!isset($_SESSION['admin_ses']) || $_SESSION['admin_ses'] !== "hvrs@#p9w84r" 
     header("Location: login.php");
     exit();
 }
+require_once(__DIR__ . '/../inc/function.php');
+if (function_exists('ensure_admin_database_schema')) {
+    global $conn;
+    ensure_admin_database_schema($conn);
+}
 ?>

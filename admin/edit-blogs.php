@@ -17,7 +17,8 @@ if (!is_dir($upload_dir)) {
 }
 
 // Fetch Existing Record
-$art = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `tbl_blogs` WHERE `b_id` = $id"));
+$art_q = @mysqli_query($conn, "SELECT * FROM `tbl_blogs` WHERE `b_id` = $id");
+$art = ($art_q && mysqli_num_rows($art_q) > 0) ? mysqli_fetch_assoc($art_q) : false;
 if (!$art) {
     header("Location: manage-blogs.php");
     exit();

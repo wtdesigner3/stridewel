@@ -1,5 +1,9 @@
 <?php 
 $current_page = basename($_SERVER['PHP_SELF']);
+if (function_exists('ensure_admin_database_schema')) {
+    global $conn;
+    ensure_admin_database_schema($conn);
+}
 $profile = get_site_profile();
 ?>
 <div id="sidebar" class="sidebar">

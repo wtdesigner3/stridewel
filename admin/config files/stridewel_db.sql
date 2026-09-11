@@ -29,11 +29,59 @@ CREATE TABLE `tbl_about` (
   `story_content` text DEFAULT NULL,
   `story_badge_title` varchar(255) DEFAULT NULL,
   `story_badge_subtitle` varchar(255) DEFAULT NULL,
+  `story_badge_exp` varchar(50) DEFAULT '40+',
   `story_image` varchar(255) DEFAULT NULL,
   `mission_heading` varchar(255) DEFAULT NULL,
   `mission_content` text DEFAULT NULL,
+  `vision_heading` varchar(255) DEFAULT 'Our Strategic Vision',
   `vision_content` text DEFAULT NULL,
+  `values_heading` varchar(255) DEFAULT 'Core Values & Quality Policy',
   `values_content` text DEFAULT NULL,
+  `rnd_heading` varchar(255) DEFAULT 'Continuous In-House R&D',
+  `rnd_content` text DEFAULT NULL,
+  `capabilities_subheading` varchar(255) DEFAULT NULL,
+  `capabilities_heading` varchar(255) DEFAULT NULL,
+  `capabilities_badge_title` varchar(255) DEFAULT NULL,
+  `capabilities_content` text DEFAULT NULL,
+  `capabilities_image` varchar(255) DEFAULT NULL,
+  `capabilities_btn1_text` varchar(100) DEFAULT NULL,
+  `capabilities_btn1_link` varchar(255) DEFAULT NULL,
+  `capabilities_btn2_text` varchar(100) DEFAULT NULL,
+  `capabilities_btn2_link` varchar(255) DEFAULT NULL,
+  `cta_badge` varchar(255) DEFAULT 'DIRECT MANUFACTURER SUPPLY',
+  `cta_heading` varchar(255) DEFAULT NULL,
+  `cta_desc` text DEFAULT NULL,
+  `cta_btn_text` varchar(100) DEFAULT 'Request Factory Direct Quote',
+  `cta_btn_link` varchar(255) DEFAULT 'contact.php',
+  `cta_bg_image` varchar(255) DEFAULT NULL,
+  `footprint_subheading` varchar(255) DEFAULT NULL,
+  `footprint_heading` varchar(255) DEFAULT NULL,
+  `footprint_desc` text DEFAULT NULL,
+  `footprint_image` varchar(255) DEFAULT NULL,
+  `channel_1_title` varchar(255) DEFAULT 'State Dairy Federations',
+  `channel_1_sub` varchar(255) DEFAULT 'NDDB, State Cooperative Dairy Boards',
+  `channel_2_title` varchar(255) DEFAULT 'Frozen Semen Stations',
+  `channel_2_sub` varchar(255) DEFAULT 'Bull mother farms & cryo banks',
+  `channel_3_title` varchar(255) DEFAULT 'Veterinary Universities',
+  `channel_3_sub` varchar(255) DEFAULT 'IVRI, GADVASU, TANUVAS & Colleges',
+  `channel_4_title` varchar(255) DEFAULT 'International Exports',
+  `channel_4_sub` varchar(255) DEFAULT 'Direct exports to 25+ global countries',
+  `stat_1_val` varchar(50) DEFAULT '40',
+  `stat_1_suffix` varchar(20) DEFAULT '+',
+  `stat_1_label` varchar(100) DEFAULT 'Years of Industry Heritage',
+  `stat_1_sub` varchar(255) DEFAULT 'Pioneering A.I. since 1982',
+  `stat_2_val` varchar(50) DEFAULT '100',
+  `stat_2_suffix` varchar(20) DEFAULT 'K+',
+  `stat_2_label` varchar(100) DEFAULT 'Universal Guns Supplied',
+  `stat_2_sub` varchar(255) DEFAULT 'Universal 0.5 & 0.25ml SS',
+  `stat_3_val` varchar(50) DEFAULT '50',
+  `stat_3_suffix` varchar(20) DEFAULT 'M+',
+  `stat_3_label` varchar(100) DEFAULT 'French Sheaths Delivered',
+  `stat_3_sub` varchar(255) DEFAULT 'Zero-defect automated molding',
+  `stat_4_val` varchar(50) DEFAULT '25',
+  `stat_4_suffix` varchar(20) DEFAULT '+',
+  `stat_4_label` varchar(100) DEFAULT 'Global Export Countries',
+  `stat_4_sub` varchar(255) DEFAULT 'Trusted by Livestock Boards',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -173,6 +221,23 @@ CREATE TABLE `tbl_contact` (
   `con_youtube` text DEFAULT NULL,
   `con_google` text DEFAULT NULL,
   `con_whatsaap` varchar(255) DEFAULT NULL,
+  `primary_phone` varchar(100) DEFAULT '+91 98100 46038',
+  `secondary_phone` varchar(100) DEFAULT '+91 98100 46038',
+  `primary_email` varchar(100) DEFAULT 'stridewel@gmail.com',
+  `secondary_email` varchar(100) DEFAULT 'stridewel@gmail.com',
+  `whatsapp_number` varchar(100) DEFAULT '+919810046038',
+  `office_address` text DEFAULT NULL,
+  `google_map_iframe` text DEFAULT NULL,
+  `working_hours` varchar(255) DEFAULT 'Mon – Sat: 09:30 – 18:30 IST',
+  `widget_call_status` tinyint(1) DEFAULT 1,
+  `widget_call_phone` varchar(100) DEFAULT '+919810046038',
+  `widget_call_position` varchar(20) DEFAULT 'left',
+  `widget_call_tooltip` varchar(255) DEFAULT 'Call Veterinary Desk',
+  `widget_wa_status` tinyint(1) DEFAULT 1,
+  `widget_wa_number` varchar(100) DEFAULT '+919810046038',
+  `widget_wa_position` varchar(20) DEFAULT 'right',
+  `widget_wa_message` varchar(255) DEFAULT 'Hello Stridewel Team, I would like to inquire about your veterinary products.',
+  `widget_wa_tooltip` varchar(255) DEFAULT 'Chat on WhatsApp',
   PRIMARY KEY (`con_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -470,3 +535,208 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-09-09 16:06:31
+
+
+--
+-- Table structure for table `tbl_timeline_meta`
+--
+
+DROP TABLE IF EXISTS `tbl_timeline_meta`;
+CREATE TABLE `tbl_timeline_meta` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `badge` varchar(255) DEFAULT 'Milestones & Heritage Journey',
+  `heading` varchar(255) DEFAULT 'Four Decades of <span>Pioneering Animal Husbandry</span> (1982 – Present)',
+  `description` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_timeline_meta` (`id`, `badge`, `heading`, `description`) VALUES
+(1, 'Milestones & Heritage Journey', 'Four Decades of <span>Pioneering Animal Husbandry</span> (1982 – Present)', 'Tracing our journey from Dr. N. Burdizzo's sole Indian agency to in-house manufacturing, Minitube Germany partnership, and regular veterinary R&D.');
+
+--
+-- Table structure for table `tbl_timeline`
+--
+
+DROP TABLE IF EXISTS `tbl_timeline`;
+CREATE TABLE `tbl_timeline` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `year` varchar(50) NOT NULL,
+  `year_tag` varchar(100) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `card_tag` varchar(100) NOT NULL,
+  `description` text NOT NULL,
+  `icon` varchar(100) DEFAULT 'bi-calendar-check',
+  `sort_order` int(11) DEFAULT 0,
+  `status` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_timeline` (`id`, `year`, `year_tag`, `title`, `card_tag`, `description`, `icon`, `sort_order`, `status`) VALUES
+(1, '1982', 'Founding', 'Italian Burdizzo Castrators', 'Import Pioneer', 'Commenced business by marketing world-famous Italian Burdizzo Castrators manufactured by Dr. N. Burdizzo in Italy.', 'bi-calendar-check', 1, 1),
+(2, '1985', 'Sole Agency', 'Appointed Sole Agents for India', 'Exclusive Agency', 'Appointed Sole Agents for India in 1985, adding comprehensive Veterinary Equipments and Surgical Instruments to cater to Veterinary Hospitals all over India.', 'bi-award', 2, 1),
+(3, '1986', 'Semen Tech', 'Frozen Semen Tech & Embryo Transfer', 'Bull Station Supply', 'Entered the upcoming field of Frozen Semen Technology and Embryo Transfer, selling indigenously manufactured A.I. Consumables and Frozen Semen Bull Station equipment.', 'bi-snow2', 3, 1),
+(4, '2012', 'Manufacturing', 'In-House Manufacturing Plant', 'OEM Production', 'Set up dedicated manufacturing facility producing A.I. Sheaths, Guns, Gloves, Plastic Goblets, Artificial Vaginas, Silicone Cones, LN2 Dipsticks, Aprons, Kit Bags, Cryojar Bags, plus precision surgical instruments.', 'bi-gear-wide-connected', 4, 1),
+(5, '2016', 'Partnership', 'Associated with M/s Minitube Germany', 'Cryogenic Systems', 'Associated with M/s Minitube Germany for marketing high State-of-the-Art Cryogenic Systems for Advanced Animal Reproductive Technology to State Livestock Development Agencies/Boards across India.', 'bi-globe-americas', 5, 1),
+(6, 'Present', 'Regular R&D', 'Continuous In-House R&D', 'Innovation', 'Dedicated to work tirelessly for the veterinary industry by doing Research & Development (R&D) on a regular basis, delivering cutting-edge solutions to global livestock breeders.', 'bi-lightbulb-fill', 6, 1);
+
+--
+-- Table structure for table `tbl_home_trust`
+--
+
+DROP TABLE IF EXISTS `tbl_home_trust`;
+CREATE TABLE `tbl_home_trust` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `subtitle` varchar(255) NOT NULL,
+  `icon` varchar(100) DEFAULT 'bi-patch-check-fill',
+  `sort_order` int(11) DEFAULT 0,
+  `status` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_home_trust` (`id`, `title`, `subtitle`, `icon`, `sort_order`, `status`) VALUES
+(1, 'ISO 9001:2015 Certified', 'QMS Certified Facility in New Delhi', 'bi-patch-check-fill', 1, 1),
+(2, 'Surgical Grade SS 304/316', 'Corrosion-Resistant Precision Alloy', 'bi-shield-check', 2, 1),
+(3, 'Sterile Cleanroom Packaging', 'Hygienic 50/Pack & Sealed Cartons', 'bi-box-seam', 3, 1),
+(4, 'Make In India & Export Ready', 'Supplying 28+ States & Global Markets', 'bi-globe2', 4, 1);
+
+--
+-- Table structure for table `tbl_home_why_meta`
+--
+
+DROP TABLE IF EXISTS `tbl_home_why_meta`;
+CREATE TABLE `tbl_home_why_meta` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `badge` varchar(255) DEFAULT 'Engineered For Bovine Breeding Precision',
+  `subheading` varchar(255) DEFAULT 'Engineered For Bovine Breeding Precision',
+  `heading` varchar(255) DEFAULT 'Why Choose Stridewel International',
+  `description` text DEFAULT NULL,
+  `cta_text` varchar(100) DEFAULT 'Explore All Product Categories',
+  `cta_link` varchar(255) DEFAULT 'shop.php',
+  `btn_text` varchar(100) DEFAULT 'Explore All Product Categories',
+  `btn_link` varchar(255) DEFAULT 'shop.php',
+  `pdf_text` varchar(100) DEFAULT 'Download Complete PDF Catalogue',
+  `pdf_link` varchar(255) DEFAULT 'uploads/catalog/stridewel_catalog_1789024165.pdf',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_home_why_meta` (`id`, `badge`, `subheading`, `heading`, `description`, `cta_text`, `cta_link`, `btn_text`, `btn_link`, `pdf_text`, `pdf_link`) VALUES
+(1, 'Engineered For Bovine Breeding Precision', 'Engineered For Bovine Breeding Precision', 'Why Choose Stridewel International', 'Four decades of engineering mastery, ISO 9001:2015 certified in-house manufacturing, and exclusive partnership with global leaders like Dr. N. Burdizzo (Italy) and Minitube Germany.', 'Explore All Product Categories', 'shop.php', 'Explore All Product Categories', 'shop.php', 'Download Complete PDF Catalogue', 'uploads/catalog/stridewel_catalog_1789024165.pdf');
+
+--
+-- Table structure for table `tbl_home_why`
+--
+
+DROP TABLE IF EXISTS `tbl_home_why`;
+CREATE TABLE `tbl_home_why` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `icon` varchar(100) DEFAULT 'bi-award-fill',
+  `sort_order` int(11) DEFAULT 0,
+  `status` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_home_why` (`id`, `title`, `description`, `icon`, `sort_order`, `status`) VALUES
+(1, 'ISO 9001:2015 Certified Plant', 'Every A.I. sheath, gun, and surgical tool is manufactured under strict quality management systems ensuring zero-defect delivery.', 'bi-award-fill', 1, 1),
+(2, 'Sole Indian Agent for Burdizzo', 'Appointed since 1985 as sole authorized agents for world-renowned Dr. N. Burdizzo Italy castrators across the Indian subcontinent.', 'bi-shield-shaded', 2, 1),
+(3, 'In-House Manufacturing Since 2012', 'Direct manufacturer of French A.I. sheaths, universal guns, disposable gloves, plastic goblets, and veterinary consumables.', 'bi-building-gear', 3, 1),
+(4, 'Associated with Minitube Germany', 'Strategic association since 2016 for marketing advanced Cryogenic Systems and frozen semen reproductive technology across India.', 'bi-snow', 4, 1),
+(5, 'Continuous In-House R&D', 'Regular research and engineering enhancements driven by veterinary doctors and field practitioners for optimal conception rates.', 'bi-lightbulb-fill', 5, 1),
+(6, 'Pan-India & Export Network', 'Approved tender supplier to State Livestock Boards, Dairy Federations (NDDB), Semen Stations, and 25+ global countries.', 'bi-globe-americas', 6, 1);
+
+--
+-- Table structure for table `tbl_home_pipeline_meta`
+--
+
+DROP TABLE IF EXISTS `tbl_home_pipeline_meta`;
+CREATE TABLE `tbl_home_pipeline_meta` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `badge` varchar(255) DEFAULT 'Direct Manufacturer & ISO 9001:2015 Certified Facility',
+  `heading` varchar(255) DEFAULT 'Precision Veterinary Manufacturing & Quality Assurance Pipeline',
+  `description` text DEFAULT NULL,
+  `stat_1_val` varchar(50) DEFAULT 'SS 304/316',
+  `stat_1_label` varchar(100) DEFAULT 'Medical-Grade Stainless Steel',
+  `stat_2_val` varchar(50) DEFAULT '100% Virgin',
+  `stat_2_label` varchar(100) DEFAULT 'Non-Toxic Polymer Molding',
+  `stat_3_val` varchar(50) DEFAULT 'Optical Micrometer',
+  `stat_3_label` varchar(100) DEFAULT 'Precision Calibration & Fitment',
+  `stat_4_val` varchar(50) DEFAULT '48-Hour Dispatch',
+  `stat_4_label` varchar(100) DEFAULT 'Direct Factory Wholesale Orders',
+  `bottom_note` varchar(255) DEFAULT 'Need custom OEM branding, custom length A.I. guns, or bulk institutional supply quotes?',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_home_pipeline_meta` (`id`, `badge`, `heading`, `description`, `stat_1_val`, `stat_1_label`, `stat_2_val`, `stat_2_label`, `stat_3_val`, `stat_3_label`, `stat_4_val`, `stat_4_label`, `bottom_note`) VALUES
+(1, 'Direct Manufacturer & ISO 9001:2015 Certified Facility', 'Precision Veterinary Manufacturing & Quality Assurance Pipeline', 'From Swiss CNC metal machining to automated cleanroom injection molding, explore how Stridewel delivers certified, zero-defect instruments to veterinarians and dairy boards across 28+ states.', 'SS 304/316', 'Medical-Grade Stainless Steel', '100% Virgin', 'Non-Toxic Polymer Molding', 'Optical Micrometer', 'Precision Calibration & Fitment', '48-Hour Dispatch', 'Direct Factory Wholesale Orders', 'Need custom OEM branding, custom length A.I. guns, or bulk institutional supply quotes?');
+
+--
+-- Table structure for table `tbl_home_pipeline`
+--
+
+DROP TABLE IF EXISTS `tbl_home_pipeline`;
+CREATE TABLE `tbl_home_pipeline` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `step_num` varchar(10) NOT NULL,
+  `phase_label` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `pills` text DEFAULT NULL,
+  `image` varchar(255) DEFAULT '',
+  `sort_order` int(11) DEFAULT 0,
+  `status` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_home_pipeline` (`id`, `step_num`, `phase_label`, `title`, `description`, `pills`, `image`, `sort_order`, `status`) VALUES
+(1, '01', 'CNC Tooling & Forging', 'Precision SS Engineering', 'Swiss CNC machining and fine hand-polishing of medical-grade SS 304/316 instruments with micro-tolerance standards.', 'Universal A.I. Guns, Surgical Forceps, SS Trays & Scissor', 'assets/images/manufacturing/mfg_1_ss_machining.jpg', 1, 1),
+(2, '02', 'Medical Polymers', 'Cleanroom Extrusion', 'Automated injection molding and extrusion of non-toxic virgin French A.I. sheaths, goblets, and protective veterinary gloves.', 'French A.I. Sheaths, Cryo Goblets, Gynae Gloves', 'assets/images/manufacturing/mfg_2_cleanroom_molding.jpg', 2, 1),
+(3, '03', 'Quality Assurance', 'ISO 9001:2015 Calibration', 'Stringent optical micro-calibration, straw-seating fitment checks, smooth-tip inspection, and zero-defect QA protocols.', 'Optical Micrometers, Straw Seating Test, Zero-Defect Standard', 'assets/images/manufacturing/mfg_3_qa_calibration.jpg', 3, 1),
+(4, '04', 'Fulfillment & Logistics', 'Institutional Supply', 'Sterile cleanroom boxing, batch barcoding, and rapid bulk dispatch for State Animal Husbandry & Milk Producer Federations.', '28+ States Dispatch, Milk Federations, Export Ready', 'assets/images/manufacturing/mfg_4_institutional_logistics.jpg', 4, 1);
+
+--
+-- Table structure for table `tbl_faq_categories`
+--
+
+DROP TABLE IF EXISTS `tbl_faq_categories`;
+CREATE TABLE `tbl_faq_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `status` tinyint(1) DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_faq_categories` (`id`, `name`, `slug`, `sort_order`, `status`) VALUES
+(1, 'General Inquiries', 'general-inquiries', 1, 1),
+(2, 'Artificial Insemination Equipment', 'artificial-insemination-equipment', 2, 1),
+(3, 'Cryogenic Storage & Handling', 'cryogenic-storage-handling', 3, 1),
+(4, 'Burdizzo Castrators & Surgical', 'burdizzo-castrators-surgical', 4, 1),
+(5, 'Ordering, Bulk Supply & Export', 'ordering-bulk-supply-export', 5, 1);
+
+--
+-- Table structure for table `tbl_blog_categories`
+--
+
+DROP TABLE IF EXISTS `tbl_blog_categories`;
+CREATE TABLE `tbl_blog_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `slug` varchar(255) NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  `status` tinyint(1) DEFAULT 1,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tbl_blog_categories` (`id`, `name`, `slug`, `sort_order`, `status`) VALUES
+(1, 'Cryogenics', 'cryogenics', 1, 1),
+(2, 'Artificial Insemination', 'artificial-insemination', 2, 1),
+(3, 'Veterinary Surgery', 'veterinary-surgery', 3, 1),
+(4, 'Livestock Care', 'livestock-care', 4, 1);
+
