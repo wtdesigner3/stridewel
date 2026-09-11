@@ -55,13 +55,49 @@ $inserted = false;
 $lead_id = 0;
 
 if ($conn && $conn instanceof mysqli) {
+    // Ensure table has required columns
+    if (function_exists('ensure_enquiry_table_schema')) {
+        ensure_enquiry_table_schema($conn);
+    }
+
     try {
-        $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `source_form`, `ip_address`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
-        if ($stmt) {
-            $stmt->bind_param("ssssssss", $fullName, $email, $phone, $companyName, $productInterest, $message, $sourceForm, $ipAddress);
-            $inserted = $stmt->execute();
-            $lead_id = $stmt->insert_id;
-            $stmt->close();
+        // Check if extended tracking columns exist in tbl_enquiry
+        $has_source_col = false;
+        $has_ip_col = false;
+        $q_src = @mysqli_query($conn, "SHOW COLUMNS FROM `tbl_enquiry` LIKE 'source_form'");
+        if ($q_src && mysqli_num_rows($q_src) > 0) {
+            $has_source_col = true;
+        }
+        $q_ip = @mysqli_query($conn, "SHOW COLUMNS FROM `tbl_enquiry` LIKE 'ip_address'");
+        if ($q_ip && mysqli_num_rows($q_ip) > 0) {
+            $has_ip_col = true;
+        }
+
+        // Primary Attempt: Insert with source_form and ip_address if available
+        if ($has_source_col && $has_ip_col) {
+            $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `source_form`, `ip_address`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+            if ($stmt) {
+                $stmt->bind_param("ssssssss", $fullName, $email, $phone, $companyName, $productInterest, $message, $sourceForm, $ipAddress);
+                $inserted = $stmt->execute();
+                if ($inserted) {
+                    $lead_id = intval($stmt->insert_id);
+                }
+                $stmt->close();
+            }
+        }
+
+        // Fallback Attempt: Insert using base standard schema if columns are not present or primary failed
+        if (!$inserted) {
+            $annotated_message = "[Origin: " . $sourceForm . "] [IP: " . $ipAddress . "]\n\n" . $message;
+            $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())");
+            if ($stmt) {
+                $stmt->bind_param("ssssss", $fullName, $email, $phone, $companyName, $productInterest, $annotated_message);
+                $inserted = $stmt->execute();
+                if ($inserted) {
+                    $lead_id = intval($stmt->insert_id);
+                }
+                $stmt->close();
+            }
         }
     } catch (Exception $e) {
         error_log("Enquiry database insert exception: " . $e->getMessage());
@@ -69,15 +105,19 @@ if ($conn && $conn instanceof mysqli) {
 }
 
 // 4. Dispatch Email Alert to Website Owner
+$mail_sent = false;
 if (function_exists('send_enquiry_notification_email')) {
-    send_enquiry_notification_email([
+    $mail_sent = send_enquiry_notification_email([
+        'name' => $fullName,
         'full_name' => $fullName,
         'phone' => $phone,
         'email' => $email,
         'message' => $message,
         'source_form' => $sourceForm,
         'product_interest' => $productInterest,
-        'ip_address' => $ipAddress
+        'company_name' => $companyName,
+        'ip_address' => $ipAddress,
+        'lead_id' => $lead_id
     ]);
 }
 
@@ -91,6 +131,7 @@ if (!empty($_POST['redirect_back'])) {
 echo json_encode([
     'status' => 'success',
     'message' => 'Thank you! Your inquiry has been received. Our technical sales team will contact you shortly.',
-    'lead_id' => $lead_id
+    'lead_id' => $lead_id,
+    'mail_sent' => $mail_sent
 ]);
 exit;

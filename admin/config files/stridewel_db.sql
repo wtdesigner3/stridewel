@@ -1,4 +1,4 @@
-﻿-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
 --
 -- Host: localhost    Database: stridewel_db
 -- ------------------------------------------------------
@@ -205,6 +205,8 @@ CREATE TABLE `tbl_enquiry` (
   `product_interest` varchar(255) DEFAULT NULL,
   `volume_requirement` varchar(100) DEFAULT NULL,
   `message` text DEFAULT NULL,
+  `source_form` varchar(255) DEFAULT 'Website Form',
+  `ip_address` varchar(50) DEFAULT NULL,
   `status` enum('pending','in_discussion','quoted','closed') NOT NULL DEFAULT 'pending',
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),

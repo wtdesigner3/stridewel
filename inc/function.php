@@ -1462,21 +1462,51 @@ function get_catalog_info() {
 }
 
 /**
+ * Ensure `tbl_enquiry` has required columns for CRM tracking
+ */
+function ensure_enquiry_table_schema($conn = null) {
+    if (!$conn) {
+        global $conn;
+    }
+    if (!$conn || !($conn instanceof mysqli)) {
+        return;
+    }
+    static $checked = false;
+    if ($checked) return;
+    $checked = true;
+
+    try {
+        $res = @mysqli_query($conn, "SHOW COLUMNS FROM `tbl_enquiry` LIKE 'source_form'");
+        if ($res && mysqli_num_rows($res) === 0) {
+            @mysqli_query($conn, "ALTER TABLE `tbl_enquiry` ADD COLUMN `source_form` VARCHAR(255) DEFAULT 'Website Form' AFTER `message`");
+        }
+        $res = @mysqli_query($conn, "SHOW COLUMNS FROM `tbl_enquiry` LIKE 'ip_address'");
+        if ($res && mysqli_num_rows($res) === 0) {
+            @mysqli_query($conn, "ALTER TABLE `tbl_enquiry` ADD COLUMN `ip_address` VARCHAR(50) DEFAULT NULL AFTER `source_form`");
+        }
+    } catch (Throwable $e) {
+        error_log("Enquiry schema migration check: " . $e->getMessage());
+    }
+}
+
+/**
  * Send Instant Enquiry Notification Email to Website Owner
- * Dispatches a formatted HTML alert with direct WhatsApp, Phone & Email quick-action buttons.
+ * Dispatches a formatted multipart (plain text + HTML) alert with direct WhatsApp, Phone & Email quick-action buttons.
  */
 function send_enquiry_notification_email($data) {
     try {
-        $contact = function_exists('get_contact_info') ? get_contact_info() : [];
-        $owner_email = !empty($contact['con_email1']) ? trim($contact['con_email1']) : 'stridewel@gmail.com';
+        // Target Recipient: Using wtdesigner3@gmail.com for testing, switchable to stridewel@gmail.com
+        $owner_email = defined('INQUIRY_NOTIFICATION_EMAIL') ? INQUIRY_NOTIFICATION_EMAIL : 'wtdesigner3@gmail.com';
         
-        $name = htmlspecialchars(trim($data['name'] ?? $data['full_name'] ?? 'Website Visitor'), ENT_QUOTES, 'UTF-8');
-        $phone = htmlspecialchars(trim($data['phone'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $name = trim($data['name'] ?? $data['full_name'] ?? 'Website Visitor');
+        $phone = trim($data['phone'] ?? '');
         $email = filter_var(trim($data['email'] ?? ''), FILTER_SANITIZE_EMAIL);
-        $message_text = nl2br(htmlspecialchars(trim($data['message'] ?? 'No message provided.'), ENT_QUOTES, 'UTF-8'));
-        $source_form = htmlspecialchars(trim($data['source_form'] ?? 'Website Inquiry Form'), ENT_QUOTES, 'UTF-8');
-        $product_interest = !empty($data['product_interest']) ? htmlspecialchars(trim($data['product_interest']), ENT_QUOTES, 'UTF-8') : '';
-        $ip_address = htmlspecialchars(trim($data['ip_address'] ?? $_SERVER['REMOTE_ADDR'] ?? 'Unknown'), ENT_QUOTES, 'UTF-8');
+        $message_raw = trim($data['message'] ?? 'No message provided.');
+        $source_form = trim($data['source_form'] ?? 'Website Inquiry Form');
+        $product_interest = trim($data['product_interest'] ?? '');
+        $company_name = trim($data['company_name'] ?? $data['company'] ?? '');
+        $ip_address = trim($data['ip_address'] ?? $_SERVER['REMOTE_ADDR'] ?? 'Unknown');
+        $lead_id = !empty($data['lead_id']) ? intval($data['lead_id']) : 0;
         $date_time = date('d M Y, h:i A (T)');
 
         // Clean numeric phone for WhatsApp / tel links
@@ -1487,138 +1517,231 @@ function send_enquiry_notification_email($data) {
             $wa_phone = $clean_phone;
         }
 
-        $subject = "🔔 New Inquiry: {$name} via {$source_form} | Stridewel International";
+        // HTML-escaped values for the email template
+        $esc_name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+        $esc_phone = htmlspecialchars($phone, ENT_QUOTES, 'UTF-8');
+        $esc_email = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+        $esc_message = nl2br(htmlspecialchars($message_raw, ENT_QUOTES, 'UTF-8'));
+        $esc_source = htmlspecialchars($source_form, ENT_QUOTES, 'UTF-8');
+        $esc_product = htmlspecialchars($product_interest, ENT_QUOTES, 'UTF-8');
+        $esc_company = htmlspecialchars($company_name, ENT_QUOTES, 'UTF-8');
+        $esc_ip = htmlspecialchars($ip_address, ENT_QUOTES, 'UTF-8');
 
-        // HTML Email Body
-        $body = '
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <title>' . $subject . '</title>
-            <style>
-                body { margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; line-height: 1.6; }
-                .email-container { max-width: 620px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
-                .email-header { background: linear-gradient(135deg, #103755 0%, #0a2540 100%); padding: 30px 25px; text-align: center; border-bottom: 4px solid #ed1c24; }
-                .email-header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
-                .email-header p { margin: 6px 0 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
-                .badge-pill { display: inline-block; background: #ed1c24; color: #ffffff; padding: 5px 14px; border-radius: 50px; font-size: 12px; font-weight: 700; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-                .email-body { padding: 30px 25px; }
-                .info-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
-                .info-table th, .info-table td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; text-align: left; }
-                .info-table th { background: #f8fafc; color: #64748b; font-weight: 600; width: 34%; }
-                .info-table td { color: #0f172a; font-weight: 500; }
-                .msg-container { background: #f8fafc; border-left: 4px solid #103755; padding: 18px 20px; border-radius: 0 8px 8px 0; margin-bottom: 28px; }
-                .msg-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
-                .msg-content { font-size: 14px; color: #1e293b; white-space: pre-wrap; word-break: break-word; }
-                .action-btns { text-align: center; margin: 25px 0 10px; }
-                .btn { display: inline-block; padding: 11px 20px; font-size: 13px; font-weight: 700; text-decoration: none; border-radius: 6px; margin: 4px; }
-                .btn-wa { background-color: #25D366; color: #ffffff !important; }
-                .btn-call { background-color: #103755; color: #ffffff !important; }
-                .btn-mail { background-color: #ed1c24; color: #ffffff !important; }
-                .email-footer { background: #f8fafc; padding: 20px 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
-                .email-footer a { color: #103755; text-decoration: none; font-weight: 600; }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="email-header">
-                    <h1>STRIDEWEL INTERNATIONAL</h1>
-                    <p>Direct Veterinary &amp; A.I. Equipment Manufacturer</p>
-                    <div class="badge-pill">Source: ' . $source_form . '</div>
-                </div>
-                
-                <div class="email-body">
-                    <p style="margin-top: 0; font-size: 15px; color: #334155;">Hello Team,</p>
-                    <p style="font-size: 14px; color: #475569; margin-bottom: 22px;">A new customer enquiry has been submitted on the Stridewel website. Here are the full lead details:</p>
-                    
-                    <table class="info-table">
-                        <tr>
-                            <th>Customer Name</th>
-                            <td><strong>' . $name . '</strong></td>
-                        </tr>
-                        <tr>
-                            <th>Phone / WhatsApp</th>
-                            <td>
-                                <strong><a href="tel:' . $clean_phone . '" style="color: #103755; text-decoration: none;">' . $phone . '</a></strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Email Address</th>
-                            <td>
-                                <a href="mailto:' . $email . '" style="color: #103755; text-decoration: underline;">' . $email . '</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Form Source</th>
-                            <td><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">' . $source_form . '</span></td>
-                        </tr>';
-        
+        // Subject Line (RFC 2047 encoded to protect against spam filtering on UTF-8 / emojis)
+        $subject_raw = "🔔 New Website Lead #" . ($lead_id ?: date('His')) . ": {$name} [{$source_form}]";
+        $subject_encoded = "=?UTF-8?B?" . base64_encode($subject_raw) . "?=";
+
+        // Envelope & Sender parameters
+        $from_email = 'no-reply@stridewel.com';
+        $from_name  = 'Stridewel Website Inquiry Desk';
+        $from_encoded = "=?UTF-8?B?" . base64_encode($from_name) . "?= <{$from_email}>";
+
+        // Generate a unique MIME multipart boundary
+        $boundary = "----=_Part_" . md5(uniqid(strval(time()), true));
+
+        // MIME Headers
+        $headers  = "From: {$from_encoded}\r\n";
+        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $reply_name_clean = preg_replace('/[^\w\s\.-]/u', '', $name);
+            $reply_name_encoded = "=?UTF-8?B?" . base64_encode($reply_name_clean ?: 'Customer') . "?=";
+            $headers .= "Reply-To: {$reply_name_encoded} <{$email}>\r\n";
+        }
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+        $headers .= "X-Priority: 1 (Highest)\r\n";
+        $headers .= "Importance: High\r\n";
+
+        // 1. Plain Text Body Representation (Anti-Spam deliverability)
+        $plain_body = "========================================================\r\n";
+        $plain_body .= "🔔 NEW WEBSITE INQUIRY - STRIDEWEL INTERNATIONAL\r\n";
+        $plain_body .= "========================================================\r\n\r\n";
+        $plain_body .= "Customer Name: " . $name . "\r\n";
+        $plain_body .= "Phone / Mobile: " . $phone . "\r\n";
+        $plain_body .= "Email Address: " . $email . "\r\n";
+        if (!empty($company_name)) {
+            $plain_body .= "Company / Org: " . $company_name . "\r\n";
+        }
+        $plain_body .= "Origin Form:   " . $source_form . "\r\n";
         if (!empty($product_interest)) {
-            $body .= '
-                        <tr>
-                            <th>Product Interest</th>
-                            <td><strong style="color: #ed1c24;">' . $product_interest . '</strong></td>
-                        </tr>';
+            $plain_body .= "Product Interest: " . $product_interest . "\r\n";
         }
-
-        $body .= '
-                        <tr>
-                            <th>Received At</th>
-                            <td>' . $date_time . '</td>
-                        </tr>
-                        <tr>
-                            <th>IP Address</th>
-                            <td><small style="color: #94a3b8;">' . $ip_address . '</small></td>
-                        </tr>
-                    </table>
-
-                    <div class="msg-container">
-                        <div class="msg-label">Customer Message / Requirements</div>
-                        <div class="msg-content">' . $message_text . '</div>
-                    </div>
-
-                    <div class="action-btns">';
-        
+        $plain_body .= "Received At:   " . $date_time . "\r\n";
+        $plain_body .= "IP Address:    " . $ip_address . "\r\n\r\n";
+        $plain_body .= "CUSTOMER MESSAGE / REQUIREMENTS:\r\n";
+        $plain_body .= "--------------------------------------------------------\r\n";
+        $plain_body .= $message_raw . "\r\n";
+        $plain_body .= "--------------------------------------------------------\r\n\r\n";
         if (!empty($clean_phone)) {
-            $body .= '
-                        <a href="https://wa.me/' . $wa_phone . '?text=' . urlencode("Hello " . $name . ", thank you for contacting Stridewel International regarding your inquiry.") . '" class="btn btn-wa" target="_blank">📱 WhatsApp Chat</a>
-                        <a href="tel:' . $clean_phone . '" class="btn btn-call">📞 Call Customer</a>';
+            $plain_body .= "Quick WhatsApp: https://wa.me/" . $wa_phone . "\r\n";
+            $plain_body .= "Quick Call:     tel:" . $clean_phone . "\r\n";
         }
+        $plain_body .= "Admin CRM:      https://stridewel.com/admin/manage-enquiries.php\r\n";
+
+        // 2. HTML Body Representation
+        $html_body = '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>' . htmlspecialchars($subject_raw, ENT_QUOTES, 'UTF-8') . '</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1e293b; line-height: 1.6; }
+        .email-container { max-width: 620px; margin: 30px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+        .email-header { background: linear-gradient(135deg, #103755 0%, #0a2540 100%); padding: 30px 25px; text-align: center; border-bottom: 4px solid #ed1c24; }
+        .email-header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: 0.5px; }
+        .email-header p { margin: 6px 0 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+        .badge-pill { display: inline-block; background: #ed1c24; color: #ffffff; padding: 5px 14px; border-radius: 50px; font-size: 12px; font-weight: 700; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .email-body { padding: 30px 25px; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        .info-table th, .info-table td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; text-align: left; }
+        .info-table th { background: #f8fafc; color: #64748b; font-weight: 600; width: 34%; }
+        .info-table td { color: #0f172a; font-weight: 500; }
+        .msg-container { background: #f8fafc; border-left: 4px solid #103755; padding: 18px 20px; border-radius: 0 8px 8px 0; margin-bottom: 28px; }
+        .msg-label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
+        .msg-content { font-size: 14px; color: #1e293b; white-space: pre-wrap; word-break: break-word; }
+        .action-btns { text-align: center; margin: 25px 0 10px; }
+        .btn { display: inline-block; padding: 11px 20px; font-size: 13px; font-weight: 700; text-decoration: none; border-radius: 6px; margin: 4px; }
+        .btn-wa { background-color: #25D366; color: #ffffff !important; }
+        .btn-call { background-color: #103755; color: #ffffff !important; }
+        .btn-mail { background-color: #ed1c24; color: #ffffff !important; }
+        .btn-crm { background-color: #0284c7; color: #ffffff !important; }
+        .email-footer { background: #f8fafc; padding: 20px 25px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b; }
+        .email-footer a { color: #103755; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>STRIDEWEL INTERNATIONAL</h1>
+            <p>Direct Veterinary &amp; A.I. Equipment Manufacturer</p>
+            <div class="badge-pill">Source: ' . $esc_source . '</div>
+        </div>
         
-        if (!empty($email)) {
-            $body .= '
-                        <a href="mailto:' . $email . '?subject=' . urlencode("Re: Stridewel International Inquiry") . '" class="btn btn-mail">✉️ Reply by Email</a>';
+        <div class="email-body">
+            <p style="margin-top: 0; font-size: 15px; color: #334155;">Hello Team,</p>
+            <p style="font-size: 14px; color: #475569; margin-bottom: 22px;">A new customer enquiry has been submitted on the Stridewel website. Here are the full lead details:</p>
+            
+            <table class="info-table">
+                <tr>
+                    <th>Customer Name</th>
+                    <td><strong>' . $esc_name . '</strong></td>
+                </tr>
+                <tr>
+                    <th>Phone / WhatsApp</th>
+                    <td>
+                        <strong><a href="tel:' . $clean_phone . '" style="color: #103755; text-decoration: none;">' . $esc_phone . '</a></strong>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Email Address</th>
+                    <td>
+                        <a href="mailto:' . $esc_email . '" style="color: #103755; text-decoration: underline;">' . $esc_email . '</a>
+                    </td>
+                </tr>';
+
+        if (!empty($esc_company)) {
+            $html_body .= '
+                <tr>
+                    <th>Company / Org</th>
+                    <td><strong>' . $esc_company . '</strong></td>
+                </tr>';
         }
 
-        $body .= '
-                    </div>
-                </div>
+        $html_body .= '
+                <tr>
+                    <th>Form Source</th>
+                    <td><span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">' . $esc_source . '</span></td>
+                </tr>';
 
-                <div class="email-footer">
-                    This notification was automatically sent from the official Stridewel International website.<br>
-                    Manage all incoming leads in the <a href="http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/admin/manage-enquiries.php" target="_blank">Admin Control Center &rarr;</a>
-                </div>
+        if (!empty($esc_product)) {
+            $html_body .= '
+                <tr>
+                    <th>Product Interest</th>
+                    <td><strong style="color: #ed1c24;">' . $esc_product . '</strong></td>
+                </tr>';
+        }
+
+        $html_body .= '
+                <tr>
+                    <th>Received At</th>
+                    <td>' . $date_time . '</td>
+                </tr>
+                <tr>
+                    <th>Lead Record ID</th>
+                    <td><span style="background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-weight: bold;">#' . ($lead_id ?: 'New') . '</span></td>
+                </tr>
+                <tr>
+                    <th>IP Address</th>
+                    <td><small style="color: #94a3b8;">' . $esc_ip . '</small></td>
+                </tr>
+            </table>
+
+            <div class="msg-container">
+                <div class="msg-label">Customer Message / Specifications</div>
+                <div class="msg-content">' . $esc_message . '</div>
             </div>
-        </body>
-        </html>';
 
-        // Headers
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: Stridewel Website <no-reply@stridewel.com>\r\n";
-        if (!empty($email)) {
-            $headers .= "Reply-To: {$name} <{$email}>\r\n";
+            <div class="action-btns">';
+
+        if (!empty($clean_phone)) {
+            $html_body .= '
+                <a href="https://wa.me/' . $wa_phone . '?text=' . urlencode("Hello " . $name . ", thank you for contacting Stridewel International regarding your inquiry.") . '" class="btn btn-wa" target="_blank">📱 WhatsApp Chat</a>
+                <a href="tel:' . $clean_phone . '" class="btn btn-call">📞 Call Customer</a>';
         }
-        $headers .= "X-Mailer: PHP/" . phpversion();
 
-        // Attempt dispatch via mail()
-        $sent = @mail($owner_email, $subject, $body, $headers);
+        if (!empty($email)) {
+            $html_body .= '
+                <a href="mailto:' . $esc_email . '?subject=' . urlencode("Re: Stridewel International Inquiry") . '" class="btn btn-mail">✉️ Reply by Email</a>';
+        }
+
+        $html_body .= '
+                <a href="https://stridewel.com/admin/manage-enquiries.php" class="btn btn-crm" target="_blank">🗂️ View in CRM</a>
+            </div>
+        </div>
+
+        <div class="email-footer">
+            This notification was automatically generated by the official Stridewel International website.<br>
+            Manage all customer leads &amp; quotations in your <a href="https://stridewel.com/admin/manage-enquiries.php" target="_blank">Admin Control Center &rarr;</a>
+        </div>
+    </div>
+</body>
+</html>';
+
+        // Build Combined Multipart Message Body
+        $full_message  = "--{$boundary}\r\n";
+        $full_message .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        $full_message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+        $full_message .= $plain_body . "\r\n\r\n";
+        $full_message .= "--{$boundary}\r\n";
+        $full_message .= "Content-Type: text/html; charset=UTF-8\r\n";
+        $full_message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+        $full_message .= $html_body . "\r\n\r\n";
+        $full_message .= "--{$boundary}--\r\n";
+
+        // Dispatch via PHP mail() with envelope sender -f parameter
+        $sent = false;
+        if (function_exists('mail')) {
+            $additional_params = "-f " . $from_email;
+            $sent = @mail($owner_email, $subject_encoded, $full_message, $headers, $additional_params);
+            
+            // Fallback without 5th parameter if server restricts -f
+            if (!$sent) {
+                $sent = @mail($owner_email, $subject_encoded, $full_message, $headers);
+            }
+        }
+
+        if ($sent) {
+            error_log("Enquiry notification email dispatched successfully to: {$owner_email} for lead: {$name}");
+        } else {
+            error_log("Enquiry notification email dispatch failed for: {$owner_email} for lead: {$name}");
+        }
+
         return $sent;
     } catch (Throwable $e) {
         error_log("Enquiry notification email error: " . $e->getMessage());
         return false;
     }
 }
+
 
 

@@ -2,6 +2,11 @@
 require('checksession.php'); 
 require('../inc/function.php');
 
+// Ensure database schema has source_form and ip_address columns
+if (function_exists('ensure_enquiry_table_schema')) {
+    ensure_enquiry_table_schema($conn);
+}
+
 // 1. Handle CSV / Excel Export
 if (isset($_GET['export']) && $_GET['export'] == 'csv') {
     $filter_status = isset($_GET['status']) ? mysqli_real_escape_string($conn, $_GET['status']) : '';
