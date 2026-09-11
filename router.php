@@ -93,11 +93,11 @@ if ($path === 'faq' || $path === 'faq.php') {
     exit;
 }
 
-if ($path === 'catalog' || $path === 'download-catalog') {
+if ($path === 'catalog' || $path === 'download-catalog' || $path === 'catalogue' || $path === 'download-catalogue') {
     $pdf = __DIR__ . '/uploads/catalog/stridewel_catalog_1789024165.pdf';
     if (file_exists($pdf)) {
         header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="Stridewel_Product_Catalog.pdf"');
+        header('Content-Disposition: inline; filename="Stridewel_Product_Catalogue.pdf"');
         readfile($pdf);
         exit;
     }

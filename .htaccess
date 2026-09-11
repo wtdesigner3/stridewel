@@ -21,6 +21,8 @@ DirectoryIndex index.php index.html home.html
     RewriteRule ^faq/?$ faq.php [L,QSA]
     RewriteRule ^catalog/?$ uploads/catalog/stridewel_catalog_1789024165.pdf [L]
     RewriteRule ^download-catalog/?$ uploads/catalog/stridewel_catalog_1789024165.pdf [L]
+    RewriteRule ^catalogue/?$ uploads/catalog/stridewel_catalog_1789024165.pdf [L]
+    RewriteRule ^download-catalogue/?$ uploads/catalog/stridewel_catalog_1789024165.pdf [L]
     RewriteRule ^sitemap(\.xml)?$ sitemap.php [L,QSA]
 
     # Products Catalog Routes
