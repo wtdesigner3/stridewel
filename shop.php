@@ -20,7 +20,7 @@ require_once __DIR__ . '/includes/header.php';
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-xl-7 col-lg-8 col-md-10">
-					<div class="about_hero_badge"><i class="bi bi-grid-3x3-gap-fill text-danger me-1"></i> PRECISION PRODUCTS CATALOG</div>
+					<div class="about_hero_badge"><i class="bi bi-grid-3x3-gap-fill text-danger me-1"></i> PRECISION PRODUCTS CATALOGUE</div>
 					<h1 style="max-width: 680px; margin-left: auto; margin-right: auto;">Veterinary &amp; <span>A.I. Equipment</span></h1>
 					<div class="product_breadcrumb_trail">
 						<a href="<?= SITE_URL ?>"><i class="bi bi-house-door-fill text-danger me-1"></i> Home</a>
@@ -31,7 +31,7 @@ require_once __DIR__ . '/includes/header.php';
 					<div class="mt-3">
 						<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn btn-sm btn-danger fw-bold rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="background: linear-gradient(135deg, #ed1c24 0%, #c41219 100%); border: none;">
 							<i class="bi bi-file-earmark-pdf-fill fs-6"></i>
-							<span><?= e($catalogInfo['btn_text'] ?? 'Download Full Catalog (PDF)') ?></span>
+							<span><?= e($catalogInfo['btn_text'] ?? 'Download Full Catalogue (PDF)') ?></span>
 							<?php if (!empty($catalogInfo['file_size'])): ?>
 								<span class="badge bg-white text-danger px-2 py-0.5 rounded-pill" style="font-size: 10.5px; font-weight: 700;"><?= e($catalogInfo['file_size']) ?></span>
 							<?php endif; ?>
@@ -44,7 +44,7 @@ require_once __DIR__ . '/includes/header.php';
 	</div>
 	<!-- End Master Hero Breadcrumb Area -->
 
-	<!-- Master Product Catalog Section (34 Products) -->
+	<!-- Master Product Catalogue Section (34 Products) -->
 	<section class="shop_catalog_section" style="padding: 60px 0 80px; background: #ffffff;">
 		<div class="container">
 			<!-- Filter & Search Toolbar -->

@@ -198,7 +198,7 @@ require_once __DIR__ . '/includes/header.php';
 								</a>
 								<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf'])): ?>
 								<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn_download_brochure">
-									<i class="bi bi-download"></i> <?= e($catalogInfo['btn_text'] ?? 'Catalog PDF') ?>
+									<i class="bi bi-download"></i> <?= e($catalogInfo['btn_text'] ?? 'Catalogue PDF') ?>
 								</a>
 								<?php endif; ?>
 							</div>

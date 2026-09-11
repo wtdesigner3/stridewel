@@ -161,10 +161,19 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 		<div class="footer-bottom">
 			<div class="container">
 				<div class="row align-items-center">
-					<div class="col-md-7 text-center text-md-start">
-						<p class="mb-0">&copy; <?= date('Y') ?> <?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>. All Rights Reserved. Designed for Precision Livestock Healthcare.</p>
+					<div class="col-lg-8 col-md-8 text-center text-md-start">
+						<p class="mb-0 footer_copyright_text">
+							&copy; <?= date('Y') ?> <?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>. All Rights Reserved. 
+							<span class="webtycoons_credit">
+								Designed &amp; Developed by 
+								<a href="https://www.thewebtycoons.com/" target="_blank" rel="noopener noreferrer" class="webtycoons_link" title="WebTycoons - Web Design &amp; Digital Marketing">
+									<img src="assets/images/webtycoons-logo.png" alt="WebTycoons Logo" class="webtycoons_logo" width="18" height="18">
+									<span class="webtycoons_name">WebTycoons</span>
+								</a>
+							</span>
+						</p>
 					</div>
-					<div class="col-md-5 text-center text-md-end mt-2 mt-md-0">
+					<div class="col-lg-4 col-md-4 text-center text-md-end mt-2 mt-md-0">
 						<span class="badge bg-secondary-subtle text-light px-3 py-2 border border-secondary">ISO 9001:2015 QMS Certified</span>
 					</div>
 				</div>
@@ -194,7 +203,7 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 				<li><a href="about" class="<?= $active_page === 'about' ? 'active' : '' ?>"><span><i class="bi bi-info-circle-fill text-danger me-2"></i> About Us</span> <i class="bi bi-chevron-right"></i></a></li>
 				<li class="mobile_has_submenu">
 					<a href="javascript:void(0);" class="mobile_accordion_toggle collapsed" id="mobileProdToggle" role="button" aria-expanded="false">
-						<span><i class="bi bi-grid-fill text-danger me-2"></i> Products Catalog</span> <i class="bi bi-chevron-down mobile_toggle_chevron"></i>
+						<span><i class="bi bi-grid-fill text-danger me-2"></i> Products Catalogue</span> <i class="bi bi-chevron-down mobile_toggle_chevron"></i>
 					</a>
 					<div class="mobile_products_accordion" id="mobileProdCollapse">
 						<!-- Category 1 -->
@@ -252,7 +261,7 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 			if (!empty($footerCatalog['status']) && !empty($footerCatalog['catalog_pdf'])): 
 			?>
 			<a href="<?= e($footerCatalog['catalog_pdf']) ?>" target="_blank" class="btn_drawer_catalog mt-2" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px 16px; background: #ffffff; border: 1.5px solid #ed1c24; color: #ed1c24; font-weight: 700; font-size: 13px; border-radius: 8px; text-decoration: none;">
-				<i class="bi bi-file-earmark-pdf-fill"></i> <?= e($footerCatalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>
+				<i class="bi bi-file-earmark-pdf-fill"></i> <?= e($footerCatalog['btn_text'] ?? 'Download Full Catalogue (PDF)') ?>
 			</a>
 			<?php endif; ?>
 			<div class="drawer_phone">

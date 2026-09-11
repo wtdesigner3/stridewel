@@ -96,11 +96,11 @@ require_once __DIR__ . '/includes/header.php';
 
 						<div class="about_btn_group">
 							<a href="products" class="btn btn-danger btn_about_primary">
-								<i class="bi bi-grid-fill me-1"></i> Explore Product Catalog <i class="bi bi-arrow-right ms-1"></i>
+								<i class="bi bi-grid-fill me-1"></i> Explore Product Catalogue <i class="bi bi-arrow-right ms-1"></i>
 							</a>
 							<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf'])): ?>
 							<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn btn-outline-dark btn_about_secondary">
-								<i class="bi bi-download me-1"></i> <?= e($catalogInfo['btn_text'] ?? 'Download PDF Catalog') ?>
+								<i class="bi bi-download me-1"></i> <?= e($catalogInfo['btn_text'] ?? 'Download PDF Catalogue') ?>
 							</a>
 							<?php endif; ?>
 						</div>
@@ -473,7 +473,7 @@ require_once __DIR__ . '/includes/header.php';
 						<?php endif; ?>
 						<?php if (!empty($catalogInfo['status']) && !empty($catalogInfo['catalog_pdf'])): ?>
 						<a href="<?= e($catalogInfo['catalog_pdf']) ?>" target="_blank" class="btn btn-outline-dark btn_about_secondary">
-							<i class="bi bi-download me-1"></i> <?= e($catalogInfo['btn_text'] ?? 'Download PDF Catalog') ?>
+							<i class="bi bi-download me-1"></i> <?= e($catalogInfo['btn_text'] ?? 'Download PDF Catalogue') ?>
 						</a>
 						<?php endif; ?>
 					</div>

@@ -173,7 +173,7 @@ require_once __DIR__ . '/includes/header.php';
 						<?php if (!empty($catalogInfo['version_label'])): ?>
 						<h4><i class="bi bi-grid-fill"></i> <?= e($catalogInfo['version_label']) ?></h4>
 						<?php else: ?>
-						<h4><i class="bi bi-grid-fill"></i> Complete Product Catalog</h4>
+						<h4><i class="bi bi-grid-fill"></i> Complete Product Catalogue</h4>
 						<?php endif; ?>
 						<h1><?= !empty($catalogInfo['catalog_title']) ? e($catalogInfo['catalog_title']) : 'Explore Our <span>Complete Range of Products</span>' ?></h1>
 						<p><?= !empty($catalogInfo['catalog_subtitle']) ? nl2br(e($catalogInfo['catalog_subtitle'])) : 'ISO 9001:2015 certified artificial insemination instruments, cryogenic storage tools, semen collection sets, and veterinary surgical equipment.' ?></p>

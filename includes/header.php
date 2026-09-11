@@ -155,7 +155,7 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 									</ul>
 								</div>
 
-								<!-- Mega Menu Bottom Catalog Strip -->
+								<!-- Mega Menu Bottom Catalogue Strip -->
 								<?php if (!empty($headerCatalog['status']) && !empty($headerCatalog['catalog_pdf'])): ?>
 								<div class="col-12 mt-2 pt-2 border-top d-flex flex-wrap align-items-center justify-content-between gap-2" style="font-size: 13px;">
 									<div class="d-flex align-items-center gap-2 text-muted">
@@ -163,7 +163,7 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 										<span>Looking for complete institutional tender specifications &amp; items?</span>
 									</div>
 									<a href="<?= e($headerCatalog['catalog_pdf']) ?>" target="_blank" class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1.5" style="font-size: 12px;">
-										<i class="bi bi-download"></i> <?= e($headerCatalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>
+										<i class="bi bi-download"></i> <?= e($headerCatalog['btn_text'] ?? 'Download Full Catalogue (PDF)') ?>
 									</a>
 								</div>
 								<?php endif; ?>
@@ -178,10 +178,10 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 				<div class="col-xl-4 col-lg-4 col-md-8 col-8 header_action_col">			
 					<div class="header_quote_wrap text-end d-flex justify-content-end align-items-center">
 						<?php if (!empty($headerCatalog['status']) && !empty($headerCatalog['catalog_pdf'])): ?>
-						<a href="<?= e($headerCatalog['catalog_pdf']) ?>" target="_blank" download class="header_catalog_btn" title="<?= e($headerCatalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>">
+						<a href="<?= e($headerCatalog['catalog_pdf']) ?>" target="_blank" class="header_catalog_btn" title="<?= e($headerCatalog['btn_text'] ?? 'Download Full Catalogue (PDF)') ?>">
 							<i class="bi bi-file-earmark-pdf-fill"></i>
-							<span class="catalog_text_desktop d-none d-xl-inline">Download Catalog</span>
-							<span class="catalog_text_tablet d-none d-sm-inline d-xl-none">Catalog</span>
+							<span class="catalog_text_desktop d-none d-xl-inline">Download Catalogue</span>
+							<span class="catalog_text_tablet d-none d-sm-inline d-xl-none">Catalogue</span>
 							<span class="catalog_text_mobile d-inline d-sm-none">PDF</span>
 						</a>
 						<?php endif; ?>

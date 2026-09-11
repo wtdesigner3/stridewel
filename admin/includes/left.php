@@ -58,13 +58,13 @@ $profile = get_site_profile();
 						<a href="manage-categories.php">Categories <?= $sidebar_cat_count > 0 ? "({$sidebar_cat_count})" : '' ?></a>
 					</li>
 					<li class="<?= ($current_page == 'manage-products.php' && !isset($_GET['cat'])) ? 'active' : '' ?>">
-						<a href="manage-products.php">All Catalog Items</a>
+						<a href="manage-products.php">All Catalogue Items</a>
 					</li>
 					<li class="<?= ($current_page == 'add-product.php') ? 'active' : '' ?>">
 						<a href="add-product.php">Add New Product</a>
 					</li>
 					<li class="<?= ($current_page == 'manage-catalog.php') ? 'active' : '' ?>">
-						<a href="manage-catalog.php"><i class="fa-solid fa-file-pdf text-danger me-1"></i> PDF Catalog Download</a>
+						<a href="manage-catalog.php"><i class="fa-solid fa-file-pdf text-danger me-1"></i> PDF Catalogue Download</a>
 					</li>
 				</ul>
 			</li>

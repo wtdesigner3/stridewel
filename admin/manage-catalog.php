@@ -127,16 +127,16 @@ if (empty($catalog) || !is_array($catalog)) {
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <div>
                     <h1 class="page-header mb-1" style="font-size: 24px; font-weight: 800; color: #103755;">
-                        <i class="fa-solid fa-file-pdf text-danger me-2"></i> PDF Catalog Management
+                        <i class="fa-solid fa-file-pdf text-danger me-2"></i> PDF Catalogue Management
                     </h1>
                     <p class="text-muted mb-0" style="font-size: 13.5px;">
-                        Manage the downloadable company product catalog PDF, button labels, and sitewide visibility across all pages.
+                        Manage the downloadable company product catalogue PDF, button labels, and sitewide visibility across all pages.
                     </p>
                 </div>
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
                     <li class="breadcrumb-item"><a href="manage-products.php">Products Inventory</a></li>
-                    <li class="breadcrumb-item active">PDF Catalog Management</li>
+                    <li class="breadcrumb-item active">PDF Catalogue Management</li>
                 </ol>
             </div>
 
@@ -149,10 +149,10 @@ if (empty($catalog) || !is_array($catalog)) {
                     <i class="fa-solid fa-layer-group"></i> Categories
                 </a>
                 <a href="manage-catalog.php" class="cms-subnav-pill active">
-                    <i class="fa-solid fa-file-pdf"></i> Download Catalog CMS
+                    <i class="fa-solid fa-file-pdf"></i> Download Catalogue CMS
                 </a>
                 <a href="../shop.php" target="_blank" class="cms-subnav-pill cms-subnav-preview">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live Shop Catalog
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Live Shop Catalogue
                 </a>
             </div>
 
@@ -239,23 +239,23 @@ if (empty($catalog) || !is_array($catalog)) {
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom">
                                 <h5 class="mb-0 fw-bold" style="color: #103755;">
-                                    <i class="fa-solid fa-pen-nib text-danger me-2"></i> Catalog Headings &amp; Button Text
+                                    <i class="fa-solid fa-pen-nib text-danger me-2"></i> Catalogue Headings &amp; Button Text
                                 </h5>
                             </div>
                             <div class="card-body p-4 bg-white">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark mb-1">
-                                        Catalog Showcase Title
+                                        Catalogue Showcase Title
                                     </label>
-                                    <input type="text" name="catalog_title" class="form-control form-control-lg fw-bold" value="<?= htmlspecialchars($catalog['catalog_title'] ?? '') ?>" placeholder="e.g. Complete Veterinary & A.I. Equipment Product Catalog">
-                                    <small class="text-muted d-block mt-1">Displayed as the main heading in catalog showcase sections. Leave blank to hide.</small>
+                                    <input type="text" name="catalog_title" class="form-control form-control-lg fw-bold" value="<?= htmlspecialchars($catalog['catalog_title'] ?? '') ?>" placeholder="e.g. Complete Veterinary & A.I. Equipment Product Catalogue">
+                                    <small class="text-muted d-block mt-1">Displayed as the main heading in catalogue showcase sections. Leave blank to hide.</small>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold text-dark mb-1">
                                         Subtitle / Description
                                     </label>
-                                    <textarea name="catalog_subtitle" class="form-control" rows="3" placeholder="Brief overview of what is included in the downloadable catalog..."><?= htmlspecialchars($catalog['catalog_subtitle'] ?? '') ?></textarea>
+                                    <textarea name="catalog_subtitle" class="form-control" rows="3" placeholder="Brief overview of what is included in the downloadable catalogue..."><?= htmlspecialchars($catalog['catalog_subtitle'] ?? '') ?></textarea>
                                     <small class="text-muted d-block mt-1">Leave blank to hide description.</small>
                                 </div>
 
@@ -264,15 +264,15 @@ if (empty($catalog) || !is_array($catalog)) {
                                         <label class="form-label fw-bold text-dark mb-1">
                                             Download Button Label
                                         </label>
-                                        <input type="text" name="btn_text" class="form-control" value="<?= htmlspecialchars($catalog['btn_text'] ?? 'Download Full Catalog (PDF)') ?>" placeholder="e.g. Download Full Catalog (PDF)">
-                                        <small class="text-muted d-block mt-1">Text shown on all download catalog buttons across the website.</small>
+                                        <input type="text" name="btn_text" class="form-control" value="<?= htmlspecialchars($catalog['btn_text'] ?? 'Download Full Catalogue (PDF)') ?>" placeholder="e.g. Download Full Catalogue (PDF)">
+                                        <small class="text-muted d-block mt-1">Text shown on all download catalogue buttons across the website.</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold text-dark mb-1">
                                             Edition / Quality Badge Tag
                                         </label>
                                         <input type="text" name="version_label" class="form-control" value="<?= htmlspecialchars($catalog['version_label'] ?? '2026 Edition (ISO 9001:2015)') ?>" placeholder="e.g. 2026 Edition (ISO 9001:2015)">
-                                        <small class="text-muted d-block mt-1">Version tag shown next to the catalog. Leave blank to hide.</small>
+                                        <small class="text-muted d-block mt-1">Version tag shown next to the catalogue. Leave blank to hide.</small>
                                     </div>
                                 </div>
                             </div>
@@ -282,7 +282,7 @@ if (empty($catalog) || !is_array($catalog)) {
                         <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
                             <div class="card-header bg-white py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
                                 <h5 class="mb-0 fw-bold" style="color: #103755;">
-                                    <i class="fa-solid fa-file-lines text-primary me-2"></i> Current Active Catalog File
+                                    <i class="fa-solid fa-file-lines text-primary me-2"></i> Current Active Catalogue File
                                 </h5>
                                 <a href="../<?= htmlspecialchars($catalog['catalog_pdf']) ?>" target="_blank" class="btn btn-sm btn-outline-danger fw-bold d-inline-flex align-items-center gap-1.5 rounded-pill px-3">
                                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Current PDF
@@ -355,14 +355,14 @@ if (empty($catalog) || !is_array($catalog)) {
                                     </label>
                                 </div>
                                 <small class="text-muted d-block" style="font-size: 12px; line-height: 1.45;">
-                                    When turned OFF, all "Download Catalog" buttons and callouts across the Homepage, About Us, Products Catalog, Product Details, Header, and Footer are cleanly hidden.
+                                    When turned OFF, all "Download Catalogue" buttons and callouts across the Homepage, About Us, Products Catalogue, Product Details, Header, and Footer are cleanly hidden.
                                 </small>
                             </div>
                         </div>
 
                         <!-- Save Submit Button -->
                         <button type="submit" name="update_catalog" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm py-3 rounded-pill d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #ed1c24 0%, #c41219 100%); border: none;">
-                            <i class="fa-solid fa-floppy-disk"></i> Save Catalog Settings
+                            <i class="fa-solid fa-floppy-disk"></i> Save Catalogue Settings
                         </button>
                     </div>
                 </div>
