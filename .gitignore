@@ -7,7 +7,9 @@
 .env.*
 !.env.example
 inc/config.local.php
+inc/config.production.php
 *.local.php
+node_modules/
 
 # PHP & Server Error Logs
 error_log

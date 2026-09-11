@@ -1,0 +1,43 @@
+name: 🚀 Auto Deploy to Live Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: 🛰️ Sync Files to Live cPanel
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Fetch Repository Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 📂 Sync Files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST || secrets.FTP_SERVER || 'stridewel.com' }}
+          username: ${{ secrets.FTP_USERNAME || secrets.FTP_USER || 'strid@stridewel.com' }}
+          password: ${{ secrets.FTP_PASSWORD || secrets.FTP_PASS }}
+          port: 21
+          protocol: ftp
+          server-dir: /
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .github/**
+            scratch/**
+            .gemini/**
+            .agents/**
+            .system_generated/**
+            deploy.js
+            package.json
+            package-lock.json
+            test_*.php
+            *.tmp
+            *.bak
+            *.log

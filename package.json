@@ -1,0 +1,12 @@
+{
+  "name": "stridewel-website",
+  "version": "1.0.0",
+  "description": "Stridewel International Official Website & Deployment Automation",
+  "scripts": {
+    "deploy": "node deploy.js",
+    "deploy:dry": "node deploy.js --dry-run"
+  },
+  "devDependencies": {
+    "basic-ftp": "^5.0.5"
+  }
+}

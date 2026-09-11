@@ -14,11 +14,16 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 ini_set('display_errors', '0');
 
 // 3. Environment & Database Credentials
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'stridewel_db');
-define('DB_PORT', 3306);
+if (file_exists(__DIR__ . '/config.production.php')) {
+    require_once __DIR__ . '/config.production.php';
+} else {
+    // Default Local Development Credentials
+    defined('DB_HOST') or define('DB_HOST', 'localhost');
+    defined('DB_USER') or define('DB_USER', 'root');
+    defined('DB_PASS') or define('DB_PASS', '');
+    defined('DB_NAME') or define('DB_NAME', 'stridewel_db');
+    defined('DB_PORT') or define('DB_PORT', 3306);
+}
 
 // 4. Base Site Constants
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['SERVER_PORT'] ?? 80) == 443) ? "https://" : "http://";
@@ -39,23 +44,16 @@ define('UPLOAD_URL', SITE_URL . 'uploads/');
 $conn = null;
 
 try {
-    $conn = @mysqli_init();
-    if ($conn) {
-        @mysqli_options($conn, MYSQLI_OPT_CONNECT_TIMEOUT, 3);
-        $connected = @mysqli_real_connect($conn, DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-        if ($connected) {
-            @mysqli_set_charset($conn, "utf8mb4");
+    $temp_conn = @mysqli_init();
+    if ($temp_conn) {
+        @mysqli_options($temp_conn, MYSQLI_OPT_CONNECT_TIMEOUT, 3);
+        $connected = @mysqli_real_connect($temp_conn, DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+        if ($connected && !mysqli_connect_errno()) {
+            @mysqli_set_charset($temp_conn, "utf8mb4");
+            $conn = $temp_conn;
         } else {
-            // If connection to server works but DB is missing, create it
-            $srv_conn = @mysqli_connect(DB_HOST, DB_USER, DB_PASS, '', DB_PORT);
-            if ($srv_conn) {
-                @mysqli_query($srv_conn, "CREATE DATABASE IF NOT EXISTS `" . DB_NAME . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-                @mysqli_close($srv_conn);
-                $connected = @mysqli_real_connect($conn, DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-                if ($connected) {
-                    @mysqli_set_charset($conn, "utf8mb4");
-                }
-            }
+            @mysqli_close($temp_conn);
+            $conn = null;
         }
     }
 } catch (Throwable $e) {

@@ -1,3 +1,6 @@
+# Set default index order (prioritize index.php over legacy static html)
+DirectoryIndex index.php index.html home.html
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
