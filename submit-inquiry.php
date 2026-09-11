@@ -73,11 +73,13 @@ if ($conn && $conn instanceof mysqli) {
             $has_ip_col = true;
         }
 
+        $now_ist = date('Y-m-d H:i:s');
+
         // Primary Attempt: Insert with source_form and ip_address if available
         if ($has_source_col && $has_ip_col) {
-            $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `source_form`, `ip_address`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
+            $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `source_form`, `ip_address`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)");
             if ($stmt) {
-                $stmt->bind_param("ssssssss", $fullName, $email, $phone, $companyName, $productInterest, $message, $sourceForm, $ipAddress);
+                $stmt->bind_param("sssssssss", $fullName, $email, $phone, $companyName, $productInterest, $message, $sourceForm, $ipAddress, $now_ist);
                 $inserted = $stmt->execute();
                 if ($inserted) {
                     $lead_id = intval($stmt->insert_id);
@@ -89,9 +91,9 @@ if ($conn && $conn instanceof mysqli) {
         // Fallback Attempt: Insert using base standard schema if columns are not present or primary failed
         if (!$inserted) {
             $annotated_message = "[Origin: " . $sourceForm . "] [IP: " . $ipAddress . "]\n\n" . $message;
-            $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())");
+            $stmt = $conn->prepare("INSERT INTO `tbl_enquiry` (`full_name`, `email`, `phone`, `company_name`, `product_interest`, `message`, `status`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)");
             if ($stmt) {
-                $stmt->bind_param("ssssss", $fullName, $email, $phone, $companyName, $productInterest, $annotated_message);
+                $stmt->bind_param("sssssss", $fullName, $email, $phone, $companyName, $productInterest, $annotated_message, $now_ist);
                 $inserted = $stmt->execute();
                 if ($inserted) {
                     $lead_id = intval($stmt->insert_id);

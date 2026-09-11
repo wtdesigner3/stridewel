@@ -13,6 +13,9 @@ if (session_status() === PHP_SESSION_NONE) {
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 ini_set('display_errors', '0');
 
+// Set Application Default Timezone to Indian Standard Time (IST, UTC+5:30)
+date_default_timezone_set('Asia/Kolkata');
+
 // 3. Environment & Database Credentials
 if (file_exists(__DIR__ . '/config.production.php')) {
     require_once __DIR__ . '/config.production.php';
@@ -50,6 +53,7 @@ try {
         $connected = @mysqli_real_connect($temp_conn, DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
         if ($connected && !mysqli_connect_errno()) {
             @mysqli_set_charset($temp_conn, "utf8mb4");
+            @mysqli_query($temp_conn, "SET time_zone = '+05:30'");
             $conn = $temp_conn;
         } else {
             @mysqli_close($temp_conn);
@@ -71,6 +75,9 @@ try {
         PDO::ATTR_TIMEOUT            => 3,
     ];
     $pdo = @new PDO($dsn, DB_USER, DB_PASS, $pdo_options);
+    if ($pdo) {
+        @$pdo->exec("SET time_zone = '+05:30'");
+    }
 } catch (Throwable $e) {
     // Graceful fallback if database service is starting or migrating
     $pdo = null;

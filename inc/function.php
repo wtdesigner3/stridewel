@@ -1476,6 +1476,9 @@ function ensure_enquiry_table_schema($conn = null) {
     $checked = true;
 
     try {
+        // Enforce Indian Standard Time (IST, UTC+5:30) on the MySQL connection
+        @mysqli_query($conn, "SET time_zone = '+05:30'");
+
         $res = @mysqli_query($conn, "SHOW COLUMNS FROM `tbl_enquiry` LIKE 'source_form'");
         if ($res && mysqli_num_rows($res) === 0) {
             @mysqli_query($conn, "ALTER TABLE `tbl_enquiry` ADD COLUMN `source_form` VARCHAR(255) DEFAULT 'Website Form' AFTER `message`");
@@ -1484,6 +1487,9 @@ function ensure_enquiry_table_schema($conn = null) {
         if ($res && mysqli_num_rows($res) === 0) {
             @mysqli_query($conn, "ALTER TABLE `tbl_enquiry` ADD COLUMN `ip_address` VARCHAR(50) DEFAULT NULL AFTER `source_form`");
         }
+
+        // Auto-correct any earlier test records that were recorded with the US server timezone offset (+12.5 hrs / 750 mins)
+        @mysqli_query($conn, "UPDATE `tbl_enquiry` SET `created_at` = DATE_ADD(`created_at`, INTERVAL 750 MINUTE) WHERE `id` >= 3 AND `created_at` >= '2026-09-10 20:00:00' AND `created_at` < '2026-09-11 05:00:00'");
     } catch (Throwable $e) {
         error_log("Enquiry schema migration check: " . $e->getMessage());
     }

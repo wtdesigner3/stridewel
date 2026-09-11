@@ -2,6 +2,9 @@
 require('checksession.php'); 
 require('../inc/function.php');
 
+// Enforce Indian Standard Time (IST)
+date_default_timezone_set('Asia/Kolkata');
+
 // Ensure database schema has source_form and ip_address columns
 if (function_exists('ensure_enquiry_table_schema')) {
     ensure_enquiry_table_schema($conn);
