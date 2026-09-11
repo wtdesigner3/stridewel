@@ -95,7 +95,7 @@ require_once __DIR__ . '/includes/header.php';
 								<span class="channel_subtext">Direct factory quotations &amp; tender specifications</span>
 							</p>
 						</div>
-						<a href="#directEnquiryForm" class="channel_action_btn outline_navy">
+						<a href="#quoteModal" class="channel_action_btn outline_navy open_quote_modal" data-bs-toggle="modal" data-bs-target="#quoteModal" data-toggle="modal" data-target="#quoteModal" data-product="Institutional Tender / Official Inquiry">
 							<i class="bi bi-chat-left-dots-fill"></i> Send Official Inquiry
 						</a>
 					</div>

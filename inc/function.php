@@ -1501,8 +1501,8 @@ function ensure_enquiry_table_schema($conn = null) {
  */
 function send_enquiry_notification_email($data) {
     try {
-        // Target Recipient: Using wtdesigner3@gmail.com for testing, switchable to stridewel@gmail.com
-        $owner_email = defined('INQUIRY_NOTIFICATION_EMAIL') ? INQUIRY_NOTIFICATION_EMAIL : 'wtdesigner3@gmail.com';
+        // Target Recipient: Production destination for all incoming website enquiries
+        $owner_email = defined('INQUIRY_NOTIFICATION_EMAIL') ? INQUIRY_NOTIFICATION_EMAIL : 'stridewel@gmail.com';
         
         $name = trim($data['name'] ?? $data['full_name'] ?? 'Website Visitor');
         $phone = trim($data['phone'] ?? '');
