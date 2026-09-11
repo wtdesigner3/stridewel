@@ -80,13 +80,13 @@ $page_seo = $page_seo ?? ($seo_key ?? 'home');
 			<div class="row align-items-center">
 				<div class="col-xl-2 col-lg-2 col-md-4 col-4 header_logo_col">
 					<div class="header-logo">
-						<a href="index"><img src="assets/images/logo.png" alt="<?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>" style="max-height: 44px; width: auto;"></a>
+						<a href="<?= SITE_URL ?>"><img src="assets/images/logo.png" alt="<?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>" style="max-height: 44px; width: auto;"></a>
 					</div>
 				</div>
 				<div class="col-xl-6 col-lg-6 d-none d-lg-block">
 					<div class="header-menu">
 						<ul class="nav_scroll">
-							<li><a href="index" class="<?= $active_page === 'home' ? 'active' : '' ?>">Home</a></li>
+							<li><a href="<?= SITE_URL ?>" class="<?= $active_page === 'home' ? 'active' : '' ?>">Home</a></li>
 							<li><a href="about" class="<?= $active_page === 'about' ? 'active' : '' ?>">About Us</a></li>
 							<li class="has-mega-menu"><a href="products" class="<?= $active_page === 'products' ? 'active' : '' ?>" style="cursor: pointer;">Products <i class="bi bi-chevron-down" style="font-size: 11px; margin-left: 3px;"></i></a>
 							<div class="sub_menu mega_menu">

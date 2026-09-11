@@ -28,7 +28,7 @@ require_once __DIR__ . '/includes/header.php';
 						Get in Touch with <span>Stridewel Engineering</span>
 					</h1>
 					<div class="page_breadcrumb_trail">
-						<a href="index"><i class="bi bi-house-door-fill text-danger me-1"></i> Home</a>
+						<a href="<?= SITE_URL ?>"><i class="bi bi-house-door-fill text-danger me-1"></i> Home</a>
 						<span class="trail_sep"><i class="bi bi-chevron-right"></i></span>
 						<span class="current">Contact Us</span>
 					</div>

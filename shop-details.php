@@ -72,7 +72,7 @@ require_once __DIR__ . '/includes/header.php';
 						<?= e($product['product_name']) ?>
 					</h1>
 					<div class="page_breadcrumb_trail">
-						<a href="index"><i class="bi bi-house-door-fill text-danger me-1"></i> Home</a>
+						<a href="<?= SITE_URL ?>"><i class="bi bi-house-door-fill text-danger me-1"></i> Home</a>
 						<span style="color: rgba(255,255,255,0.4);"><i class="bi bi-chevron-right" style="font-size: 11px;"></i></span>
 						<a href="products">Products</a>
 						<span style="color: rgba(255,255,255,0.4);"><i class="bi bi-chevron-right" style="font-size: 11px;"></i></span>

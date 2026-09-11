@@ -68,7 +68,12 @@ if (!empty($path) && file_exists($direct_file) && !is_dir($direct_file)) {
 }
 
 // 3. Main Page Routes
-if ($path === '' || $path === 'index' || $path === 'index.php' || $path === 'home') {
+if ($path === 'index' || $path === 'index.php' || $path === 'home') {
+    header("Location: /", true, 301);
+    exit;
+}
+
+if ($path === '') {
     require __DIR__ . '/index.php';
     exit;
 }

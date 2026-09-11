@@ -23,7 +23,7 @@ require_once __DIR__ . '/includes/header.php';
 					<div class="about_hero_badge"><i class="bi bi-grid-3x3-gap-fill text-danger me-1"></i> PRECISION PRODUCTS CATALOG</div>
 					<h1 style="max-width: 680px; margin-left: auto; margin-right: auto;">Veterinary &amp; <span>A.I. Equipment</span></h1>
 					<div class="product_breadcrumb_trail">
-						<a href="index"><i class="bi bi-house-door-fill text-danger me-1"></i> Home</a>
+						<a href="<?= SITE_URL ?>"><i class="bi bi-house-door-fill text-danger me-1"></i> Home</a>
 						<i class="bi bi-chevron-right" style="font-size: 11px; opacity: 0.6;"></i>
 						<span class="current">Products</span>
 					</div>

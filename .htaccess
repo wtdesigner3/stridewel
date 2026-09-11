@@ -8,13 +8,14 @@ DirectoryIndex index.php index.html home.html
     # Disable directory listing
     Options -Indexes
 
-    # Allow direct access to real files and directories
+    # 1. Canonical 301 Redirect: strip /index, /index.php, /home to clean root /
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /(index|home)(\.php)?(\?[^\ ]*)?\ HTTP/ [NC]
+    RewriteRule ^(index|home)(\.php)?$ / [R=301,L]
+
+    # 2. Allow direct access to real files and directories
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
-
-    # Clean URLs for Main Static Pages
-    RewriteRule ^(home|index)/?$ index.php [L,QSA]
     RewriteRule ^about/?$ about.php [L,QSA]
     RewriteRule ^contact/?$ contact.php [L,QSA]
     RewriteRule ^faq/?$ faq.php [L,QSA]

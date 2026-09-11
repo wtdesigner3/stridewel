@@ -86,7 +86,7 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 				<div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
 					<div class="footer-widget">
 						<div class="footer-logo">
-							<a href="index"><img src="assets/images/logo.png" alt="<?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>"></a>
+							<a href="<?= SITE_URL ?>"><img src="assets/images/logo.png" alt="<?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>"></a>
 						</div>
 						<p class="footer-desc"><?= e($siteProfile['site_tagline'] ?? 'ISO 9001:2015 QMS Certified manufacturer of premium Artificial Insemination equipment, cryogenic storage, and livestock healthcare solutions across India & globally.') ?></p>
 						<div class="footer_social_ribbon">
@@ -110,7 +110,7 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 					<div class="footer-widget">
 						<h4>Quick Links</h4>
 						<ul class="footer-links">
-							<li><a href="index"><i class="bi bi-chevron-right"></i> Home</a></li>
+							<li><a href="<?= SITE_URL ?>"><i class="bi bi-chevron-right"></i> Home</a></li>
 							<li><a href="about"><i class="bi bi-chevron-right"></i> About Us</a></li>
 							<li><a href="products"><i class="bi bi-chevron-right"></i> All Products</a></li>
 							<li><a href="faq"><i class="bi bi-chevron-right"></i> FAQ &amp; Help</a></li>
@@ -181,7 +181,7 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 	<div class="mobile_nav_backdrop" id="mobileNavBackdrop"></div>
 	<div class="mobile_nav_drawer" id="mobileNavDrawer">
 		<div class="mobile_drawer_header">
-			<a href="index">
+			<a href="<?= SITE_URL ?>">
 				<img src="assets/images/logo.png" alt="<?= e($siteProfile['site_name'] ?? 'Stridewel International') ?>" style="max-height: 36px; width: auto;">
 			</a>
 			<button type="button" class="mobile_drawer_close" id="mobileNavClose" aria-label="Close Menu">
@@ -190,7 +190,7 @@ $showCtaBanner = (!empty($ctaHeading) || !empty($ctaDesc) || !empty($ctaBtnText)
 		</div>
 		<div class="mobile_drawer_body">
 			<ul class="mobile_nav_list">
-				<li><a href="index" class="<?= $active_page === 'home' ? 'active' : '' ?>"><span><i class="bi bi-house-door-fill text-danger me-2"></i> Home</span> <i class="bi bi-chevron-right"></i></a></li>
+				<li><a href="<?= SITE_URL ?>" class="<?= $active_page === 'home' ? 'active' : '' ?>"><span><i class="bi bi-house-door-fill text-danger me-2"></i> Home</span> <i class="bi bi-chevron-right"></i></a></li>
 				<li><a href="about" class="<?= $active_page === 'about' ? 'active' : '' ?>"><span><i class="bi bi-info-circle-fill text-danger me-2"></i> About Us</span> <i class="bi bi-chevron-right"></i></a></li>
 				<li class="mobile_has_submenu">
 					<a href="javascript:void(0);" class="mobile_accordion_toggle collapsed" id="mobileProdToggle" role="button" aria-expanded="false">
