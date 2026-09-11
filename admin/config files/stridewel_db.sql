@@ -225,6 +225,33 @@ INSERT INTO `tbl_enquiry` VALUES (1,'Dr. Rajesh Patel','Apex Livestock Solutions
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tbl_catalog`
+--
+
+DROP TABLE IF EXISTS `tbl_catalog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tbl_catalog` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `catalog_title` varchar(255) NOT NULL DEFAULT 'Complete Veterinary & A.I. Equipment Product Catalogue',
+  `catalog_subtitle` text DEFAULT 'Comprehensive product catalogue featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.',
+  `catalog_pdf` varchar(255) NOT NULL DEFAULT 'uploads/catalog/stridewel_catalog_1789024165.pdf',
+  `btn_text` varchar(100) NOT NULL DEFAULT 'Download Full Catalogue (PDF)',
+  `version_label` varchar(100) NOT NULL DEFAULT '2026 Edition (ISO 9001:2015)',
+  `file_size` varchar(50) NOT NULL DEFAULT '4.8 MB',
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+LOCK TABLES `tbl_catalog` WRITE;
+/*!40000 ALTER TABLE `tbl_catalog` DISABLE KEYS */;
+INSERT INTO `tbl_catalog` VALUES (1,'Complete Veterinary & A.I. Equipment Product Catalogue','Comprehensive product catalogue featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.','uploads/catalog/stridewel_catalog_1789024165.pdf','Download Full Catalogue (PDF)','2026 Edition (ISO 9001:2015)','4.8 MB',1,NOW());
+/*!40000 ALTER TABLE `tbl_catalog` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tbl_faq`
 --
 

@@ -2,42 +2,65 @@
 require('checksession.php');
 require('../inc/function.php');
 
+// Ensure database has tbl_catalog and active record
+if (function_exists('ensure_catalog_table_schema')) {
+    ensure_catalog_table_schema($conn);
+}
+
+// Enforce Indian Standard Time
+date_default_timezone_set('Asia/Kolkata');
+
 $msg = "";
 $error = "";
 
 // Handle Catalog Update
 if (isset($_POST['update_catalog'])) {
-    $cur_q = mysqli_query($conn, "SELECT * FROM `tbl_catalog` WHERE `id`=1");
-    $cur = mysqli_fetch_assoc($cur_q);
-    $pdf_file = $cur['catalog_pdf'] ?? 'assets/STRIDEWEL (2).pdf';
-    $file_size = $cur['file_size'] ?? '4.8 MB';
+    $cur = [];
+    $cur_q = @mysqli_query($conn, "SELECT * FROM `tbl_catalog` WHERE `id`=1");
+    if ($cur_q && mysqli_num_rows($cur_q) > 0) {
+        $cur = mysqli_fetch_assoc($cur_q);
+    }
+    $pdf_file = !empty($cur['catalog_pdf']) ? $cur['catalog_pdf'] : 'uploads/catalog/stridewel_catalog_1789024165.pdf';
+    $file_size = !empty($cur['file_size']) ? $cur['file_size'] : '4.8 MB';
 
     // Handle PDF File Upload
     if (!empty($_FILES['catalog_file']['name'])) {
-        $ext = strtolower(pathinfo($_FILES['catalog_file']['name'], PATHINFO_EXTENSION));
-        if ($ext === 'pdf') {
-            $upload_dir = "../uploads/catalog/";
-            if (!is_dir($upload_dir)) {
-                @mkdir($upload_dir, 0777, true);
-            }
-            $clean_name = "stridewel_catalog_" . time() . ".pdf";
-            $target_file = $upload_dir . $clean_name;
+        if ($_FILES['catalog_file']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['catalog_file']['name'], PATHINFO_EXTENSION));
+            if ($ext === 'pdf') {
+                $upload_dir = __DIR__ . '/../uploads/catalog/';
+                if (!is_dir($upload_dir)) {
+                    @mkdir($upload_dir, 0777, true);
+                }
+                $clean_name = "stridewel_catalog_" . time() . ".pdf";
+                $target_file = $upload_dir . $clean_name;
 
-            if (move_uploaded_file($_FILES['catalog_file']['tmp_name'], $target_file)) {
-                $pdf_file = "uploads/catalog/" . $clean_name;
-                $bytes = filesize($target_file);
-                if ($bytes >= 1048576) {
-                    $file_size = number_format($bytes / 1048576, 1) . ' MB';
-                } elseif ($bytes >= 1024) {
-                    $file_size = number_format($bytes / 1024, 0) . ' KB';
+                if (move_uploaded_file($_FILES['catalog_file']['tmp_name'], $target_file)) {
+                    $pdf_file = "uploads/catalog/" . $clean_name;
+                    $bytes = @filesize($target_file);
+                    if ($bytes >= 1048576) {
+                        $file_size = number_format($bytes / 1048576, 1) . ' MB';
+                    } elseif ($bytes >= 1024) {
+                        $file_size = number_format($bytes / 1024, 0) . ' KB';
+                    } else {
+                        $file_size = $bytes . ' B';
+                    }
                 } else {
-                    $file_size = $bytes . ' B';
+                    $error = "Failed to upload catalogue PDF. Please check write permissions on uploads/catalog/.";
                 }
             } else {
-                $error = "Failed to upload catalog PDF. Check folder write permissions.";
+                $error = "Invalid file type. Only PDF documents (.pdf) are allowed.";
             }
         } else {
-            $error = "Invalid file type. Only PDF documents (.pdf) are allowed.";
+            $upload_errors = [
+                UPLOAD_ERR_INI_SIZE   => 'The uploaded file exceeds the upload_max_filesize limit in php.ini.',
+                UPLOAD_ERR_FORM_SIZE  => 'The uploaded file exceeds the MAX_FILE_SIZE limit in the HTML form.',
+                UPLOAD_ERR_PARTIAL    => 'The uploaded file was only partially uploaded.',
+                UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder on the server.',
+                UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk.',
+                UPLOAD_ERR_EXTENSION  => 'A PHP extension stopped the file upload.'
+            ];
+            $error = $upload_errors[$_FILES['catalog_file']['error']] ?? 'An error occurred during file upload.';
         }
     } elseif (!empty($_POST['catalog_pdf_custom'])) {
         $pdf_file = mysqli_real_escape_string($conn, trim($_POST['catalog_pdf_custom']));
@@ -45,7 +68,7 @@ if (isset($_POST['update_catalog'])) {
 
     $title = mysqli_real_escape_string($conn, trim(strip_tags($_POST['catalog_title'] ?? '')));
     $subtitle = mysqli_real_escape_string($conn, trim(strip_tags($_POST['catalog_subtitle'] ?? '')));
-    $btn_text = mysqli_real_escape_string($conn, trim(strip_tags($_POST['btn_text'] ?? 'Download Full Catalog (PDF)')));
+    $btn_text = mysqli_real_escape_string($conn, trim(strip_tags($_POST['btn_text'] ?? 'Download Full Catalogue (PDF)')));
     $version = mysqli_real_escape_string($conn, trim(strip_tags($_POST['version_label'] ?? '2026 Edition (ISO 9001:2015)')));
     $status = isset($_POST['status']) ? 1 : 0;
     $custom_size = mysqli_real_escape_string($conn, trim(strip_tags($_POST['file_size'] ?? '')));
@@ -54,21 +77,22 @@ if (isset($_POST['update_catalog'])) {
     }
 
     if (empty($error)) {
-        $upd = mysqli_query($conn, "UPDATE `tbl_catalog` SET 
+        $upd = @mysqli_query($conn, "INSERT INTO `tbl_catalog` (`id`, `catalog_title`, `catalog_subtitle`, `catalog_pdf`, `btn_text`, `version_label`, `file_size`, `status`) 
+            VALUES (1, '$title', '$subtitle', '$pdf_file', '$btn_text', '$version', '$file_size', '$status') 
+            ON DUPLICATE KEY UPDATE 
             `catalog_title`='$title',
             `catalog_subtitle`='$subtitle',
             `catalog_pdf`='$pdf_file',
             `btn_text`='$btn_text',
             `version_label`='$version',
             `file_size`='$file_size',
-            `status`='$status'
-            WHERE `id`=1");
+            `status`='$status'");
 
         // Keep tbl_profile.pro_catalog_pdf in sync
         @mysqli_query($conn, "UPDATE `tbl_profile` SET `pro_catalog_pdf`='$pdf_file' WHERE `pro_id`=1");
 
         if ($upd) {
-            $msg = "Product Catalog settings and download file updated successfully!";
+            $msg = "Product Catalogue settings and download file updated successfully!";
         } else {
             $error = "Database update failed: " . mysqli_error($conn);
         }
@@ -77,6 +101,18 @@ if (isset($_POST['update_catalog'])) {
 
 // Fetch Latest Record
 $catalog = get_catalog_info();
+if (empty($catalog) || !is_array($catalog)) {
+    $catalog = [
+        'id' => 1,
+        'catalog_title' => 'Complete Veterinary & A.I. Equipment Product Catalogue',
+        'catalog_subtitle' => 'Comprehensive product catalogue featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.',
+        'catalog_pdf' => 'uploads/catalog/stridewel_catalog_1789024165.pdf',
+        'btn_text' => 'Download Full Catalogue (PDF)',
+        'version_label' => '2026 Edition (ISO 9001:2015)',
+        'file_size' => '4.8 MB',
+        'status' => 1
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

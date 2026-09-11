@@ -588,7 +588,7 @@ function get_site_profile() {
         'pro_detail' => 'Stridewel International (Est. 1982) is India\'s premier manufacturer, importer, and exporter of high-precision Artificial Insemination and Veterinary instruments. GST: 07AAEPC9628C1ZZ',
         'pro_footer_desc' => 'Leading manufacturers and global exporters of high-precision Veterinary Artificial Insemination equipment, Frozen Semen Bull Station consumables, Cryogenic systems, and livestock surgical instruments since 1982.',
         'pro_copyright' => '© Copyright 2026 Stridewel International. All Rights Reserved.',
-        'pro_catalog_pdf' => 'assets/STRIDEWEL (2).pdf'
+        'pro_catalog_pdf' => 'uploads/catalog/stridewel_catalog_1789024165.pdf'
     ];
 }
 
@@ -1439,11 +1439,65 @@ function get_timeline_data() {
 }
 
 /**
+ * Ensure `tbl_catalog` exists and holds active product catalogue configuration
+ */
+function ensure_catalog_table_schema($conn = null) {
+    if (!$conn) {
+        global $conn;
+    }
+    if (!$conn || !($conn instanceof mysqli)) {
+        return;
+    }
+    static $checked = false;
+    if ($checked) return;
+    $checked = true;
+
+    try {
+        // 1. Create table if not exists
+        $create_sql = "CREATE TABLE IF NOT EXISTS `tbl_catalog` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `catalog_title` varchar(255) NOT NULL DEFAULT 'Complete Veterinary & A.I. Equipment Product Catalogue',
+            `catalog_subtitle` text DEFAULT 'Comprehensive product catalogue featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.',
+            `catalog_pdf` varchar(255) NOT NULL DEFAULT 'uploads/catalog/stridewel_catalog_1789024165.pdf',
+            `btn_text` varchar(100) NOT NULL DEFAULT 'Download Full Catalogue (PDF)',
+            `version_label` varchar(100) NOT NULL DEFAULT '2026 Edition (ISO 9001:2015)',
+            `file_size` varchar(50) NOT NULL DEFAULT '4.8 MB',
+            `status` tinyint(1) NOT NULL DEFAULT 1,
+            `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+            PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+        @mysqli_query($conn, $create_sql);
+
+        // 2. Ensure Row 1 exists and points to correct active PDF
+        $check_q = @mysqli_query($conn, "SELECT `id`, `catalog_pdf` FROM `tbl_catalog` WHERE `id`=1 LIMIT 1");
+        if ($check_q && mysqli_num_rows($check_q) === 0) {
+            @mysqli_query($conn, "INSERT INTO `tbl_catalog` (`id`, `catalog_title`, `catalog_subtitle`, `catalog_pdf`, `btn_text`, `version_label`, `file_size`, `status`) VALUES (1, 'Complete Veterinary & A.I. Equipment Product Catalogue', 'Comprehensive product catalogue featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.', 'uploads/catalog/stridewel_catalog_1789024165.pdf', 'Download Full Catalogue (PDF)', '2026 Edition (ISO 9001:2015)', '4.8 MB', 1)");
+        } elseif ($check_q && ($row = mysqli_fetch_assoc($check_q))) {
+            if (empty($row['catalog_pdf']) || strpos($row['catalog_pdf'], 'STRIDEWEL (2)') !== false) {
+                @mysqli_query($conn, "UPDATE `tbl_catalog` SET `catalog_pdf`='uploads/catalog/stridewel_catalog_1789024165.pdf' WHERE `id`=1");
+            }
+        }
+
+        // 3. Keep tbl_profile.pro_catalog_pdf in sync
+        @mysqli_query($conn, "UPDATE `tbl_profile` SET `pro_catalog_pdf`='uploads/catalog/stridewel_catalog_1789024165.pdf' WHERE `pro_id`=1");
+
+        // 4. Ensure upload directory exists
+        $upload_dir = __DIR__ . '/../uploads/catalog/';
+        if (!is_dir($upload_dir)) {
+            @mkdir($upload_dir, 0777, true);
+        }
+    } catch (Throwable $e) {
+        error_log("Catalog schema setup error: " . $e->getMessage());
+    }
+}
+
+/**
  * Fetch Product Catalog Info & Download Configuration
  */
 function get_catalog_info() {
     global $conn;
     if ($conn) {
+        ensure_catalog_table_schema($conn);
         $q = @mysqli_query($conn, "SELECT * FROM `tbl_catalog` WHERE `id`=1 LIMIT 1");
         if ($q && ($row = mysqli_fetch_assoc($q))) {
             return $row;
@@ -1451,10 +1505,10 @@ function get_catalog_info() {
     }
     return [
         'id' => 1,
-        'catalog_title' => 'Complete Veterinary & A.I. Equipment Product Catalog',
-        'catalog_subtitle' => 'Comprehensive product catalog featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.',
-        'catalog_pdf' => 'assets/STRIDEWEL (2).pdf',
-        'btn_text' => 'Download Full Catalog (PDF)',
+        'catalog_title' => 'Complete Veterinary & A.I. Equipment Product Catalogue',
+        'catalog_subtitle' => 'Comprehensive product catalogue featuring 36+ veterinary instruments, A.I. guns, sheaths, and cryogenic equipment manufactured to ISO 9001:2015 precision standards.',
+        'catalog_pdf' => 'uploads/catalog/stridewel_catalog_1789024165.pdf',
+        'btn_text' => 'Download Full Catalogue (PDF)',
         'version_label' => '2026 Edition (ISO 9001:2015)',
         'file_size' => '4.8 MB',
         'status' => 1
